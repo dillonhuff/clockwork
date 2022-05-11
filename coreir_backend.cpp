@@ -991,9 +991,9 @@ void load_mem_ext(Context* c) {
       {"config", Const::make(c, config)}});
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
     //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
-    def->connect("self.rdata","cgramem." + lake_port_map.at("data_out_0"));
-    def->connect("self.ren","cgramem." + lake_port_map.at("ren_in_0"));
-    def->connect("self.raddr", "cgramem." + lake_port_map.at("addr_in_0"));
+    def->connect("self.rdata","cgramem." + lake_port_map.at("lake").at("data_out_0"));
+    def->connect("self.ren","cgramem." + lake_port_map.at("lake").at("ren_in_0"));
+    def->connect("self.raddr", "cgramem." + lake_port_map.at("lake").at("addr_in_0"));
   });
 }
 
@@ -3168,7 +3168,7 @@ bool runOnInstance(Instance* inst) {
        };
        auto ctrl = def->addInstance(inst->toString() + "_lake", "cgralib.Mem_amber", genargs);
        ctrl->getMetaData()["config"] = config_file;
-       ctrl->getMetaData()["mode"] = "lake";
+       ctrl->getMetaData()["mode"] = "UB";
        ctrl->getMetaData()["verilog"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
        auto clk_en_const = def->addInstance(inst->toString()+"_clk_en_const", "corebit.const",
@@ -3454,11 +3454,11 @@ bool InitMove(Instance* cnst) {
   Instance* buf = def->addInstance(cnst->getInstname()+"_rom",
           "cgralib.Mem", genargs, modargs);
   reconnectInWire(def, cnst->sel("raddr"),
-          buf->sel(lake_port_map.at("addr_in_0")));
+          buf->sel(lake_port_map.at("lake").at("addr_in_0")));
   reconnectInWire(def, cnst->sel("ren"),
-          buf->sel(lake_port_map.at("ren_in_0")));
+          buf->sel(lake_port_map.at("lake").at("ren_in_0")));
   reconnectOutWire(def, cnst->sel("rdata"),
-          buf->sel(lake_port_map.at("data_out_0")));
+          buf->sel(lake_port_map.at("lake").at("data_out_0")));
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   //inlineInstance(pt);
@@ -3536,13 +3536,19 @@ bool MemtileReplace(Instance* cnst) {
   auto genargs = cnst->getModuleRef()->getGenArgs();
   if(genargs.at("has_external_addrgen")->get<bool>())
     return false;
-  cout << "enter here\n";
+
   auto config_file = cnst->getMetaData()["config"];
+  string mode = cnst->getMetaData()["mode"];
+  genargs.insert({"port_map_key", CoreIR::Const::make(c, mode)});
+
+  //Rewrite all unified_buffer mode to <UB>
+  auto port_map = lake_port_map.at(mode);
+  config_file["mode"] = "UB";
   auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
       {"config", CoreIR::Const::make(c, config_file)},
       {"init", CoreIR::Const::make(c, init)},
-      {"mode", CoreIR::Const::make(c, "lake")}
+      {"mode", CoreIR::Const::make(c, mode)}
   };
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
@@ -3553,9 +3559,9 @@ bool MemtileReplace(Instance* cnst) {
   for (auto itr: allSels) {
     cout << tab(2) << "garnet buf sel: " << itr.first << endl;
     string premap_pt_name = itr.first;
-    if (lake_port_map.count(premap_pt_name))
+    if (port_map.count(premap_pt_name))
       def->connect(pt->sel("in")->sel(premap_pt_name),
-              buf->sel(lake_port_map.at(premap_pt_name)));
+              buf->sel(port_map.at(premap_pt_name)));
     else
       def->connect(pt->sel("in")->sel(premap_pt_name),
               buf->sel(premap_pt_name));
@@ -3719,14 +3725,17 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
 
   string map_name = "";
+  //TODO: the mode of memtile should be unpacked from config but here hardcode to lake
+  //auto port_map = lake_port_map.at(config_file.at("mode"));
+  auto port_map = lake_port_map.at("lake");
 
   for (auto cnst_port : cnst_ports) {
-    if (lake_port_map.count(cnst_port)) {
+    if (port_map.count(cnst_port)) {
       if (routable_ports.count(cnst_port) > 0) {
         cout << "Connecting cnst_port: " << cnst_port << endl;
-        def->connect(pt->sel("in")->sel(cnst_port), buf->sel(lake_port_map.at(cnst_port)));
+        def->connect(pt->sel("in")->sel(cnst_port), buf->sel(port_map.at(cnst_port)));
       } else {
-      	map_name = lake_port_map.at(cnst_port);
+      	map_name = port_map.at(cnst_port);
       	auto index = find(routable_renamed_outputs.begin(), routable_renamed_outputs.end(), map_name);
       	if (index != routable_renamed_outputs.end()){
           int port_index = index - routable_renamed_outputs.begin();
@@ -3734,6 +3743,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
           def->connect(buf->sel("O" + std::to_string(port_index)), pt->sel("in")->sel(cnst_port));
       	} else {
           cout << "Not Connecting cnst_port: " << cnst_port << endl;
+          assert(false);
       	}
       }
     } else {
@@ -4038,12 +4048,14 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
 
   // vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
+  //
+  auto port_map = lake_port_map.at("lake");
 
   cout << "Wiring raddr" << endl;
-  def->connect(pt->sel("in")->sel("raddr"), buf->sel(lake_port_map.at("addr_in_0")));
+  def->connect(pt->sel("in")->sel("raddr"), buf->sel(port_map.at("addr_in_0")));
 
   cout << "Wiring ren" << endl;
-  def->connect(pt->sel("in")->sel("ren"), buf->sel(lake_port_map.at("ren_in_0")));
+  def->connect(pt->sel("in")->sel("ren"), buf->sel(port_map.at("ren_in_0")));
 
   cout << "Wiring rdata" << endl;
   def->connect(buf->sel("O0"), pt->sel("in")->sel("rdata"));

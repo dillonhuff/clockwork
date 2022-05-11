@@ -15554,10 +15554,11 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   //test_apps.push_back(camera_pipeline_2x2());
 
   //working
+  test_apps.push_back(gaussian_glb2());
+  test_apps.push_back(gaussian());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(up_sample());
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(rom());
   test_apps.push_back(harris());
@@ -19767,7 +19768,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
 
       for (auto b : op->buffers_referenced()) {
-        if (!prg.is_boundary(b)) {
+        if (!prg.is_boundary(b) && !contains(b, "glb")) {
           sched.buffer_load_latencies[b] = buffer_load_latency(options);
           sched.buffer_store_latencies[b] = buffer_store_latency(options);
         } else {
@@ -19803,7 +19804,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     }
 
     for (auto b : op->buffers_referenced()) {
-      if (!prg.is_boundary(b)) {
+      if (!prg.is_boundary(b) && !contains(b, "glb")) {
         sched.buffer_load_latencies[b] = buffer_load_latency(options);
         sched.buffer_store_latencies[b] = buffer_store_latency(options);
       } else {

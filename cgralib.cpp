@@ -446,6 +446,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"has_external_addrgen", c->Bool()},
         {"use_prebuilt_mem", c->Bool()},
         {"has_read_valid", c->Bool()},
+        {"port_map_key", c->String()}
     });
 
   cgralib->newTypeGen(
@@ -456,7 +457,11 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             uint ctrl_width = genargs.at("ctrl_width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
+            string port_map_key = genargs.at("port_map_key")->get<string>();
             //Json config = genargs.at("config")->get<Json>();
+
+            assert(lake_port_map.count(port_map_key));
+            auto tile_port_map = lake_port_map.at(port_map_key);
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
@@ -467,9 +472,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
             for (size_t i = 0; i < num_input; i ++) {
-                recordparams.push_back({lake_port_map.at("data_in_" + std::to_string(i)),
+                recordparams.push_back({tile_port_map.at("data_in_" + std::to_string(i)),
                         c->BitIn()->Arr(width)});
-                recordparams.push_back({lake_port_map.at("chain_data_in_" + std::to_string(i)),
+                recordparams.push_back({tile_port_map.at("chain_data_in_" + std::to_string(i)),
                         c->BitIn()->Arr(width)});
 
                 if (has_external_addrgen) {
@@ -483,7 +488,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             bool has_read_valid = genargs.at("has_read_valid")->get<bool>();
             for (size_t i = 0; i < num_output; i ++) {
-                recordparams.push_back({lake_port_map.at("data_out_" + std::to_string(i)),
+                recordparams.push_back({tile_port_map.at("data_out_" + std::to_string(i)),
                         c->Bit()->Arr(width)});
 
                 if (has_read_valid) {
@@ -506,16 +511,16 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             bool is_rom  = genargs.at("is_rom")->get<bool>();
 
             if (is_rom) {
-              recordparams.push_back({lake_port_map.at("wen_in_0"), c->BitIn()});
-              recordparams.push_back({lake_port_map.at("ren_in_0"), c->BitIn()});
-              recordparams.push_back({lake_port_map.at("addr_in_0"), c->BitIn()->Arr(width)});
+              recordparams.push_back({tile_port_map.at("wen_in_0"), c->BitIn()});
+              recordparams.push_back({tile_port_map.at("ren_in_0"), c->BitIn()});
+              recordparams.push_back({tile_port_map.at("addr_in_0"), c->BitIn()->Arr(width)});
             }
 
             if (has_valid) {
               recordparams.push_back({"valid", c->Bit()});
             }
             if (has_stencil_valid) {
-              recordparams.push_back({lake_port_map.at("stencil_valid"), c->Bit()});
+              recordparams.push_back({tile_port_map.at("stencil_valid"), c->Bit()});
             }
             if (has_flush) {
               recordparams.push_back({"flush", c->BitIn()});
@@ -541,12 +546,13 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   cgralib_mem_gen->addDefaultGenArgs({{"has_chain_en", Const::make(c, true)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"use_prebuilt_mem", Const::make(c, false)}});
-  cgralib_mem_amber_gen->addDefaultGenArgs({{"is_rom", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"is_rom", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_flush", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_reset", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_external_addrgen", Const::make(c, false)}});
   cgralib_mem_gen->addDefaultGenArgs({{"has_read_valid", Const::make(c, false)}});
+  cgralib_mem_gen->addDefaultGenArgs({{"port_map_key", Const::make(c, "lake")}});
 
 
   auto CGRALibMemModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {

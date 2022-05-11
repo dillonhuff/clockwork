@@ -2337,7 +2337,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                 //cout << tab(2) << "access map: " << str(m_pair.second) << endl;
                 auto aff = get_aff(new_sched);
                 //SRAM load latency
-                aff = sub(aff, buffer_load_latency(options));
+                if (mem_name != "glb")
+                  aff = sub(aff, buffer_load_latency(options));
                 auto dom = ::domain(new_sched);
                 auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
                 int port_width = mem.out_port_width.at(mem_name);
