@@ -3091,8 +3091,8 @@ RemoveFlush(): InstancePass(
 bool runOnInstance(Instance* inst) {
     //define the pass here
     if (inst->getModuleRef()->isGenerated()) {
-      if (inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" &&
-              inst->canSel("flush")) {
+      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" ||
+	  inst->getModuleRef()->getGenerator()->getName() == "Pond_amber") && inst->canSel("flush")) {
          auto def= inst->getContainer();
          def->disconnect(inst->sel("flush"));
          return true;
