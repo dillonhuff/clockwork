@@ -1638,11 +1638,14 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
     cout << buf << endl;
   buf.simplify_address_space();
   if (sr) {
+      cout << "SR optimization row buf before tighten:" << buf << endl;
+      buf.tighten_address_space();
 
+      cout << "SR optimization row buf after tighten:" << buf << endl;
       //FIXME: should do this after figure out vectorization dimension
       //Maybe it's correct ???
       //ASPLOS: this need to be tested for high throughput
-    buf.linear_address_space(project_out_zero_dim(rddom), 4);
+    buf.linear_address_space(project_out_zero_dim(to_set(buf.global_range())), 4);
     //buf.linear_address_space(project_out_zero_dim(rddom),
     //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
     //buf.tighten_address_space();
