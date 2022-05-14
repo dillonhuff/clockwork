@@ -3703,14 +3703,14 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   config_file["num_inputs"] = num_inputs;
   config_file["num_outputs"] = num_outputs;
   config_file["width"] = width;
-
+  config_file["mode"] = "UB";
 
 
   std::set<string> routable_ports = {"chain_data_in_0","chain_data_in_1", "flush", "ren_in", "wen_in", "addr_in_0", "addr_in_1", "data_in_0", "data_in_1"};
 
   std::vector<string> routable_outputs = {"data_out_1", "empty", "stencil_valid", "full", "data_out_0", "sram_ready_out", "valid_out", "config_data_out_1", "config_data_out_0"};
 
-  std::vector<string> routable_renamed_outputs = {"output_width_16_num_0", "output_width_16_num_1", "output_width_1_num_1", "output_width_1_num_2", "output_width_1_num_3", "config_data_out_0", "config_data_out_1", "output_width_1_num_0"};
+  std::vector<string> routable_renamed_outputs = {"output_width_16_num_0", "output_width_16_num_1", "output_width_1_num_1", "output_width_1_num_2", "output_width_1_num_4", "config_data_out_0", "config_data_out_1", "output_width_1_num_0"};
 
   vector<Module*> loaded;
   if (!loadHeader(c, "mem_header.json", loaded)) {c->die();}
@@ -3727,7 +3727,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   string map_name = "";
   //TODO: the mode of memtile should be unpacked from config but here hardcode to lake
   //auto port_map = lake_port_map.at(config_file.at("mode"));
-  auto port_map = lake_port_map.at("lake");
+  auto port_map = lake_port_map.at("lake_dp");
 
   for (auto cnst_port : cnst_ports) {
     if (port_map.count(cnst_port)) {
