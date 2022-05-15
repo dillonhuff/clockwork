@@ -11922,6 +11922,19 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 
 void playground() {
+
+    {
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto rd = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1]-> [8*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8}");
+      assert(num_out_dims(rd) == 1);
+      for (int i = 0; i < num_in_dims(rd); i ++) {
+        auto stride = stride_in_dim(rd, i, 0);
+        cout << "stride: " << stride << "dim in: " << i << endl;
+      }
+      int cms = common_max_stride(rd, 0);
+      cout << "cms: " << cms << endl;
+      assert(false);
+    }
     {
         prog app = camera_pipeline_2x2_unroll();
         app.pretty_print();
@@ -15381,27 +15394,27 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
 
   //camera pipeline variant tests
-  //test_apps.push_back(camera_pipeline_2x2_unroll());
-  ////Still not work need to add a fanin pass support delay row buffer
-  ////test_apps.push_back(camera_pipeline_extra_buf_glb());
-  //test_apps.push_back(camera_pipeline_extra_buf());
-  //test_apps.push_back(camera_pipeline_unrolly());
-  //test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(camera_pipeline_2x2_unroll());
+  //Still not work need to add a fanin pass support delay row buffer
+  //test_apps.push_back(camera_pipeline_extra_buf_glb());
+  test_apps.push_back(camera_pipeline_extra_buf());
+  test_apps.push_back(camera_pipeline_unrolly());
+  test_apps.push_back(camera_pipeline_2x2());
 
   ////ISSCC application without unroll
-  //test_apps.push_back(harris_color());
-  //test_apps.push_back(harris_color_unroll4());
-  //test_apps.push_back(gaussian_isscc());
-  //test_apps.push_back(camera_pipeline_isscc());
-  //test_apps.push_back(unsharp_isscc());
+  test_apps.push_back(harris_color());
+  test_apps.push_back(harris_color_unroll4());
+  test_apps.push_back(gaussian_isscc());
+  test_apps.push_back(camera_pipeline_isscc());
+  test_apps.push_back(unsharp_isscc());
 
-  ////GLB tests
-  //test_apps.push_back(unsharp_glb());
-  //test_apps.push_back(gaussian_glb2());
-  //test_apps.push_back(camera_pipeline_glb());
-  //test_apps.push_back(harris_glb2());
-  //test_apps.push_back(up_sample_glb());
-  //test_apps.push_back(gaussian_glb8());
+  //GLB tests
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb2());
+  test_apps.push_back(camera_pipeline_glb());
+  test_apps.push_back(harris_glb2());
+  test_apps.push_back(up_sample_glb());
+  test_apps.push_back(gaussian_glb8());
 
   ////Dense Linear algebra
   //test_apps.push_back(glb_channel_reduction());
@@ -15415,7 +15428,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet2_x_full());
 
   //For debug the 7x7 layer
-  test_apps.push_back(resnet_last());
+  //test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
   //test_apps.push_back(resnet1_docker());
@@ -15479,36 +15492,35 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fp_arith());
   //test_apps.push_back(camera_pipeline_2x2_unroll());
 
-  test_apps.push_back(matmul_unroll2());
   //CGRA tests
-  //test_apps.push_back(nlmeans_simple_trunc());
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(camera_pipeline_new());
-  //test_apps.push_back(unsharp_new());
-  //test_apps.push_back(unsharp_large());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(laplacian_pyramid());
-  //test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(nlmeans_simple_trunc());
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(counter());
+  test_apps.push_back(rom());
+  test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(unsharp_new());
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(laplacian_pyramid_docker());
 
-  ////DNN apps
-  //test_apps.push_back(resnet_tiny());
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(matmul_single());
-  //test_apps.push_back(matmul_unroll2());
-  //test_apps.push_back(resnet_size_test());
-  //test_apps.push_back(resnet());
+  //DNN apps
+  test_apps.push_back(resnet_tiny());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(matmul_single());
+  test_apps.push_back(matmul_unroll2());
+  test_apps.push_back(resnet_size_test());
+  test_apps.push_back(resnet());
 
-  ////Big applications
-  //test_apps.push_back(mobilenet_unrolled());
+  //Big applications
+  test_apps.push_back(mobilenet_unrolled());
   //test_apps.push_back(resnet_one_input());
   //test_apps.push_back(resnet88());
   //test_apps.push_back(resnet88_chain());
