@@ -3524,6 +3524,15 @@ class MemSubstitute: public CoreIR::InstanceVisitorPass {
 
 }
 
+string get_memtile_config_mode(Json config_file) {
+  if ((config_file.size() == 1) && (config_file.count("stencil_valid"))) {
+      return "stencil_valid";
+  } else {
+      return "UB";
+  }
+
+}
+
 bool MemtileReplace(Instance* cnst) {
   cout << tab(2) << "memory syntax transformation!" << endl;
   cout << tab(2) << toString(cnst) << endl;
@@ -3543,7 +3552,7 @@ bool MemtileReplace(Instance* cnst) {
 
   //Rewrite all unified_buffer mode to <UB>
   auto port_map = lake_port_map.at(mode);
-  config_file["mode"] = "UB";
+  config_file["mode"] = get_memtile_config_mode(config_file);
   auto init = cnst->getMetaData()["init"];
   CoreIR::Values modargs = {
       {"config", CoreIR::Const::make(c, config_file)},
@@ -3690,6 +3699,9 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   int width = genargs.at("width")->get<int>();
 
   auto config_file = cnst->getMetaData();
+  auto config_file_config = config_file["config"];
+  config_file_config["mode"] = get_memtile_config_mode(config_file_config);
+  config_file["config"] = config_file_config;
 
   config_file["ID"] = ID;
   config_file["has_external_addrgen"] = has_external_addrgen;
