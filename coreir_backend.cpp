@@ -3700,7 +3700,8 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
 
   auto config_file = cnst->getMetaData();
   auto config_file_config = config_file["config"];
-  config_file_config["mode"] = get_memtile_config_mode(config_file_config);
+  string mode = get_memtile_config_mode(config_file_config);
+  config_file_config["mode"] = mode;
   config_file["config"] = config_file_config;
 
   config_file["ID"] = ID;
@@ -3715,7 +3716,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   config_file["num_inputs"] = num_inputs;
   config_file["num_outputs"] = num_outputs;
   config_file["width"] = width;
-  config_file["mode"] = "UB";
+  config_file["mode"] = mode;
 
 
   std::set<string> routable_ports = {"chain_data_in_0","chain_data_in_1", "flush", "ren_in", "wen_in", "addr_in_0", "addr_in_1", "data_in_0", "data_in_1"};
