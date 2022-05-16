@@ -14,8 +14,8 @@ prog up_sample() {
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input.stencil
-  auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 8);
-  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 6);
+  auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 64);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 64);
 
 //store is: hw_input.stencil(hw_input_s0_x, hw_input_s0_y, 0) = input_copy.stencil(hw_input_s0_x, hw_input_s0_y, 0)
   auto hcompute_hw_input_stencil = hw_input_s0_x->add_op("op_hcompute_hw_input_stencil");
@@ -26,8 +26,8 @@ prog up_sample() {
 
 //consuming hw_input.stencil
 ////producing nearest_neighbor.stencil
-  auto nearest_neighbor_s0_y = prg.add_loop("nearest_neighbor_s0_y", 0, 16);
-  auto nearest_neighbor_s0_x = nearest_neighbor_s0_y->add_loop("nearest_neighbor_s0_x", 0, 12);
+  auto nearest_neighbor_s0_y = prg.add_loop("nearest_neighbor_s0_y", 0, 128);
+  auto nearest_neighbor_s0_x = nearest_neighbor_s0_y->add_loop("nearest_neighbor_s0_x", 0, 128);
 
 //store is: nearest_neighbor.stencil(nearest_neighbor_s0_x, nearest_neighbor_s0_y, 0) = hw_input.stencil((nearest_neighbor_s0_x/2), (nearest_neighbor_s0_y/2), 0)
   auto hcompute_nearest_neighbor_stencil = nearest_neighbor_s0_x->add_op("op_hcompute_nearest_neighbor_stencil");
@@ -37,8 +37,8 @@ prog up_sample() {
   hcompute_nearest_neighbor_stencil->add_store("nearest_neighbor_stencil", "nearest_neighbor_s0_y", "nearest_neighbor_s0_x" );
 
 //consuming nearest_neighbor.stencil
-  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 16);
-  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 12);
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 128);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 128);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = uint8(nearest_neighbor.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0))
   auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("op_hcompute_hw_output_stencil");
