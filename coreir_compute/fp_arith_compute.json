@@ -1,0 +1,49 @@
+{
+"namespaces":{
+  "global":{
+    "modules":{
+      "hcompute_hw_input_global_wrapper_stencil":{
+        "type":["Record",[
+          ["out_hw_input_global_wrapper_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_input_global_wrapper_stencil","self.in0_hw_input_stencil.0"]
+        ]
+      },
+      "hcompute_hw_output_stencil":{
+        "type":["Record",[
+          ["out_hw_output_stencil",["Array",16,"Bit"]],
+          ["in0_mult_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "connections":[
+          ["self.out_hw_output_stencil","self.in0_mult_stencil.0"]
+        ]
+      },
+      "hcompute_mult_stencil":{
+        "type":["Record",[
+          ["out_mult_stencil",["Array",16,"Bit"]],
+          ["in0_hw_input_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "dwfp_mul_260_261_262":{
+            "genref":"float_DW.fp_mul",
+            "genargs":{"exp_width":["Int",8], "ieee_compliance":["Bool",false], "sig_width":["Int",7]}
+          },
+          "fconst13__261":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h4154"]},
+            "metadata":{"float_value":"Equivalent float = 13.250000"}
+          }
+        },
+        "connections":[
+          ["self.in0_hw_input_global_wrapper_stencil.0","dwfp_mul_260_261_262.a"],
+          ["fconst13__261.out","dwfp_mul_260_261_262.b"],
+          ["self.out_mult_stencil","dwfp_mul_260_261_262.z"]
+        ]
+      }
+    }
+  }
+}
+}

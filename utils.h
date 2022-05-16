@@ -10,6 +10,66 @@
 using namespace dbhc;
 using namespace std;
 
+
+template <typename A, typename B>
+static inline
+std::ostream& operator<< (std::ostream& out, const std::pair<A, B>& v) {
+    out << "{" << v.first << ", " << v.second << "} ";
+    return out;
+}
+
+template <typename T>
+static inline
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+    if ( !v.empty()  ) {
+        out << '[';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b]";
+    }
+    return out;
+}
+
+template <typename T>
+static inline
+std::ostream& operator<< (std::ostream& out, const std::set<T>& v) {
+    if ( !v.empty()  ) {
+        out << '{';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b}";
+    }
+    return out;
+}
+
+template <typename T>
+static inline
+std::ostream& operator<< (std::ostream& out, const std::map<string, T>& m) {
+    if ( !m.empty()  ) {
+      for (const auto &p : m)
+      {
+        out << p.first << ": ";
+        out << p.second << ' ';
+        out << std::endl;
+      }
+
+    }
+    return out;
+}
+
+template <typename T>
+static inline
+std::ostream& operator<< (std::ostream& out, const std::map<int, T>& m) {
+    if ( !m.empty()  ) {
+      for (const auto &p : m)
+      {
+        out << p.first << ": ";
+        out << p.second << ' ';
+        out << '\t';
+      }
+
+    }
+    return out;
+}
+
 template<typename T>
 static inline
 T pop(deque<T>& d) {

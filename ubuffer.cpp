@@ -1,7 +1,9 @@
 #include "ubuffer.h"
 #include "codegen.h"
+#include "app.h"
 #ifdef COREIR
 #include "cwlib.h"
+#include "cgralib.h"
 #include "coreir_backend.h"
 #include "lake_target.h"
 
@@ -19,6 +21,7 @@ using CoreIR::Type;
 using CoreIR::Values;
 
 #endif
+#include "prog.h"
 #include "coreir_backend.h"
 typedef std::unordered_map<std::string, std::vector<int>> ConfigMap;
 
@@ -712,6 +715,25 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   int max_offset = INT_MIN;
   int max_start = INT_MIN;
   isl_map* cgpl_sched;
+
+  //First pass to get the coarse loop level information, there may be loops with if guard
+  for (auto it: schedule) {
+    auto sched = to_map(it.second);
+    int in_dim = coarse_grained_pipeline_loop_level;
+    std::vector<int> inner_levels(num_in_dims(sched) - in_dim - 1);
+    std::iota (std::begin(inner_levels), std::end(inner_levels), in_dim + 1);
+    cout << "inner levels: " << inner_levels << endl;
+    cgpl_sched = remove_in_dims(cpy(sched), inner_levels);
+    while (get_dim_extent(::domain(cgpl_sched), coarse_grained_pipeline_loop_level) == 1) {
+      cgpl_sched = remove_in_dims(cpy(cgpl_sched), {coarse_grained_pipeline_loop_level});
+      coarse_grained_pipeline_loop_level --;
+    }
+  }
+
+  cout << "Final CGPL after remove the if guard dimension: "
+      << coarse_grained_pipeline_loop_level << endl;
+
+  //get the coarse grained schedule
   for (auto it: schedule) {
     auto sched = to_map(it.second);
     auto pt_name = it.first;
@@ -753,10 +775,12 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   cout << "\tNeed double buffer optimization: " << need_double_buffer << endl;
   substract_glb_latency = (max_start >= options.mem_hierarchy.at("mem").counter_ub);
 
+  //This is an optimization
+  //flatten the coarse grained schedule for tiling loop
   isl_map* merged_sched;
   if (need_double_buffer) {
     //TODO: only implement double buffer for lake
-    assert(config_mode == "lake");
+    //assert(config_mode == "lake");
     //optimize the double buffer
     isl_set* cgpl_dom = ::domain(cgpl_sched);
     int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
@@ -787,6 +811,11 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
     std::iota (std::begin(cgpl_levels), std::end(cgpl_levels), 1); // Fill start with 1, cannot remove root
     auto new_pt_sched = remove_in_dims(sched, cgpl_levels);
     auto new_acc_map = remove_in_dims(acc_map, cgpl_levels);
+
+    //Thanks GOD! this function save my life!! can remove the implicit division and turn it into equality
+    //TODO: move this into simplify
+    isl_map_detect_equalities(new_pt_sched);
+    isl_map_detect_equalities(new_acc_map);
 
     cout << "\tnew pt schedule: " << str(new_pt_sched) << endl;
     cout << "\tnew acc_pattern: " << str(new_acc_map) << endl;
@@ -822,171 +851,6 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
   assert(!(substract_glb_latency && decouple_ctrl));
 
   return cgpl_sched;
-}
-
-//helper function to get schedule for port
-pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info) {
-
-  auto acc_map = to_map(access_map.at(inpt));
-
-  //get the bank specific access map
-  acc_map = coalesce(its_range(acc_map, rddom));
-
-  auto dom = ::domain(acc_map);
-
-  auto sched_aff = get_aff(schedule.at(inpt));
-
-  if (isIn.at(inpt)) {
-    //update op latency, if it's input port
-    int op_latency = info.compute_latency(::domain_name(acc_map));
-    sched_aff = add(sched_aff, op_latency);
-  }
-
-  isl_map* sched = its(to_map(sched_aff), dom);
-  return {acc_map, sched};
-}
-
-UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
-  //for(auto it: impl.bank_rddom) {
-    //int bank = it.first;
-    string bname = name + "_BANK_" + str(bank);
-    auto rddom = impl.bank_rddom.at(bank);
-
-    //create ubuffer for codegen
-    UBuffer buf;
-    buf.name = bname;
-    buf.ctx = ctx;
-    buf.port_widths = port_widths;
-    buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
-    cout << "CGPL level :" << coarse_grained_pipeline_loop_level << endl;
-
-    auto inpts = impl.get_unique_inpts(bank);
-    auto outpts = impl.get_unique_outpts(bank);
-    cout <<"impl inputs: "<< inpts << endl;
-    cout <<"impl outpts: "<< inpts << endl;
-
-    //TODO: may need a sort
-    //add a sort of output make sure we have positive stride when coalesce
-    //vector<string> outpt_vec(outpts.begin(), outpts.end());
-    /*sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
-              auto l_start = lexminpt(range(access_map.at(l)));
-              auto r_start = lexminpt(range(access_map.at(r)));
-              return lex_lt_pt(l_start, r_start);
-              });
-    */
-    int usuffix = 0;
-    bool sr = false;
-    int op_latency = 0;
-
-    for (string inpt: inpts) {
-      auto acc_map = to_map(access_map.at(inpt));
-
-      //get the bank specific access map
-      acc_map = coalesce(its_range(acc_map, rddom));
-
-      auto dom = ::domain(acc_map);
-
-      //update op latency
-      op_latency = info.compute_latency(::domain_name(acc_map));
-
-
-      auto sched_aff = get_aff(schedule.at(inpt));
-      sched_aff = add(sched_aff, op_latency);
-      isl_map* sched = its(to_map(sched_aff), dom);
-
-      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
-      //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
-
-      //Put into separate bundle if we have different domain name
-      buf.port_bundles[::name(dom) + "_write"].push_back(inpt);
-      if (impl.is_shift_register_input(inpt)) {
-        //rewrite for shift register
-        //TODO pass codegenoptions
-        //auto reduce_map = linear_address_map_lake(rddom, 4);
-        //cout << "Reduce map: " << str(reduce_map) << endl;
-        //reduce_map = set_range_name(reduce_map, bname);
-        //reduce_map = set_domain_name(reduce_map, bname);
-        //auto linear_acc_map = dot(acc_map, reduce_map);
-        //cout << "linear map: " << str(linear_acc_map) << endl;
-        //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
-        //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
-        sr = true;
-      }
-      acc_map = set_range_name(acc_map, bname);
-      buf.add_in_pt(inpt, dom, acc_map, sched);
-      usuffix ++;
-    }
-
-    for (string outpt: outpts) {
-      auto acc_map = to_map(access_map.at(outpt));
-      //get the bank specific access map
-      acc_map = coalesce(its_range(acc_map, rddom));
-      auto sched = schedule.at(outpt);
-
-      acc_map = set_range_name(acc_map, bname);
-      auto dom = ::domain(acc_map);
-      //Shift register need preprocess the schedule and access pattern
-      /*if (impl.shift_depth.count(outpt) > 0) {
-          auto outpt_info =
-              get_shift_pt_access_with_sched(outpt, impl.shift_depth.at(outpt));
-          acc_map = outpt_info.first;
-          sched = to_umap(outpt_info.second);
-      }*/
-      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
-
-      if (impl.is_shift_register_output(outpt)) {
-        int delay = impl.shift_registered_outputs.at(outpt).second;;
-        string inpt = impl.shift_registered_outputs.at(outpt).first;
-
-        auto acc_map = to_map(access_map.at(inpt));
-        //get the bank specific access map
-        acc_map = coalesce(its_range(acc_map, rddom));
-        auto sched = to_map(schedule.at(inpt));
-
-        acc_map = set_range_name(acc_map, bname);
-        acc_map = add_domain_suffix(acc_map, domain_name(acc_map) + "_delay_"+str(delay));
-        sched = add_domain_suffix(sched, domain_name(sched) + "_delay_"+str(delay));
-
-        auto dom = ::domain(acc_map);
-
-        //Take consider of the latency in delay
-        sched = linear_schedule(sched, {1}, delay+op_latency, false);
-       // auto reduce_map = linear_address_map_lake(rddom, 4);
-       // cout << "Reduce map: " << str(reduce_map) << endl;
-       // reduce_map = set_range_name(reduce_map, bname);
-       // reduce_map = set_domain_name(reduce_map, bname);
-       // auto linear_acc_map = dot(acc_map, reduce_map);
-       // cout << "linear map: " << str(linear_acc_map) << endl;
-
-        //change bundle naming strategy to keep same sequence
-        buf.port_bundles[outpt + "_read"].push_back(outpt);
-        //buf.add_out_pt(outpt, dom, linear_acc_map, its(to_umap(sched), dom));
-        buf.add_out_pt(outpt, dom, acc_map, its(to_umap(sched), dom));
-      } else {
-
-        //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
-
-        //Put into separate bundle if we have different domain name
-        buf.port_bundles[::name(dom) + "_read"].push_back(outpt);
-
-        buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
-      }
-      usuffix ++;
-    }
-  buf.simplify_address_space();
-  if (sr) {
-
-      //FIXME: should do this after figure out vectorization dimension
-      //Maybe it's correct ???
-      //ASPLOS: this need to be tested for high throughput
-    buf.linear_address_space(project_out_zero_dim(rddom), 4);
-    //buf.linear_address_space(project_out_zero_dim(rddom),
-    //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
-    //buf.tighten_address_space();
-  }
-  cout << "after ubuffer regen: " << buf << endl;
-
-  return buf;
 }
 
 //Post processing get the ubuffer for each bank
@@ -1139,69 +1003,273 @@ maybe<vector<int>> get_project_dim(UBuffer & buf, bool is_read) {
 }
 
 void UBufferImpl::remove_bank(int bank_id) {
+
+  lowering_info.erase(bank_id);
+
   bank_rddom.erase(bank_id);
-  for(auto it = bank_rddom.begin(); it != bank_rddom.end(); it ++){
-      if (it->first > bank_id) {
-          auto node = bank_rddom.extract(it->first);
-          node.key() = it->first - 1;
-          bank_rddom.insert(std::move(node));
-      }
-  }
+  //for(auto it = bank_rddom.begin(); it != bank_rddom.end(); it ++){
+  //    if (it->first > bank_id) {
+  //        auto node = bank_rddom.extract(it->first);
+  //        node.key() = it->first - 1;
+  //        bank_rddom.insert(std::move(node));
+  //    }
+  //}
   bank_readers.erase(bank_id);
-  for(auto it = bank_readers.begin(); it != bank_readers.end(); it ++){
-      if (it->first > bank_id) {
-          auto node = bank_readers.extract(it->first);
-          node.key() = it->first - 1;
-          bank_readers.insert(std::move(node));
-      }
-  }
+  //for(auto it = bank_readers.begin(); it != bank_readers.end(); it ++){
+  //    if (it->first > bank_id) {
+  //        auto node = bank_readers.extract(it->first);
+  //        node.key() = it->first - 1;
+  //        bank_readers.insert(std::move(node));
+  //    }
+  //}
   bank_writers.erase(bank_id);
-  for(auto it = bank_writers.begin(); it != bank_writers.end(); it ++){
-      if (it->first > bank_id) {
-          auto node = bank_writers.extract(it->first);
-          node.key() = it->first - 1;
-          bank_writers.insert(std::move(node));
-      }
-  }
+  //for(auto it = bank_writers.begin(); it != bank_writers.end(); it ++){
+  //    if (it->first > bank_id) {
+  //        auto node = bank_writers.extract(it->first);
+  //        node.key() = it->first - 1;
+  //        bank_writers.insert(std::move(node));
+  //    }
+  //}
   bank_outpt2readers.erase(bank_id);
-  for(auto it = bank_outpt2readers.begin(); it != bank_outpt2readers.end(); it ++){
-      if (it->first > bank_id) {
-          auto node = bank_outpt2readers.extract(it->first);
-          node.key() = it->first - 1;
-          bank_outpt2readers.insert(std::move(node));
-      }
-  }
+  //for(auto it = bank_outpt2readers.begin(); it != bank_outpt2readers.end(); it ++){
+  //    if (it->first > bank_id) {
+  //        auto node = bank_outpt2readers.extract(it->first);
+  //        node.key() = it->first - 1;
+  //        bank_outpt2readers.insert(std::move(node));
+  //    }
+  //}
   bank_inpt2writers.erase(bank_id);
-  for(auto it = bank_inpt2writers.begin(); it != bank_inpt2writers.end(); it ++){
-      if (it->first > bank_id) {
-          auto node = bank_inpt2writers.extract(it->first);
-          node.key() = it->first - 1;
-          bank_inpt2writers.insert(std::move(node));
-      }
-  }
+  //for(auto it = bank_inpt2writers.begin(); it != bank_inpt2writers.end(); it ++){
+  //    if (it->first > bank_id) {
+  //        auto node = bank_inpt2writers.extract(it->first);
+  //        node.key() = it->first - 1;
+  //        bank_inpt2writers.insert(std::move(node));
+  //    }
+  //}
   for (auto& it: outpt_to_bank) {
       it.second.erase(bank_id);
-      for (auto bk: it.second) {
-          if (bk > bank_id) {
-              auto val = it.second.extract(bk);
-              val.value() = bk - 1;
-              it.second.insert(std::move(val));
-          }
-      }
+     // for (auto bk: it.second) {
+     //     if (bk > bank_id) {
+     //         auto val = it.second.extract(bk);
+     //         val.value() = bk - 1;
+     //         it.second.insert(std::move(val));
+     //     }
+     // }
   }
   for (auto& it: inpt_to_bank) {
       it.second.erase(bank_id);
-      for (auto bk: it.second) {
-          if (bk > bank_id) {
-              auto val = it.second.extract(bk);
-              val.value() = bk - 1;
-              it.second.insert(std::move(val));
-          }
-      }
+     // for (auto bk: it.second) {
+     //     if (bk > bank_id) {
+     //         auto val = it.second.extract(bk);
+     //         val.value() = bk - 1;
+     //         it.second.insert(std::move(val));
+     //     }
+     // }
   }
 }
 
+UBuffer merge_sram_with_different_outpt(vector<UBuffer> & buffers, string new_name) {
+    //Merge buffers into one
+    UBuffer merge_buf;
+    auto buf = pick(buffers);
+    merge_buf.port_widths = buf.port_widths;
+    merge_buf.ctx = buf.ctx;
+    merge_buf.name = new_name + "_sram";
+
+
+    map<string, isl_map*> sched_record_map;
+    for (auto sram: buffers){
+        for (auto bd: sram.port_bundles) {
+            //All ports in the same bundle have the same schedule
+            string unique_pt = pick(bd.second);
+            if (!merge_buf.port_bundles.count(bd.first)) {
+              merge_buf.port_bundles.insert(bd);
+              for (string pt: bd.second) {
+                merge_buf.isIn[pt] = sram.isIn.at(pt);
+                merge_buf.domain[pt] = sram.domain.at(pt);
+                auto am = to_map(sram.access_map.at(pt));
+                merge_buf.access_map[pt] = to_umap(set_range_name(am, new_name + "_sram"));
+              }
+              //Add the schedule
+              isl_map* sched_map = to_map(sram.schedule.at(unique_pt));
+              cout << "get SRAM port schedule: " << str(sched_map) << endl;
+
+              //need to rename the domain name if the same stmt are loading the data
+              if(sched_record_map.count(domain_name(sched_map))) {
+                string dname = domain_name(sched_map);
+                vector<string> substr =
+                    split_at(dname, "_");
+                int idx = safe_stoi(substr.back());
+                substr.back() = str(idx+1);
+                string new_dname = sep_list(substr, "", "", "_");
+                sched_map = set_domain_name(sched_map, new_dname);
+                cout << str(sched_map) << endl;
+              }
+
+              if (!violate_deps(sched_map, sched_record_map)) {
+
+                // Input port should not violate dependency
+                sched_record_map.insert({domain_name(sched_map), sched_map});
+
+                //All sram ports should share the same schedule
+                for (string pt: bd.second) {
+                  merge_buf.schedule[pt] = to_umap(sched_map);
+                }
+              } else {
+                assert(!sram.is_in_pt(unique_pt));
+                isl_map* adjust_schedule =
+                    get_sram2tb_schedule_with_check(sched_map, sched_record_map, 0/*ahead step*/, num_in_dims(sched_map) - 1/**/, 0, false/*is_dual_port*/);
+                sched_record_map.insert({domain_name(adjust_schedule), adjust_schedule});
+
+                //All sram ports should share the same schedule
+                for (string pt: bd.second) {
+                  merge_buf.schedule[pt] = to_umap(adjust_schedule);
+                }
+              }
+            }
+
+        }
+    }
+
+    //Add another pass to rename the port name
+    merge_buf.sequentially_rename_output_domain_suffix(0);
+
+    cout << merge_buf << endl;
+    return merge_buf;
+}
+
+UBuffer merge_buf_with_different_outpt(vector<UBuffer> & buffers, string new_name) {
+    //Merge buffers into one
+    UBuffer merge_buf;
+    auto buf = pick(buffers);
+    merge_buf.port_widths = buf.port_widths;
+    merge_buf.name = new_name ;
+
+
+    map<string, isl_map*> sched_record_map;
+    for (auto sram: buffers){
+        for (auto bd: sram.port_bundles) {
+            //All ports in the same bundle have the same schedule
+            string unique_pt = pick(bd.second);
+            if (!merge_buf.port_bundles.count(bd.first)) {
+              merge_buf.port_bundles.insert(bd);
+              for (string pt: bd.second) {
+                merge_buf.isIn[pt] = sram.isIn.at(pt);
+                merge_buf.domain[pt] = sram.domain.at(pt);
+                auto am = to_map(sram.access_map.at(pt));
+                merge_buf.access_map[pt] = to_umap(set_range_name(am, new_name));
+                merge_buf.schedule[pt] = sram.schedule.at(pt);
+              }
+            }
+        }
+    }
+    cout << merge_buf << endl;
+    return merge_buf;
+}
+
+void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged) {
+    vector<UBuffer> srams, target_buffers;
+  for (auto bank_id: banks_tobe_merged) {
+    UBuffer sram;
+    for (auto it: lowering_info.at(bank_id).sub_component) {
+      cout << "\tsubcomponent keys:" << it.first << endl;
+      if (contains(it.first, "sram")) {
+        sram = it.second;
+      }
+    }
+    cout << sram << endl;
+    srams.push_back(sram);
+    target_buffers.push_back(lowering_info.at(bank_id).target_buf);
+  }
+
+  //TODO check the other impl are the same
+  GarnetImpl merged_impl;
+  int bank_id_0 = pick(banks_tobe_merged);
+  merged_impl = lowering_info.at(bank_id_0);
+  merged_impl.sub_component.clear();
+
+
+  std::set<string> merge_inpts, merge_outpts;
+  for (int bank_id: banks_tobe_merged) {
+      assert(bank_writers.at(bank_id).size() == 1);
+      assert(bank_readers.at(bank_id).size() == 1);
+      merge_inpts.merge(bank_writers.at(bank_id));
+      merge_outpts.merge(bank_readers.at(bank_id));
+  }
+  //TODO: may need an extra check if we can merge more port
+  //assert(merge_inpts.size() <= options.rtl_options.max_inpt);
+  //assert(merge_outpts.size() <= options.rtl_options.max_outpt);
+  int new_bk = add_new_bank_between(merge_inpts, merge_outpts,
+          bank_rddom.at(banks_tobe_merged.front()));
+  for (string inpt: merge_inpts) {
+      map_insert(bank_inpt2writers, new_bk, {inpt});
+  }
+  for (string outpt: merge_outpts) {
+      map_insert(bank_outpt2readers, new_bk, {outpt});
+  }
+
+  cout << "new banks id: " << new_bk << endl;;
+
+  string new_sram_name = get_buf_name() + "_bank_" + str(new_bk);
+
+  auto sram_merged = merge_sram_with_different_outpt(srams, new_sram_name);
+
+  //Also merge target buffer
+  merged_impl.target_buf = merge_buf_with_different_outpt(target_buffers, new_sram_name);
+
+
+  merged_impl.sub_component.insert({new_sram_name, sram_merged});
+  auto stmt2sched = sram_merged.get_stmt2sched();
+
+  int tb_cnt = 0;
+  map<string, UBuffer> outpt2tb;
+  for (auto bank_id: banks_tobe_merged) {
+    for (auto it: lowering_info.at(bank_id).sub_component) {
+        cout << "sub component buf: " << get_micro_buf_name(it.first) << endl;
+      if (get_micro_buf_name(it.first) == "agg") {
+        auto micro_buf = it.second;
+        string new_agg_name = new_sram_name + "_0_agg";
+        micro_buf.remap_access_to_new_buffer_name(new_agg_name);
+        merged_impl.sub_component.insert({new_agg_name, micro_buf});
+      }
+      // sort the tb name by it's bundle
+      if (get_micro_buf_name(it.first) == "tb") {
+        auto micro_buf = it.second;
+        assert(micro_buf.get_out_bundles().size() == 1);
+        string outbd = pick(micro_buf.get_out_bundles());
+        outpt2tb.insert({outbd, micro_buf});
+      }
+    }
+  }
+  for (auto it: outpt2tb) {
+    string new_tb_name = new_sram_name + "_" + str(tb_cnt) + "_tb";
+    it.second.remap_access_to_new_buffer_name(new_tb_name);
+    it.second.sequentially_rename_input_domain_suffix(tb_cnt);
+    it.second.sequentially_rename_output_domain_suffix(tb_cnt);
+    //update tb in schedule with
+    for (auto& schedule_it: it.second.schedule) {
+      string dname = domain_name(schedule_it.second);
+      if (stmt2sched.count(dname))
+        schedule_it.second = stmt2sched.at(dname);
+    }
+    merged_impl.sub_component.insert({new_tb_name, it.second});
+    tb_cnt++;
+    cout << "micor buf: " << it.second << endl;
+  }
+  for (auto bk: banks_tobe_merged) {
+      remove_bank(bk);
+  }
+  lowering_info[new_bk] = merged_impl;
+
+  cout << *this << endl;
+
+  //TODO: add new banks sub component
+
+}
+
+
 void UBufferImpl::merge_banks(vector<int> banks_tobe_merged) {
+    assert(banks_tobe_merged.size() > 0);
   std::set<string> merge_inpts, merge_outpts;
   for (int bank_id: banks_tobe_merged) {
       assert(bank_writers.at(bank_id).size() == 1);
@@ -1246,10 +1314,12 @@ void UBufferImpl::conditional_merging(CodegenOptions & options, const vector<int
   vector<int> merging_banks;
   while(true) {
     //full condition
+    //cout << "Merging banks: " << merging_banks << endl;
     if(get_banks_inpts_num(merging_banks) > max_inpt ||
       get_banks_outpts_num(merging_banks) > max_outpt) {
       auto last_bank = merging_banks.back();
       merging_banks.pop_back();
+      //cout << merging_banks << endl;
       merge_banks(merging_banks);
       merging_banks.clear();
       merging_banks.push_back(last_bank);
@@ -1262,6 +1332,99 @@ void UBufferImpl::conditional_merging(CodegenOptions & options, const vector<int
     }
   }
 }
+int get_sram_read_rate(GarnetImpl & hw_impl) {
+    UBuffer sram;
+    for (auto it: hw_impl.sub_component) {
+        if (contains(it.first, "sram")) {
+            sram = it.second;
+            break;
+        }
+    }
+    auto outpt = pick(sram.get_out_ports());
+    umap* out_sched = sram.schedule.at(outpt);
+    int out_fetch_ii = get_vector_fetch_loop_ii(out_sched);
+    cout << "out_fetch_ii: " << out_fetch_ii << endl;
+    return out_fetch_ii;
+}
+
+
+//New bank merging after vectorization
+void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
+
+  auto comp = [this](const int& a, const int& b) {
+      return !equal(this->bank_rddom.at(a), this->bank_rddom.at(b));
+  };
+  //std::set<string> merge_inpts, merge_outpts;
+  //vector<vector<int>> merge_banks;
+  map<int, vector<int>, decltype(comp)> merge_map(comp);
+
+  int max_inpt = options.mem_hierarchy.at("mem").get_inpt_num();
+  int max_outpt = options.mem_hierarchy.at("mem").get_outpt_num();
+  for (auto it: bank_rddom) {
+    int bank_id = it.first;
+    cout << "bank id: " << bank_id << endl;
+    cout << "rd dom: " << str(it.second) << endl;
+    string mem = lowering_info.at(bank_id).config_mode;
+    //Only do bank merging for lake
+    if (mem != "lake")
+        continue;
+
+
+
+    //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
+
+    //Not merge this buffer if it decouple the control or
+    //need shift register optimization
+    if (lowering_info.at(bank_id).decouple_ctrl ||
+            lowering_info.at(bank_id).insert_shift_register)
+        continue;
+
+    //TODO: check the rate less than 1 / 4 cycle otherwise cannot merge
+    //check_rate_
+    if (get_sram_read_rate(lowering_info.at(bank_id)) < options.mem_hierarchy.at("mem").fetch_width) {
+        continue;
+    }
+
+    if ((bank_readers.at(bank_id).size() < max_outpt) &&
+            (bank_writers.at(bank_id).size() < max_inpt)) {
+      if (merge_map.count(bank_id)) {
+        merge_map[bank_id].push_back(it.first);
+      } else {
+        merge_map[bank_id] = {bank_id};
+      }
+    }
+  }
+  for (auto it: merge_map) {
+    cout << "bank id: " << it.first << ", to be merged: " << it.second << endl;
+    if (it.second.size() > 1) {
+      cout << "\tGroup: " << it.first << ": " << it.second << endl;
+      cout << "\tPerform bank merging!" << endl;
+      vector<int> banks_tobe_merged = it.second;
+      sort(banks_tobe_merged.begin(), banks_tobe_merged.end(), std::greater<int>());
+
+      //put some banks into the merging list
+      vector<int> merging_banks;
+      auto bk_it = banks_tobe_merged.begin();
+      while (true) {
+        if(get_banks_inpts_num(merging_banks) > max_inpt ||
+          get_banks_outpts_num(merging_banks) > max_outpt) {
+          auto last_bank = merging_banks.back();
+          merging_banks.pop_back();
+          //cout << merging_banks << endl;
+          merge_banks_and_rewrite(merging_banks);
+          merging_banks.clear();
+          merging_banks.push_back(last_bank);
+        } else if (bk_it == banks_tobe_merged.end()) {
+          merge_banks_and_rewrite(merging_banks);
+          break;
+        } else {
+          merging_banks.push_back(*bk_it);
+          bk_it ++;
+        }
+      }
+    }
+  }
+}
 
 void UBufferImpl::bank_merging(CodegenOptions & options) {
   auto comp = [this](const int& a, const int& b) {
@@ -1271,14 +1434,23 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
   //vector<vector<int>> merge_banks;
   map<int, vector<int>, decltype(comp)> merge_map(comp);
   for (auto it: bank_rddom) {
-      int bank_id = it.first;
+    int bank_id = it.first;
+    string mem = get_memory_hierarchy(options, bank_id);
+    int max_inpt = options.mem_hierarchy.at(mem).get_inpt_num();
+    int max_outpt = options.mem_hierarchy.at(mem).get_outpt_num();
+    //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
+    if ((bank_readers.at(bank_id).size() < max_outpt) &&
+            (bank_writers.at(bank_id).size() < max_inpt)) {
       if (merge_map.count(bank_id)) {
-          merge_map[bank_id].push_back(it.first);
+        merge_map[bank_id].push_back(it.first);
       } else {
-          merge_map[bank_id] = {bank_id};
+        merge_map[bank_id] = {bank_id};
       }
+    }
   }
+
   for (auto it: merge_map) {
+      //cout << "Merge map: " << it.first << ", " << it.second << endl;
       if (it.second.size() > 1) {
           cout << "\tGroup: " << it.first << ": " << it.second << endl;
           cout << "\tPerform bank merging!" << endl;
@@ -1291,7 +1463,198 @@ void UBufferImpl::bank_merging(CodegenOptions & options) {
   }
 }
 
+//A post processing make sure each banks' port are sorted by its name
+void UBufferImpl::sort_bank_port() {
+    for (auto& it: bank_outpt2readers) {
+        vector<std::set<string>>& outpt2readers = it.second;
+        sort(outpt2readers.begin(), outpt2readers.end(),
+                [](std::set<string>& l, std::set<string>& r)
+                { return pick(l) < pick(r); });
+    }
+
+    for (auto& it: bank_inpt2writers) {
+        vector<std::set<string>>& in2writers = it.second;
+        sort(in2writers.begin(), in2writers.end(),
+                [](std::set<string>& l, std::set<string>& r)
+                { return pick(l) < pick(r); });
+    }
+}
+
 #ifdef COREIR
+
+//helper function to get schedule for port
+pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info) {
+
+  auto acc_map = to_map(access_map.at(inpt));
+
+  //get the bank specific access map
+  acc_map = coalesce(its_range(acc_map, rddom));
+
+  auto dom = ::domain(acc_map);
+
+  auto sched_aff = get_aff(schedule.at(inpt));
+
+  if (isIn.at(inpt)) {
+    //update op latency, if it's input port
+    int op_latency = info.compute_latency(::domain_name(acc_map));
+    sched_aff = add(sched_aff, op_latency);
+  }
+
+  isl_map* sched = its(to_map(sched_aff), dom);
+  return {acc_map, sched};
+}
+
+UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
+  //for(auto it: impl.bank_rddom) {
+    //int bank = it.first;
+    string bname = name + "_BANK_" + str(bank);
+    auto rddom = impl.bank_rddom.at(bank);
+
+    //create ubuffer for codegen
+    UBuffer buf;
+    buf.name = bname;
+    buf.ctx = ctx;
+    buf.port_widths = port_widths;
+    buf.coarse_grained_pipeline_loop_level = coarse_grained_pipeline_loop_level;
+    cout << "CGPL level :" << coarse_grained_pipeline_loop_level << endl;
+
+    auto inpts = impl.get_unique_inpts(bank);
+    auto outpts = impl.get_unique_outpts(bank);
+    cout <<"impl inputs: "<< inpts << endl;
+    cout <<"impl outpts: "<< outpts << endl;
+    cout << "rddom: " << str(rddom) << endl;
+
+    //TODO: may need a sort
+    //add a sort of output make sure we have positive stride when coalesce
+    //vector<string> outpt_vec(outpts.begin(), outpts.end());
+    /*sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+              auto l_start = lexminpt(range(access_map.at(l)));
+              auto r_start = lexminpt(range(access_map.at(r)));
+              return lex_lt_pt(l_start, r_start);
+              });
+    */
+    int usuffix = 0;
+    bool sr = false;
+    int op_latency = 0;
+
+    for (string inpt: inpts) {
+      auto acc_map = to_map(access_map.at(inpt));
+
+      //get the bank specific access map
+      acc_map = simplify(coalesce(its_range(acc_map, rddom)));
+
+      auto dom = ::domain(acc_map);
+
+      //update op latency
+      op_latency = info.compute_latency(::domain_name(acc_map));
+
+
+      auto sched_aff = get_aff(schedule.at(inpt));
+      sched_aff = add(sched_aff, op_latency);
+      isl_map* sched = its(to_map(sched_aff), dom);
+
+      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      //buf.port_bundles[get_bundle(inpt)].push_back(pt_name);
+
+      //Put into separate bundle if we have different domain name
+      buf.port_bundles[inpt + "_write"].push_back(inpt);
+      //buf.port_bundles[::name(dom)+ "_write"].push_back(inpt);
+      if (impl.is_shift_register_input(inpt)) {
+        //rewrite for shift register
+        //TODO pass codegenoptions
+        //auto reduce_map = linear_address_map_lake(rddom, 4);
+        //cout << "Reduce map: " << str(reduce_map) << endl;
+        //reduce_map = set_range_name(reduce_map, bname);
+        //reduce_map = set_domain_name(reduce_map, bname);
+        //auto linear_acc_map = dot(acc_map, reduce_map);
+        //cout << "linear map: " << str(linear_acc_map) << endl;
+        //buf.add_in_pt(inpt, dom, linear_acc_map, its(schedule.at(inpt), dom));
+        //buf.add_in_pt(inpt, dom, acc_map, its(schedule.at(inpt), dom));
+        sr = true;
+      }
+      acc_map = set_range_name(acc_map, bname);
+      buf.add_in_pt(inpt, dom, acc_map, sched);
+      usuffix ++;
+    }
+
+    for (string outpt: outpts) {
+      auto acc_map = to_map(access_map.at(outpt));
+      //get the bank specific access map
+      acc_map = simplify(coalesce(its_range(acc_map, rddom)));
+      auto sched = schedule.at(outpt);
+
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = ::domain(acc_map);
+      //Shift register need preprocess the schedule and access pattern
+      /*if (impl.shift_depth.count(outpt) > 0) {
+          auto outpt_info =
+              get_shift_pt_access_with_sched(outpt, impl.shift_depth.at(outpt));
+          acc_map = outpt_info.first;
+          sched = to_umap(outpt_info.second);
+      }*/
+      //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+
+      if (impl.is_shift_register_output(outpt)) {
+        cout << impl << endl;
+        int delay = impl.shift_registered_outputs.at(outpt).second;;
+        string inpt = impl.shift_registered_outputs.at(outpt).first;
+
+        auto acc_map = to_map(access_map.at(inpt));
+        //get the bank specific access map
+        acc_map = coalesce(its_range(acc_map, rddom));
+        auto sched = to_map(schedule.at(inpt));
+
+        acc_map = set_range_name(acc_map, bname);
+        acc_map = add_domain_suffix(acc_map, domain_name(acc_map) + "_delay_"+str(delay));
+        sched = add_domain_suffix(sched, domain_name(sched) + "_delay_"+str(delay));
+
+        auto dom = ::domain(acc_map);
+
+        //Take consider of the latency in delay
+        sched = linear_schedule(sched, {1}, delay+op_latency, false);
+       // auto reduce_map = linear_address_map_lake(rddom, 4);
+       // cout << "Reduce map: " << str(reduce_map) << endl;
+       // reduce_map = set_range_name(reduce_map, bname);
+       // reduce_map = set_domain_name(reduce_map, bname);
+       // auto linear_acc_map = dot(acc_map, reduce_map);
+       // cout << "linear map: " << str(linear_acc_map) << endl;
+
+        //change bundle naming strategy to keep same sequence
+        buf.port_bundles[outpt + "_read"].push_back(outpt);
+        //buf.add_out_pt(outpt, dom, linear_acc_map, its(to_umap(sched), dom));
+        buf.add_out_pt(outpt, dom, acc_map, its(to_umap(sched), dom));
+      } else {
+
+        //buf.port_bundles[get_bundle(outpt)].push_back(pt_name);
+
+        //Put into separate bundle if we have different domain name
+        buf.port_bundles[outpt + "_read"].push_back(outpt);
+        //buf.port_bundles[::name(dom)+ "_read"].push_back(outpt);
+
+        buf.add_out_pt(outpt, dom, acc_map, its(sched, dom));
+      }
+      usuffix ++;
+    }
+    cout << buf << endl;
+  buf.simplify_address_space();
+  if (sr) {
+      cout << "SR optimization row buf before tighten:" << buf << endl;
+      buf.tighten_address_space();
+
+      cout << "SR optimization row buf after tighten:" << buf << endl;
+      //FIXME: should do this after figure out vectorization dimension
+      //Maybe it's correct ???
+      //ASPLOS: this need to be tested for high throughput
+    buf.linear_address_space(project_out_zero_dim(to_set(buf.global_range())), 4);
+    //buf.linear_address_space(project_out_zero_dim(rddom),
+    //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
+    //buf.tighten_address_space();
+  }
+  cout << "after ubuffer regen: " << buf << endl;
+
+  return buf;
+}
+
 
 //void UBuffer::generate_bank_select()
 
@@ -1301,7 +1664,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, s
 }
 
 void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info & info) {
-  generate_coreir(options, impl, def, info, false);
+  generate_coreir_refactor(options, impl, def, info, false);
 }
 
 vector<isl_set*> get_multi_bank_domain_set(isl_map* origin_map, int project_out_domain) {
@@ -1698,46 +2061,10 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     }
 }
 
-//This is an optimization pass
-//take both access map and schedule and merge the dimension
-pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
-    auto a_map = cpy(acc_map);
-    auto sched = cpy(schedule);
-    int merge_cnt = 0;
-
-    //Get all mergeable dim in order from inner to outer
-    vector<pair<int, int>> all_pair_a =
-        get_all_domain_merge_dims(a_map);
-    vector<pair<int, int>> all_pair_s =
-        get_all_domain_merge_dims(sched);
-
-    cout << "\taccess map merge pair: " << all_pair_a << endl;
-    cout << "\tschedule merge pair: " << all_pair_s << endl;
-    while(!empty(all_pair_a) && !empty(all_pair_s)) {
-        auto pa = all_pair_a.front();
-        auto ps = all_pair_s.front();
-        if (pa.first == ps.first) {
-            cout << pa << ", " << ps << endl;
-            cout << str(a_map) << endl;
-            unordered_set<int> tmp({pa.first , pa.second });
-            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
-            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
-            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
-            all_pair_a.erase(all_pair_a.begin());
-            all_pair_s.erase(all_pair_s.begin());
-            merge_cnt ++;
-        } else if(pa.first > ps.first) {
-            all_pair_a.erase(all_pair_a.begin());
-        } else {
-            all_pair_s.erase(all_pair_s.begin());
-        }
-    }
-    return make_pair(sched, a_map);
-}
-
 ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
      string buf_name = range_name(to_map(acc_map));
      string micro_buf_name = get_micro_buf_name(buf_name);
+     cout << "\tMicro buf name: " << micro_buf_name << endl;
      int word_width = mem.word_width.at(micro_buf_name);
      int capacity = mem.capacity.at(micro_buf_name);
      int port_width;
@@ -1805,6 +2132,59 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     map<string, isl_map*>  op2sched;
     map<string, vector<umap*>> op2write_map, op2read_map;
     auto mem = options.mem_hierarchy.at("mem");
+    cout << "agg2sram_opt debug start " << endl;
+    map<string, std::pair<int, int>> agg2sram_cfg_map;
+    map<string, std::pair<int, int>> agg2sram_extent_stride_map;
+
+    for (auto it: rewrite_buffer) {
+      //check it is sram
+      if (contains(it.first, "sram")) {
+        auto buf = it.second;
+        auto stmt2bd_map = buf.get_stmt2bd_after_vec();
+
+        for (auto map_it: stmt2bd_map) {
+          cout << map_it.first << ": " << map_it.second << endl;
+          if (map_it.second.size() > 1){
+            cout << "found shared with size: " << map_it.second.size() << endl;
+            assert (map_it.second.size() == 2);
+            // find the delay
+            int ctrl_number = 6; // other than 0 or 1
+            string agg2sram_domain_name;
+            int sched_diff = 0;
+            bool both_read = false; // checks if we 2 read controllers
+            for (auto bd_and_ctrl_number : map_it.second){
+              string bd_name = bd_and_ctrl_number.first;
+              if (contains(bd_name, "write")){
+                string port_name = pick(buf.port_bundles.at(bd_name));
+                agg2sram_domain_name = domain_name(buf.schedule.at(port_name));
+                // assumes each port of the bundle has the same schedule
+                auto sched_aff = get_aff(buf.schedule.at(port_name));//stride in dim
+                sched_diff += to_int(const_coeff(sched_aff));
+                cout << "write " << port_name << ": +" << to_int(const_coeff(sched_aff)) << endl;
+                cout << str(sched_aff) << endl;
+                cout << "sched domain name 2" << domain_name(buf.schedule.at(port_name)) << endl;
+              }
+              else{
+                if (ctrl_number != 6) both_read = true;
+                ctrl_number = bd_and_ctrl_number.second;
+                string port_name = pick(buf.port_bundles.at(bd_name));
+                // assumes each port of the bundle has the same schedule
+                auto sched_aff = get_aff(buf.schedule.at(port_name));
+                sched_diff -= to_int(const_coeff(sched_aff));
+                cout << "read " << port_name << ": -" << to_int(const_coeff(sched_aff)) << endl;
+                cout << str(sched_aff) << endl;
+              }
+            }
+            if (!both_read){
+              sched_diff--; // convert to 0-index for RTL
+              agg2sram_cfg_map[agg2sram_domain_name] = make_pair(sched_diff, ctrl_number);
+              cout << "agg2sram sched delay " << sched_diff << " ctrl number: " << ctrl_number << endl;
+              assert(sched_diff > 0);
+            }
+          }
+        }
+      }
+    }
 
     for (auto it: rewrite_buffer) {
         auto ubuf = it.second;
@@ -1814,6 +2194,21 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             cout << "sched: " << str(m) << endl;
             m = remove_irrelevant_in_dim(m);
             op2sched[op_name] = m;
+            if (contains(op_name, "in2agg")){
+              vector<string> op_name_decouple = split_at(op_name, "_");
+              assert(op_name_decouple.size() > 2);
+              vector<string> op_name_simplify(op_name_decouple.begin(), op_name_decouple.end()-2);
+              string ctrl_name = "_agg2sram_" + op_name_decouple.back();
+              string op_name_agg2sram = sep_list(op_name_simplify, "", ctrl_name, "_");
+              auto sched_aff = get_aff(m);
+              auto sched_dom = ::domain(m);
+              int stride_0 = to_int(get_coeff(sched_aff, ::num_dims(sched_dom) - 1));
+              auto ds = project_all_but(sched_dom, ::num_dims(sched_dom) - 1);
+              int extent_0 = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+              // delay = (4 - extent_0 % 4) * cycle_stride_0
+              agg2sram_extent_stride_map[op_name_agg2sram] = make_pair(extent_0, stride_0);
+              cout << "op_name: " << op_name_agg2sram << ", extent_0: " << extent_0 << ", stride_0: " << stride_0 << endl;
+            }
         }
         auto out_acc_umap = ubuf.producer_map();
         for (auto out_acc_map: get_maps(out_acc_umap)) {
@@ -1850,14 +2245,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
               op2sched[op_name] = its(sched_remove_dom, dom);
             }
         }
-
     }
 
     //Go through all the ops and produce the read and write
     for (auto it: op2sched) {
         string op_name = it.first;
         auto sched = op2sched.at(op_name);
-        cout << "\tSched: " << str(sched) << endl;
+        cout << "\top name: " << op_name << endl;
+        cout << "\tSched: " << str(sched) << endl << endl;
         string ctrl_name = get_ctrl_name(op_name);
 
         //Check if we have loop iteration larger than hardware limit,
@@ -1872,6 +2267,32 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             ConfigMap addressor =
               generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false);
             config_info.merge(addressor);
+            // add agg2sram_opt config register
+            if(agg2sram_cfg_map.count(op_name)) {
+              int delay = agg2sram_cfg_map[op_name].first;
+              int ctrl_number = agg2sram_cfg_map[op_name].second;
+              if (ctrl_number == 0)
+                config_info["mode"] = {2};
+              else if (ctrl_number == 1)
+                config_info["mode"] = {3};
+              config_info["agg_read_padding"] = {0};
+              config_info["delay"] = {delay};
+              cout << "adding new agg2sram opt cfg for: " << op_name << ": delay" << delay << ", ctrl_number" << ctrl_number << endl;
+            }
+            else if (contains(op_name, "agg2sram")) {
+              assert(agg2sram_extent_stride_map.count(op_name));
+              int in2agg_extent_0 = agg2sram_extent_stride_map[op_name].first;
+              int in2agg_stride_0 = agg2sram_extent_stride_map[op_name].second;
+              int agg2sram_read_padding;
+              if (in2agg_extent_0 == 1 && in2agg_stride_0 == 0) // corner case, and dim = 1
+                agg2sram_read_padding = 1;
+              else
+                agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+              config_info["mode"] = {0};
+              config_info["agg_read_padding"] = {agg2sram_read_padding};
+              config_info["delay"] = {0};
+              cout << "adding new agg2sram opt cfg for: " << op_name << ": mode 0, agg_read_padding " << agg2sram_read_padding << ", delay 0. " << endl;
+            }
           }
           if (op2read_map.count(op_name) > 0){
             isl_map* opt_access_map =
@@ -1886,7 +2307,34 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
           auto aff = get_aff(sched);
           auto dom = ::domain(sched);
           auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+          cout << "\t[debug]op_name: " << op_name << endl;
           if(op2write_map.count(op_name)) {
+              // add agg2sram_opt config register
+              if(agg2sram_cfg_map.count(op_name)) {
+                int delay = agg2sram_cfg_map[op_name].first;
+                int ctrl_number = agg2sram_cfg_map[op_name].second;
+                if (ctrl_number == 0)
+                  config_info["mode"] = {2};
+                else if (ctrl_number == 1)
+                  config_info["mode"] = {3};
+                config_info["agg_read_padding"] = {0};
+                config_info["delay"] = {delay};
+                cout << "adding new agg2sram opt cfg for: " << op_name << ": mode " << config_info["mode"] << "agg_read_padding 0, delay " << delay << endl;
+              }
+              else if (contains(op_name, "agg2sram")) {
+                assert(agg2sram_extent_stride_map.count(op_name));
+                int in2agg_extent_0 = agg2sram_extent_stride_map[op_name].first;
+                int in2agg_stride_0 = agg2sram_extent_stride_map[op_name].second;
+                int agg2sram_read_padding;
+                if (in2agg_extent_0 == 1 && in2agg_stride_0 == 0) // corner case, and dim = 1
+                  agg2sram_read_padding = 1;
+                else
+                  agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+                config_info["mode"] = {0};
+                config_info["agg_read_padding"] = {agg2sram_read_padding};
+                config_info["delay"] = {0};
+                cout << "adding new agg2sram opt cfg for: " << op_name << ": mode 0, agg_read_padding " << agg2sram_read_padding << ", delay 0. " << endl;
+              }
               for (auto acc_map : op2write_map.at(op_name)) {
                   ConfigMap addressor =
                       generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
@@ -1905,6 +2353,19 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     }
     cout << ret << endl;
     return ret;
+}
+
+
+//Helper function to optimize the pond dimension
+pair<isl_map*, isl_map*> pad_domain( isl_map* sched, isl_map* acc) {
+    map<int, int> dim2pad = get_all_domain_pad_dims(sched, acc);
+    for (auto it: dim2pad) {
+        int dim = it.first;
+        int pad_depth = it.second;
+        sched = pad_to_domain_ubuf_map(sched, dim, pad_depth);
+        acc = pad_to_domain_ubuf_map(acc, dim, pad_depth);
+    }
+    return {sched, acc};
 }
 
 //Simplify the single fetch width memory codegen
@@ -1948,6 +2409,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
     int word_width = mem.word_width.at(mem_name);
     int capacity = mem.capacity.at(mem_name);
     int in_cnt = 0, out_cnt = 0;
+    string ctrl_name = pick(mem.controller_name);
     for (auto op_name: ops) {
         auto sched = op2sched.at(op_name);
         if(op2write_map.count(op_name)) {
@@ -1963,7 +2425,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                 cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
                 //add a simplify optimization pass,
                 //reutrn:    pair(schedulem access_map)
-                auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
+                auto pad_pair = pad_domain(sched, to_map(linear_acc_map));
+                auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
                 auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
                 cout << tab(2) << "schedule: " << str(new_sched) << endl;
@@ -1977,7 +2440,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                         //get_aff(to_map(linear_acc_map)), false, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tWrite map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), "in2"+mem_name +"_" + str(in_cnt));
+            add_lake_config(ret, config_info, num_in_dims(aff), "in2"+ctrl_name+"_" + str(in_cnt));
             in_cnt ++;
         }
         if(op2read_map.count(op_name)) {
@@ -1990,7 +2453,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                 cout << tab(2) << "acc map: " << str(acc_map) << endl;
                 cout << tab(2) << "sched: " << str(sched) << endl;
                 cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
-                auto m_pair = merge_dom_dim(sched, to_map(linear_acc_map));
+                auto pad_pair = pad_domain(sched, to_map(linear_acc_map));
+                auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
                 auto new_sched = m_pair.first;
                 cout << tab(1) << "After Merge: " << endl;
                 cout << tab(2) << "schedule: " << str(new_sched) << endl;
@@ -2004,7 +2468,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
                         //get_aff(linear_acc_map), true, false, word_width, capacity, port_width);
                 config_info.merge(addressor);
                 cout << "\tRead map: " << str(acc_map) << endl;
-            add_lake_config(ret, config_info, num_in_dims(aff), mem_name +"2out_" + str(out_cnt));
+            add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name+"2out_" + str(out_cnt));
             out_cnt ++;
         }
     }
@@ -2232,6 +2696,49 @@ Json UBuffer::generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffe
     return create_lake_config(data);
 }
 
+CoreIR::Instance* generate_pond_instance(
+        ModuleDef* def,
+        CodegenOptions options,
+        string ub_ins_name,
+        string rst_name,
+        string config_mode,
+        json config_file,
+        size_t input_num, size_t output_num) {
+
+  auto context = def->getContext();
+  CoreIR::Instance* buf;
+  CoreIR::Values genargs = {
+    {"width", CoreIR::Const::make(context, 16)},
+    {"num_inputs", CoreIR::Const::make(context, input_num)},
+    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())},
+  };
+  cout << "Add pond node with input_num = " << input_num
+      << ", output_num = " << output_num << endl;
+  auto* g = context->getGenerator("cgralib.Pond_amber");
+  //auto* generatedModule = g->getModule(genargs);
+  //g->getMetaData()["verilog_name"] =
+  //  "pond_"+genargs.at("ID")->get<string>();
+  buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
+  buf->getMetaData()["config"] = config_file;
+  buf->getMetaData()["mode"] = config_mode;
+  //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+
+  auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
+          {{"value", CoreIR::Const::make(context, true)}});
+
+  //garnet wire reset to flush of memory
+  def->connect(buf->sel("flush"), def->sel("self." + rst_name));
+  //def->connect(buf->sel("flush"), def->sel("self.flush"));
+  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
+  def->connect(buf->sel("clk"), def->sel("self.clk"));
+  def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+  def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+
+  return buf;
+}
+
 CoreIR::Module* affine_controller_use_lake_tile_counter(
         CodegenOptions& options,
         CoreIR::Context* context,
@@ -2296,99 +2803,132 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
     }
 
-    //generate tb accessor
-    auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
 
     auto mem = options.mem_hierarchy.at("mem");
 
     //generate tb address
     auto index_addr = project_all_out_but(cpy(addr), dim);
     cout << "Index address: " << str(index_addr) << endl;
-    {
-      int word_width = mem.word_width.at("tb");
-      int capacity = mem.capacity.at("tb");
-      int port_width = mem.out_port_width.at("tb");
-      //is_read = true, is_mux = false
-      auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
-      config_tb2out.merge(addressor_tb2out);
+
+    if (mem.fetch_width > 1) {
+      //generate tb accessor
+      auto config_tb2out = generate_accessor_config_from_aff_expr(dom, aff);
+      {
+        int word_width = mem.word_width.at("tb");
+        int capacity = mem.capacity.at("tb");
+        int port_width = mem.out_port_width.at("tb");
+        //is_read = true, is_mux = false
+        auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+        config_tb2out.merge(addressor_tb2out);
+      }
+      add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
+
+      //generate sram2tb controller
+      //TODO: change 4 to fetch width
+      auto trans = get_domain_trans(dom, dim, 4);
+      cout << "Vectorization Trans: " << str(trans) << endl;
+
+      //Apply the vectorization trans on both accessor and addressor
+      auto acc_0 = its(to_map(aff), dom);
+      auto res = dot(trans, acc_0);
+      auto vec_index_addr = dot(trans, index_addr);
+
+      //project all the inner dim
+      for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
+          res = reset_domain_coeff(res, reset_dim, 0);
+          cout << "\treset: " << str(res) << endl;
+      }
+
+      if (dim < num_in_dims(acc_0) - 1) {
+         vec_index_addr = isl_map_project_out(cpy(vec_index_addr), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+         res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
+      }
+      cout << "\tAfter trans: " << str(res) << endl;
+      cout << "\tVec index address: " << str(vec_index_addr) << endl;
+
+      //bring the sram2tb forward for 3 cycle
+      res = shift_range_map(res, {-3});
+      auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
+
+      //Getthe addressor
+      {
+        int word_width = mem.word_width.at("tb");
+        int capacity = mem.capacity.at("tb");
+        int port_width = mem.in_port_width.at("tb");
+        auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
+        config_sram2tb.merge(addressor_sram2tb_write);
+      }
+
+      {
+        int word_width = mem.word_width.at("sram");
+        int capacity = mem.capacity.at("sram");
+        int port_width = mem.out_port_width.at("sram");
+        auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
+        config_sram2tb.merge(addressor_sram2tb_read);
+      }
+      add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
+
+      auto* g = context->getGenerator("cgralib.Mem_amber");
+      //auto* generatedModule = g->getModule(genargs);
+      //g->getMetaData()["verilog_name"] =
+      //  "aff_ctrl_"+genargs.at("ID")->get<string>();
+      buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
+      //assign the init value
+      //TODO change 4 to fetch width
+      std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
+      std::iota(v.begin(), v.end(), 0);
+
+      //TODO: this is a temporary fix for lake counter, need to move to the root level
+      //buf->getMetaData()["init"] = v;
+      config_file["init"] = v;
+
+      buf->getMetaData()["config"] = config_file;
+      buf->getMetaData()["mode"] = "lake";
+      //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+      //buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
+
+
+      //garnet wire reset to flush of memory
+      def->connect(buf->sel("flush"), def->sel("self.rst_n"));
+      def->connect(buf->sel("clk"), def->sel("self.clk"));
+      def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+      def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
+      def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
+      if (has_stencil_valid) {
+        def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
+      }
+      generate_lake_tile_verilog(options, buf);
+
+    } else {
+      //This is the dual port version
+      auto config_mem2out = generate_accessor_config_from_aff_expr(dom, aff);
+      {
+        int word_width = mem.word_width.at("mem");
+        int capacity = mem.capacity.at("mem");
+        int port_width = mem.out_port_width.at("mem");
+        //is_read = true, is_mux = false
+        auto addressor_mem2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
+        config_mem2out.merge(addressor_mem2out);
+      }
+      add_lake_config(config_file, config_mem2out, num_dims(dom), pick(mem.controller_name)+"2out_0");
+
+      std::vector<int> v(get_domain_range(dom, dim));
+      std::iota(v.begin(), v.end(), 0);
+
+      //TODO: this is a temporary fix for lake counter, need to move to the root level
+      //buf->getMetaData()["init"] = v;
+      config_file["init"] = v;
+      auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
+              "rst_n", "lake_dp", config_file, 1, 1);
+
+      //Wire the output data
+      def->connect(dp_buf_for_counter->sel("data_out_pond_0"), def->sel("self")->sel("d")->sel(dim));
+      generate_lake_tile_verilog(options, dp_buf_for_counter);
+      if (has_stencil_valid) {
+        def->connect(dp_buf_for_counter->sel("valid_out_pond"), def->sel("self.valid"));
+      }
+
     }
-    add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
-
-    //generate sram2tb controller
-    //TODO: change 4 to fetch width
-    auto trans = get_domain_trans(dom, dim, 4);
-    cout << "Vectorization Trans: " << str(trans) << endl;
-
-    //Apply the vectorization trans on both accessor and addressor
-    auto acc_0 = its(to_map(aff), dom);
-    auto res = dot(trans, acc_0);
-    auto vec_index_addr = dot(trans, index_addr);
-
-    //project all the inner dim
-    for (int reset_dim = dim+1; reset_dim < num_in_dims(acc_0); reset_dim ++) {
-        res = reset_domain_coeff(res, reset_dim, 0);
-        cout << "\treset: " << str(res) << endl;
-    }
-
-    if (dim < num_in_dims(acc_0) - 1) {
-       vec_index_addr = isl_map_project_out(cpy(vec_index_addr), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
-       res = isl_map_project_out(cpy(res), isl_dim_in, dim+1, num_in_dims(acc_0) - dim - 1);
-    }
-    cout << "\tAfter trans: " << str(res) << endl;
-    cout << "\tVec index address: " << str(vec_index_addr) << endl;
-
-    //bring the sram2tb forward for 3 cycle
-    res = shift_range_map(res, {-3});
-    auto config_sram2tb = generate_accessor_config_from_aff_expr(domain(res), get_aff(res));
-
-    //Getthe addressor
-    {
-      int word_width = mem.word_width.at("tb");
-      int capacity = mem.capacity.at("tb");
-      int port_width = mem.in_port_width.at("tb");
-      auto addressor_sram2tb_write = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), false, false, word_width, capacity, port_width);
-      config_sram2tb.merge(addressor_sram2tb_write);
-    }
-
-    {
-      int word_width = mem.word_width.at("sram");
-      int capacity = mem.capacity.at("sram");
-      int port_width = mem.out_port_width.at("sram");
-      auto addressor_sram2tb_read = generate_addressor_config_from_aff_expr(get_aff(vec_index_addr), true, false, word_width, capacity, port_width);
-      config_sram2tb.merge(addressor_sram2tb_read);
-    }
-    add_lake_config(config_file, config_sram2tb, num_dims(domain(res)), "sram2tb_0");
-
-    auto* g = context->getGenerator("cgralib.Mem_amber");
-    //auto* generatedModule = g->getModule(genargs);
-    //g->getMetaData()["verilog_name"] =
-    //  "aff_ctrl_"+genargs.at("ID")->get<string>();
-    buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
-    //assign the init value
-    //TODO change 4 to fetch width
-    std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
-    std::iota(v.begin(), v.end(), 0);
-
-    //TODO: this is a temporary fix for lake counter, need to move to the root level
-    //buf->getMetaData()["init"] = v;
-    config_file["init"] = v;
-
-    buf->getMetaData()["config"] = config_file;
-    buf->getMetaData()["mode"] = "lake";
-    //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
-    buf->getMetaData()["verilog_name"] = "aff_ctrl_"+genargs.at("ID")->get<string>();
-
-
-    //garnet wire reset to flush of memory
-    def->connect(buf->sel("flush"), def->sel("self.rst_n"));
-    def->connect(buf->sel("clk"), def->sel("self.clk"));
-    def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
-    def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
-    def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
-    if (has_stencil_valid) {
-      def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
-    }
-    generate_lake_tile_verilog(options, buf);
   }
   m->setDef(def);
 
@@ -2421,40 +2961,60 @@ CoreIR::Instance* affine_controller_use_lake_tile(
         isl_aff* aff,
         string ub_ins_name) {
 
-  CoreIR::Instance* buf;
-  bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
-  CoreIR::Values genargs = {
-    {"width", CoreIR::Const::make(context, 16)},
-    {"num_inputs", CoreIR::Const::make(context, 0)},
-    {"num_outputs", CoreIR::Const::make(context, 0)},
-    {"has_stencil_valid", CoreIR::Const::make(context, true)},
-    {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
-    {"ID", CoreIR::Const::make(context, context->getUnique())},
-    {"has_flush",  CoreIR::Const::make(context, true)},
-    {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
-  };
-  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
-  //FIXME:possible bug if one ubuffer contains more than one tile
-  json config_file;
-  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
   cout << "Add ub node to be aff ctrl"  << endl;
 
-  auto* g = context->getGenerator("cgralib.Mem_amber");
-  //auto* generatedModule = g->getModule(genargs);
-  //  "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-  buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
-  buf->getMetaData()["config"] = config_file;
-  buf->getMetaData()["mode"] = "lake";
-  //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
-  buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+  //Generate the configuration
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+  json config_file;
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+
+  CoreIR::Instance* buf;
+  auto mem = options.mem_hierarchy.at("mem");
+  if (mem.fetch_width > 1) {
+    //TODO: put this into a function
+    bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
+    CoreIR::Values genargs = {
+      {"width", CoreIR::Const::make(context, 16)},
+      {"num_inputs", CoreIR::Const::make(context, 1)},
+      {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_stencil_valid", CoreIR::Const::make(context, true)},
+      {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())},
+      {"has_flush",  CoreIR::Const::make(context, true)},
+      {"use_prebuilt_mem",  CoreIR::Const::make(context, true)}
+    };
+    auto* g = context->getGenerator("cgralib.Mem_amber");
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake";
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
+
+  } else {
+    CoreIR::Values genargs = {
+      {"width", CoreIR::Const::make(context, 16)},
+      {"num_inputs", CoreIR::Const::make(context, 1)},
+      {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())},
+    };
+    auto* g = context->getGenerator("cgralib.Pond_amber");
+    //auto* generatedModule = g->getModule(genargs);
+    //g->getMetaData()["verilog_name"] =
+    //  "pond_"+genargs.at("ID")->get<string>();
+    buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
+    buf->getMetaData()["config"] = config_file;
+    buf->getMetaData()["mode"] = "lake_dp";
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+
+  }
+
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
 
-  //garnet wire reset to flush of memory
+  //Wire some default logic
   def->connect(buf->sel("flush"), def->sel("self.reset"));
-  //def->connect(buf->sel("flush"), def->sel("self.flush"));
-  //def->connect(buf->sel("rst_n"), def->sel("self.rst_n"));
   def->connect(buf->sel("clk"), def->sel("self.clk"));
   def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
   def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
@@ -2462,10 +3022,12 @@ CoreIR::Instance* affine_controller_use_lake_tile(
   return buf;
 }
 
+//TODO: we should rewrite this function to include both dp memory and sp memory
 CoreIR::Instance* UBuffer::generate_pond_instance(
         ModuleDef* def,
         CodegenOptions options,
         string ub_ins_name,
+        string config_mode,
         size_t input_num, size_t output_num) {
 
   auto context = def->getContext();
@@ -2484,9 +3046,9 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   //  "pond_"+genargs.at("ID")->get<string>();
   buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
   buf->getMetaData()["config"] = config_file;
-  buf->getMetaData()["mode"] = "pond";
+  buf->getMetaData()["mode"] = config_mode;
   //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
-  buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
+  //buf->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
           {{"value", CoreIR::Const::make(context, true)}});
@@ -2529,7 +3091,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     cout << "Generate stencil valid signal" << endl;
     generate_stencil_valid_config(options, bank_name);
   }
-  cout << "Add ub node with input_num = " << input_num
+  cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
     //modargs["config"] = CoreIR::Const::make(context, config_file);
@@ -2541,7 +3103,7 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = string("lake");
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
-    buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
+    //buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
   } else {
     //TODO: remove cwlib in the future
     genargs["config"] = CoreIR::Const::make(context, config_file);
@@ -2583,9 +3145,9 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
 }
 
 string memDatainPort(string mode, int pt_cnt) {
-    if (mode == "lake" || mode == "glb")
+    if (mode == "lake"  || mode == "glb")
         return "data_in_" + to_string(pt_cnt);
-    else if (mode == "pond") {
+    else if (mode == "pond" || mode == "lake_dp") {
         return "data_in_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -2596,7 +3158,7 @@ string memDatainPort(string mode, int pt_cnt) {
 string memDataoutPort(string mode, int pt_cnt) {
     if (mode == "lake" || mode == "glb")
         return "data_out_" + to_string(pt_cnt);
-    else if (mode == "pond") {
+    else if (mode == "pond" || mode == "lake_dp") {
         return "data_out_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -2607,6 +3169,7 @@ string memDataoutPort(string mode, int pt_cnt) {
 //Helper function to find the last port in chaining path
 CoreIR::Wireable* findChainDataIn(CoreIR::Wireable* mem_data_out, int port_id) {
     auto last_bank =  mem_data_out->getTopParent();
+    cout << "Last bank in chain data in" << last_bank->toString() << endl;
     auto chain_in = last_bank->sel("chain_data_in_" + str(port_id));
     auto conns = getConnectWires(chain_in);
     if (conns.size() == 0) {
@@ -2668,12 +3231,13 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
           } else {
             assert(conns.size() == 1);
+            cout << "pt count: " << outpt_cnt << endl;
             CoreIR::Wireable* last_dangling_chain_data_in =
               findChainDataIn(pick(conns), outpt_cnt);
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
           }
 
-        } else if (config_mode == "pond") {
+        } else if (config_mode == "pond" || config_mode == "lake_dp") {
           if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
             //last port directly connec to the wire
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)),  pt2wire.at(outpt));
@@ -2696,7 +3260,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
                     {{"width", CoreIR::Const::make(context, this->port_widths)}});
             def->connect(dataout_pth->sel("out"), next_val->sel("out"));
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in1"));
-            def->connect(mux_ctrl->sel("stencil_valid"), next_val->sel("sel"));
+            def->connect(op_control_wires(mux_ctrl), next_val->sel("sel"));
             inlineInstance(dataout_pth);
             pt2wire.at(outpt) = next_val->sel("in0");
           }
@@ -2755,10 +3319,17 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
       last_out = wire;
     else {
       auto conns = getConnectWires(wire);
+      //cout << "src: " << src << endl;
+      //for (auto conn: conns) {
+      //    cout << conn->toString() << endl;
+      //}
       assert(conns.size() == 1);
       last_out = pick(conns);
     }
-    CoreIR::Wireable* final_out = pt2wire.at(dst);
+    //CoreIR::Wireable* final_out = pt2wire.at(dst);
+
+    //cout << *this << endl;
+    CoreIR::Wireable* final_out = def->sel("self." + container_bundle(dst) + "." + str(bundle_offset(dst)));
     for (size_t i = 0; i < delay; i ++) {
       auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
           {{"width", CoreIR::Const::make(context, port_widths)},
@@ -2767,6 +3338,54 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
       last_out = reg->sel("out");
     }
     def->connect(last_out, final_out);
+  }
+}
+
+//Take the fanin structure and generate the wiring
+void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
+  auto context = def->getContext();
+  for (auto it: impl.fanin_outputs) {
+    map<string, CoreIR::Wireable*> output_map;
+    for (auto in_delay: it.second) {
+      string src = in_delay.first;
+      int delay = in_delay.second;
+      CoreIR::Wireable* last_out =
+          pt2wire.at(src);
+      for (size_t i = 0; i < delay; i ++) {
+        auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+            {{"width", CoreIR::Const::make(context, port_widths)},
+            {"has_en", CoreIR::Const::make(context, false)}});
+        def->connect(reg->sel("in"), last_out);
+        last_out = reg->sel("out");
+      }
+      output_map[src] = last_out;
+    }
+    string outpt = it.first;
+
+    auto mux_output = pt2wire.at(outpt);
+    for (auto src: output_map) {
+
+      //Add a pass through for the mux output
+      Instance* dataout_pth = addPassthrough(
+            mux_output, "dataout_pt_" + context->getUnique());
+      //Creating the input selection logic
+      isl_aff* sched_aff = get_aff(to_map(schedule.at(src.first)));
+      cout << "pt schedule: " << str(sched_aff) << endl;
+      auto mux_ctrl = affine_controller_use_lake_tile(
+              options, def, context, domain.at(src.first),
+              sched_aff, "dataout_pt_mux_ctrl_" + context->getUnique());
+      generate_lake_tile_verilog(options, mux_ctrl);
+      //create a mux
+      auto next_val = def->addInstance(
+              def->getContext()->getUnique() + "_mux",
+              "coreir.mux",
+              {{"width", CoreIR::Const::make(context, this->port_widths)}});
+      def->connect(dataout_pth->sel("out"), next_val->sel("out"));
+      def->connect(src.second, next_val->sel("in1"));
+      def->connect(op_control_wires(mux_ctrl), next_val->sel("sel"));
+      inlineInstance(dataout_pth);
+      mux_output = next_val->sel("in0");
+    }
   }
 }
 
@@ -2780,13 +3399,99 @@ string UBuffer::determine_config_mode(CodegenOptions& options, UBuffer& target_b
   //Changing the size of pond threshold
   if (contains(target_buf.name, "_glb_stencil")) {
     config_mode = "glb";
-  } else if (capacity <= 96 && multi_level_mem ) {
+  } else if (capacity <= 32 && multi_level_mem )  {
     cout << "Generate config for register file!" << endl;
     config_mode = "pond";
+
+  } else if (options.mem_hierarchy.at("mem").fetch_width == 1) {
+    config_mode = "lake_dp";
   } else {
     config_mode = "lake";
   }
   return config_mode;
+}
+
+CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, GarnetImpl& hw_impl) {
+  UBuffer target_buf = hw_impl.target_buf;
+  string ub_ins_name = "ub_" + target_buf.name;
+  CoreIR::Instance* buf;
+  if (hw_impl.config_mode == "lake") {
+    //auto vectorized_buf = hw_impl.sub_component;
+    //for (auto buf: vectorized_buf) {
+    //    cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
+    //}
+    //TODO generate the config file on the fly
+    assert(hw_impl.sub_component.size());
+    config_file = generate_ubuf_args(options, hw_impl.sub_component);
+    buf = generate_lake_tile_instance(def, options,
+      ub_ins_name, target_buf.name,
+      target_buf.num_in_ports(),
+      target_buf.num_out_ports(),
+      false/*TODO: exclude stencil valid signal*/, true);
+
+  } else if (hw_impl.config_mode == "lake_dp") {
+    config_file = generate_ubuf_args(options, target_buf, "mem");
+    buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp",
+            target_buf.num_in_ports(), target_buf.num_out_ports());
+  } else if (hw_impl.config_mode == "pond") {
+    config_file = generate_ubuf_args(options, target_buf, "regfile");
+    buf = generate_pond_instance(def, options, ub_ins_name, "pond",
+            target_buf.num_in_ports(), target_buf.num_out_ports());
+  } else if (hw_impl.config_mode == "glb") {
+
+    //TODO: put this info a function
+    auto c = def->getContext();
+    config_file = generate_ubuf_args(options, target_buf, "glb");
+    Values tile_params{
+      {"width", COREMK(c, 16)},
+      {"ctrl_width", COREMK(c, 32)},
+      {"ID", COREMK(c, target_buf.name)},
+      {"has_external_addrgen", COREMK(c, true)},
+      {"num_inputs",COREMK(c,target_buf.num_in_ports())},
+      {"num_outputs",COREMK(c,target_buf.num_out_ports())}};
+
+    buf = def->addInstance(
+            target_buf.name + "_ubuf",
+            "cgralib.Mem_amber", tile_params);
+    buf->getMetaData()["mode"] = "glb";
+    buf->getMetaData()["config"] = config_file;
+    //buf->getModuleRef()->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
+    //buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
+    int count = 0;
+    target_buf.remove_bank_dim();
+    cout << "After simplify: " << target_buf << endl;
+    for (auto inpt: target_buf.get_in_ports()) {
+      isl_set* dom = target_buf.domain.at(inpt);
+      isl_aff* aff = get_aff(to_map(target_buf.schedule.at(inpt)));
+      auto accessor = ::affine_controller(def, dom, aff, 32);
+      accessor->getMetaData()["garnet_remove"] = true;
+      auto agen = build_addrgen(inpt, target_buf, def, 32);
+      def->connect(agen->sel("d"), accessor->sel("d"));
+      def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
+      def->connect(agen->sel("out"), buf->sel("write_addr_" + str(count)));
+      def->connect(buf->sel("wen_" + str(count)),
+              accessor->sel("valid"));
+      count ++;
+    }
+    count = 0;
+    for (auto outpt: target_buf.get_out_ports()) {
+      isl_set* dom = target_buf.domain.at(outpt);
+      isl_aff* aff = get_aff(to_map(target_buf.schedule.at(outpt)));
+      //read have one cycle latency
+      aff = add(aff, -1);
+      auto accessor = ::affine_controller(def, dom, aff, 32);
+      accessor->getMetaData()["garnet_remove"] = true;
+      auto agen = build_addrgen(outpt, target_buf, def, 32);
+      def->connect(agen->sel("d"), accessor->sel("d"));
+      def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
+      def->connect(agen->sel("out"), buf->sel("read_addr_" + str(count)));
+      def->connect(buf->sel("ren_" + str(count)),
+              accessor->sel("valid"));
+      count ++;
+    }
+    def->connect(buf->sel("rst_n"), def->sel("self.reset"));
+  }
+  return buf;
 }
 
 CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode) {
@@ -2798,24 +3503,6 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   auto capacity = total_capacity(target_buf);
 
   cout << "Vectorization buffer capacity: " << capacity << endl;
-  bool multi_level_mem = options.mem_hierarchy.count("regfile");
-  /*if (capacity <= 32 && multi_level_mem ) {
-    cout << "Generate config for register file!" << endl;
-    //TODO generate the config file on the fly
-    config_file = generate_ubuf_args(options, target_buf, "regfile");
-    config_mode = "pond";
-  } else {
-    //buffer_vectorization(options.iis, bk.name + "_ubuf", 1, 4, rewrite_buffer);
-    cout << "vectorization buf name: " << target_buf.name << endl;
-    buffer_vectorization(options, {target_buf.name+ "_ubuf"}, vectorized_buf);
-    vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
-    for (auto buf: vectorized_buf) {
-        cout << "After vectorization codegen: " << buf.first << endl << buf.second << endl;
-    }
-    //TODO generate the config file on the fly
-    config_file = generate_ubuf_args(options, vectorized_buf);
-    config_mode = "lake";
-  }*/
   CoreIR::Instance* buf;
   if (config_mode == "lake") {
     cout << "vectorization buf name: " << target_buf.name << endl;
@@ -2831,9 +3518,13 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       target_buf.num_in_ports(), target_buf.num_out_ports(),
       false/*TODO: exclude stencil valid signal*/, true);
 
+  } else if (config_mode == "lake_dp") {
+    config_file = generate_ubuf_args(options, target_buf, "mem");
+    buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp",
+            target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (config_mode == "pond") {
     config_file = generate_ubuf_args(options, target_buf, "regfile");
-    buf = generate_pond_instance(def, options, ub_ins_name,
+    buf = generate_pond_instance(def, options, ub_ins_name, "pond",
             target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (config_mode == "glb") {
     auto c = def->getContext();
@@ -2852,7 +3543,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     buf->getMetaData()["mode"] = "glb";
     buf->getMetaData()["config"] = config_file;
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
-    buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
+    //buf->getMetaData()["verilog_name"] = "glb_"+ c->getUnique();
     int count = 0;
     target_buf.remove_bank_dim();
     cout << "After simplify: " << target_buf << endl;
@@ -2924,7 +3615,7 @@ CoreIR::Instance* generate_cgpl_ctrl(CodegenOptions& options, CoreIR::ModuleDef*
   return cgpl_ctrl;
 }
 
-void cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode,
+void cgpl_ctrl_optimization(CodegenOptions& options, UBuffer& target_buf, string config_mode,
         isl_map*& cgpl_schedule, bool& decouple_ctrl, bool& substract_glb_latency) {
   string ub_ins_name = "ub_" + target_buf.name;
   decouple_ctrl =
@@ -2937,6 +3628,25 @@ void cgpl_ctrl_optimization(CodegenOptions& options, CoreIR::ModuleDef* def, UBu
         target_buf.get_coarse_grained_pipeline_schedule(options, new_target_buf, config_mode, decouple_ctrl, substract_glb_latency);
     //Just get the schedule, push back the logic generation we may need to change it due to double buffer optimization
     target_buf = new_target_buf;
+  }
+}
+
+void cgpl_post_processing(CodegenOptions& options,
+        CoreIR::ModuleDef* def, CoreIR::Instance*buf, GarnetImpl & hw_impl) {
+  if (hw_impl.decouple_ctrl) {
+    CoreIR::Instance* cgpl_ctrl = generate_cgpl_ctrl(options, def, hw_impl.cgpl_schedule);
+    buf->getMetaData()["drive_by_cgpl_ctrl"] = true;
+    //Disconnect the original connection from flush port
+    auto conns = buf->sel("flush")->getConnectedWireables();
+    for (auto conn: conns) {
+      def->disconnect(buf->sel("flush"), conn);
+    }
+    //Use lake tile to generate control
+    if (cgpl_ctrl->getModuleRef()->isGenerated())
+      def->connect(cgpl_ctrl->sel("stencil_valid"), buf->sel("flush"));
+    //Use coreir built affine control
+    else
+      def->connect(cgpl_ctrl->sel("valid"), buf->sel("flush"));
   }
 }
 
@@ -3000,18 +3710,176 @@ void host2glb_optimization(CodegenOptions& options,
   }
 }
 
+
+void host2glb_optimization(CodegenOptions& options,
+        CoreIR::ModuleDef* def, CoreIR::Instance*buf, GarnetImpl& hw_impl) {
+  if (hw_impl.substract_glb_latency) {
+    buf->getMetaData()["drive_by_cgpl_ctrl"] = true;
+    assert(options.host2glb_latency != 0);
+    int glb_load_latency= options.host2glb_latency;
+    //Substract all the cycle starting address in configuration
+
+    auto config_file = buf->getMetaData()["config"];
+    substract_glb_latency_in_config_file(config_file, glb_load_latency);
+    buf->getMetaData()["config"] = config_file;
+
+    isl_ctx* ctx = isl_ctx_alloc();
+    isl_map* cgpl_sched = isl_map_read_from_str(ctx, ("{op[root=0, i0]->["+str(glb_load_latency-1)+" + i0]: i0=0}").c_str());
+    auto sched_aff = get_aff(cgpl_sched);
+    auto dom = ::domain(cgpl_sched);
+
+    //Add one because we did not wire reset
+    auto cgpl_ctrl = affine_controller(def, dom, add(sched_aff, 1), 32);
+    //cgpl_ctrl->getMetaData()["garnet_remove"] = true;
+    cgpl_ctrl->getMetaData()["garnet_rewire_flush"] = true;
+
+    //Disconnect the original connection from flush port
+    auto conns = buf->sel("flush")->getConnectedWireables();
+    for (auto conn: conns) {
+      def->disconnect(buf->sel("flush"), conn);
+    }
+    //connect the new flush
+    def->connect(cgpl_ctrl->sel("valid"), buf->sel("flush"));
+  }
+}
 CoreIR::Instance* UBuffer::generate_accum_reg_instance(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //Save the config argument in ubuffer data structure
     config_file = generate_ubuf_args(options, *this, "regfile");
 
     //TODO: check we define pond
-    auto buf_ins = generate_pond_instance(def, options, "ub_"+name,
+    auto buf_ins = generate_pond_instance(def, options, "ub_"+name, "pond",
             num_in_ports(), num_out_ports());
     return buf_ins;
 }
 
-void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* def, UBuffer & buf,
-        map<string, CoreIR::Wireable*> & pt2wire, string config_mode) {
+void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuffer & buf, GarnetImpl& hw_impl) {
+  //only evoke this opitimization for lake
+  if (hw_impl.config_mode != "lake") {
+    return ;
+  }
+
+  vector<string> update_ops;
+  for(auto op: buf.get_ops()) {
+    if (buf.is_update_op(op)) {
+      update_ops.push_back(op);
+    }
+  }
+  if (update_ops.size() == 0) {
+    return ;
+  }
+  assert(update_ops.size() == 1);
+  string op_name = pick(update_ops);
+  auto am = buf.get_access_map_from_op(op_name);
+  auto sched = buf.get_schedule_from_op(op_name);
+  cout << "\tupdate op access map: " << str(am) << endl
+      << "\tupdate op schedule: " << str(sched) << endl;
+  vector<bool> reaccess_dims = relation_map(am);
+  int mask_until = reaccess_dims.size();
+  for(auto it = reaccess_dims.rbegin(); it < reaccess_dims.rend(); it ++)
+    if ((*it) ) {
+      mask_until = (int)(reaccess_dims.rend() - 1 - it) ;
+      break;
+  }
+  cout <<"MASK dim: "<< mask_until << endl;
+  if (mask_until == reaccess_dims.size() - 1)
+    return ;
+  isl_map* mask_map = get_domain_mask(am, mask_until);
+  auto am_mask = dot(mask_map, am);
+  auto sched_mask = dot(mask_map, sched);
+  cout << "\tupdate op access map: " << str(am_mask) << endl
+      << "\tupdate op schedule: " << str(sched_mask) << endl;
+
+  vector<int> domain_ext = extents(::domain(am));
+  cout << domain_ext << endl;
+  int accum_time = 1;
+  for(int i = mask_until + 1; i < num_in_dims(am); i ++) {
+    accum_time *= domain_ext.at(i);
+  }
+
+  cout << "Accumulation time: " << accum_time << endl;
+
+  //TODO double check this value make sense
+  auto in_sched_reg = linear_schedule(sched_mask, {1}, -1, false);
+  auto out_sched_reg = linear_schedule(sched_mask, {1}, accum_time - 1, false);
+
+  //Create the pond reg
+  UBuffer accum_reg;
+  accum_reg.name = buf.name + "_accum_reg";
+  accum_reg.ctx = buf.ctx;
+  accum_reg.port_widths = buf.port_widths;
+
+  vector<string> inpts, outpts;
+
+  for(string inpt: buf.get_in_ports()) {
+    if (::name(buf.domain.at(inpt)) == op_name) {
+      inpts.push_back(inpt);
+      string pt_name = inpt + "_accum_in_0";
+      auto reg_in_am = add_domain_suffix(am_mask, "_write");
+      auto reg_in_sched= add_domain_suffix(in_sched_reg, "_write");
+      accum_reg.port_bundles[op_name + "_write_0"].push_back(pt_name);
+      accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
+
+      pt_name = inpt + "_accum_in_1";
+      reg_in_am = add_domain_suffix(am, "_write_pe");
+      reg_in_sched= add_domain_suffix(sched, "_write_pe");
+      accum_reg.port_bundles[op_name + "_write_1"].push_back(pt_name);
+      accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
+    }
+  }
+
+  for(string outpt: buf.get_out_ports()) {
+    if (::name(buf.domain.at(outpt)) == op_name) {
+      outpts.push_back(outpt);
+      //string pt_name = outpt + "_accum_out_0";
+      //auto reg_out_am = add_domain_suffix(am_mask, "_read");
+      //auto reg_out_sched= add_domain_suffix(out_sched_reg, "_read");
+      //accum_reg.port_bundles[op_name + "_read_0"].push_back(pt_name);
+      //accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
+
+      auto pt_name = outpt + "_accum_out_1";
+      auto reg_out_am = add_domain_suffix(am, "_read_pe");
+      auto reg_out_sched= add_domain_suffix(sched, "_read_pe");
+      accum_reg.port_bundles[op_name + "_read_1"].push_back(pt_name);
+      accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
+    }
+  }
+  assert(inpts.size()==1);
+  buf.replace_pt(pick(inpts), simplify(am_mask), simplify(out_sched_reg));
+  assert(outpts.size()==1);
+  buf.replace_pt(pick(outpts), simplify(am_mask), simplify(in_sched_reg));
+  cout <<"\tFinal accum register: \n" << accum_reg << endl;
+  cout << "\tbuffer after accumu reg insert: \n" << buf << endl;
+
+  //save the impl information
+  hw_impl.reduce_PE_inpt = pick(inpts);
+  hw_impl.reduce_PE_outpt = pick(outpts);
+  hw_impl.accum_reg = accum_reg;
+  hw_impl.insert_shift_register = true;
+}
+
+void insert_accumulation_register(CodegenOptions& options,  CoreIR::ModuleDef* def, GarnetImpl & hw_impl, map<string, CoreIR::Wireable*> & pt2wire) {
+
+  if (!hw_impl.insert_shift_register)
+    return;
+
+  //Check if we get the ubuffer instance
+  UBuffer accum_reg = hw_impl.accum_reg;
+
+
+  //Generate the coreIR module
+  CoreIR::Instance* accum_reg_ins = accum_reg.generate_accum_reg_instance(options, def);
+  generate_lake_tile_verilog(options, accum_reg_ins);
+  string config_mode_ = accum_reg_ins->getMetaData()["mode"];
+
+  //Wire the PE interface with accumulation register
+  def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(config_mode_, 0));
+}
+
+
+void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* def, UBuffer & buf, map<string, CoreIR::Wireable*> & pt2wire, string config_mode) {
   //only evoke this opitimization for lake
   if (config_mode != "lake") {
     return;
@@ -3104,9 +3972,9 @@ void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* d
   }
   cout << accum_reg << endl;
   assert(inpts.size()==1);
-  buf.replace_pt(pick(inpts), am_mask, out_sched_reg);
+  buf.replace_pt(pick(inpts), simplify(am_mask), simplify(out_sched_reg));
   assert(outpts.size()==1);
-  buf.replace_pt(pick(outpts), am_mask, in_sched_reg);
+  buf.replace_pt(pick(outpts), simplify(am_mask), simplify(in_sched_reg));
 
   //Wire the datapath
   CoreIR::Instance* accum_reg_ins = accum_reg.generate_accum_reg_instance(options, def);
@@ -3119,7 +3987,127 @@ void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* d
   def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(pick(outpts)));
   pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(config_mode_, 0));
 
-  cout << "original buffer for rewrite: " << buf << endl;
+  cout << "buffer after accumu reg insert: " << buf << endl;
+
+}
+
+//FIXME: this function is buggy
+//double check if we can use wire after inserting accumulation register
+//UBuffer port_reduction(CodegenOptions & options, CoreIR::ModuleDef* def, UBuffer & buf,
+//        map<string, CoreIR::Wireable*> & pt2wire, UBufferImpl& impl, int bank_id) {
+//    std::set<string> remove_pt;
+//    std::set<size_t> remove_in_set, remove_out_set;
+//    auto & inpt_broadcast_set = impl.bank_inpt2writers.at(bank_id);
+//    auto & outpt_broadcast_set = impl.bank_outpt2readers.at(bank_id);
+//    for (auto outpt : buf.get_out_ports()) {
+//      auto reads = range(buf.access_map.at(outpt));
+//      for (auto inpt : buf.get_in_ports()) {
+//        auto writes = range(buf.access_map.at(inpt));
+//        auto overlap = its(writes, reads);
+//        //compute dd when write overlap with read
+//        bool decouple = isl_map_is_injective(to_map(buf.access_map.at(inpt))) &&
+//          isl_map_is_injective(to_map(buf.access_map.at(outpt)));
+//        if (empty(overlap) || !decouple)
+//            continue;
+//        auto dd = buf.dependence_distance_min(inpt, outpt);
+//        if (dd.has_value()) {
+//          int dd_raw = dd.get_value();
+//          if (dd_raw == 0) {
+//              cout << "\tRemove port: " << inpt << endl;
+//              cout << "\tRemove port: " << outpt << endl;
+//            //Remove pt from ubuf
+//            remove_pt.insert(inpt);
+//            remove_pt.insert(outpt);
+//
+//            //remove pt from impl
+//            for (size_t i = 0; i < inpt_broadcast_set.size(); i ++) {
+//              if (inpt_broadcast_set.at(i).count(inpt)) {
+//                remove_in_set.insert(i);
+//              }
+//            }
+//            for (size_t i = 0; i < outpt_broadcast_set.size(); i ++) {
+//              if (outpt_broadcast_set.at(i).count(outpt)) {
+//                remove_out_set.insert(i);
+//                for (string pt: outpt_broadcast_set.at(i)) {
+//                  def->connect(pt2wire.at(inpt), pt2wire.at(pt));
+//                }
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
+//
+//    for (size_t id: remove_in_set) {
+//      inpt_broadcast_set.erase(inpt_broadcast_set.begin() + id);
+//    }
+//
+//    for (size_t id: remove_out_set) {
+//      outpt_broadcast_set.erase(outpt_broadcast_set.begin() + id);
+//    }
+//
+//    return delete_ports(remove_pt, buf);
+//}
+
+//This is the new coreIR generation pass use the lowering information
+//separate optimization from codegen
+void UBuffer::generate_coreir_refactor(CodegenOptions& options,
+        UBufferImpl& impl,
+        CoreIR::ModuleDef* def,
+        schedule_info& info, //TODO:remove this
+        bool with_ctrl) {
+  auto context = def->getContext();
+  map<string, CoreIR::Wireable*> pt2wire;
+
+  //Sequence of port is based on name of bundle
+  for (auto b : get_in_bundles()) {
+    int pix_width = port_widths;
+    int pt_cnt = 0;
+    auto inpt_bd_wire = def->sel("self." + b);
+    for (auto inpt : port_bundles.at(b)) {
+      pt2wire[inpt] = inpt_bd_wire->sel(pt_cnt);
+      cout << "add input: " << inpt << " to pt2wire" << endl;
+      pt_cnt ++;
+    }
+  }
+  for (auto b : get_out_bundles()) {
+    int pix_width = port_widths;
+    int pt_cnt = 0;
+    auto outpt_bd_wire = def->sel("self." + b);
+    for (auto outpt : port_bundles.at(b)) {
+      pt2wire[outpt] = outpt_bd_wire->sel(pt_cnt);
+      cout << "add output: " << outpt << " to pt2wire" << endl;
+      pt_cnt ++;
+    }
+  }
+
+  //Go through the banks and generate connection and config
+  for (auto it: impl.bank_rddom) {
+    auto bank_id = it.first;
+    auto target_buf_impl = impl.lowering_info.at(bank_id);
+
+
+    insert_accumulation_register(options, def, target_buf_impl, pt2wire);
+    CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf_impl);
+
+    //Wire the stencil valid to flush of ubuffer module
+    //if we can optmize for coarse grained pipeline scheduler
+    cgpl_post_processing(options, def, buf, target_buf_impl);
+
+    //add a flush for memory tile if have glb load latency
+    host2glb_optimization(options, def, buf, target_buf_impl);
+
+    //Wiring the port after generate verilog
+    wire_ubuf_IO(options, def, pt2wire, buf, impl, info, bank_id, with_ctrl);
+
+    //generate verilog collateral
+    generate_lake_tile_verilog(options, buf);
+  }
+
+  //Generate the shift register connection
+  generate_sreg_and_wire(options, impl, def, pt2wire);
+
+  generate_fanin_connection(options, impl, def, pt2wire);
 
 }
 
@@ -3162,6 +4150,9 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     //This is used for tighten the cyclic banking space
     target_buf.tighten_iteration_domain();
     target_buf.tighten_address_space();
+    target_buf.set_dim_id();
+
+    cout << "\n\tUBuffer after address tighten" << target_buf << endl;
 
     //An optimization for coarse grained pipeline, save the iterator level
     //CoreIR::Instance* cgpl_ctrl;
@@ -3175,14 +4166,18 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     isl_map* cgpl_schedule;
     bool decouple_ctrl = false;
     bool substract_glb_latency = false;
-    cgpl_ctrl_optimization(options, def, target_buf, config_mode,
+    cgpl_ctrl_optimization(options, target_buf, config_mode,
             cgpl_schedule, decouple_ctrl, substract_glb_latency);
 
+    cout << "\n\tUBuffer after cgpl optimization" << target_buf << endl;
 
     insert_accumulation_register(options, def, target_buf, pt2wire, config_mode);
+    target_buf.remove_redundant_dim();
+    //target_buf = port_reduction(options, def, target_buf, pt2wire, impl, bank_id);
 
     //Generate the ubuffer module for CGRA
     //Lake/Pond coreir generation
+    target_buf.simplify_floor_div_expr();
     CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf, config_mode);
 
     //Wire the stencil valid to flush of ubuffer module
@@ -3564,95 +4559,6 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     }
   }
 
-bool UBuffer::overlap_schedule(std::set<string> & ptset) {
-    for (string lpt: ptset) {
-        for (string rpt: ptset) {
-            if (lpt < rpt) {
-                auto overlap =
-                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
-                if (!empty(overlap))
-                    return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
-  bool built_dm = true;
-  for (auto outpt : buf.get_out_ports()) {
-    std::set<string> ins;
-    {
-      auto reads = range(buf.access_map.at(outpt));
-      for (auto inpt : buf.get_in_ports()) {
-        auto writes = range(buf.access_map.at(inpt));
-        auto overlap = its(writes, reads);
-        if (!empty(overlap)) {
-          ins.insert(inpt);
-        }
-      }
-    }
-
-    assert(ins.size() == 1);
-    auto inpt = pick(ins);
-
-    auto writes = buf.access_map.at(inpt);
-    auto reads = buf.access_map.at(outpt);
-    cout << "writes: " << str(writes) << endl;
-    cout << "reads : " << str(reads) << endl;
-    cout << "Schedule..." << endl;
-    for (auto m : get_maps(sched)) {
-      cout << tab(1) << str(m) << endl;
-      release(m);
-    }
-
-    auto time_to_write = dot(inv(sched), (writes));
-    auto time_to_read = dot(inv(sched), (reads));
-
-    cout << "Time to write: " << str(time_to_write) << endl;
-    cout << "Time to read : " << str(time_to_read) << endl;
-
-    auto pc_times = dot(time_to_write, inv(time_to_read));
-    cout << "PC times     : " << str(pc_times) << endl;
-    auto dds = isl_union_map_deltas(pc_times);
-    cout << "DDs          : " << str(dds) << endl;
-    if (!empty(dds)) {
-      auto ddc = to_set(dds);
-
-      if (!(isl_set_is_singleton(ddc))) {
-        built_dm = false;
-        break;
-      }
-      assert(isl_set_is_singleton(ddc));
-
-      int dd = to_int(lexminval(ddc));
-      cout << "DD           : " << dd << endl;
-      string writer_name = domain_name(pick(get_maps(writes)));
-      //auto write_op = prg.find_op(writer_name);
-      //cout << "writer op    : " << writer_name << endl;
-      //for (auto e : hwinfo.op_compute_unit_latencies) {
-        //cout << tab(1) << e.first << " -> " << e.second << endl;
-      //}
-      //assert(false);
-      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      //int op_latency = hwinfo.compute_latency(write_op);
-      //assert(op_latency == 0);
-
-      int op_latency = hwinfo.compute_latency(writer_name);
-      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
-      dd = dd - op_latency;
-
-      delay_maps[inpt].push_back({outpt, dd});
-
-    } else {
-      cout << tab(1) << "No overlap" << endl;
-      assert(false);
-    }
-  }
-  return built_dm;
-}
-
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def, schedule_info& hwinfo) {
 
     //generate_platonic_ubuffer(options, buf, hwinfo);
@@ -3925,6 +4831,132 @@ bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& del
   }
 
 #endif
+
+
+bool UBuffer::overlap_schedule(std::set<string> & ptset) {
+    for (string lpt: ptset) {
+        for (string rpt: ptset) {
+            if (lpt < rpt) {
+                auto overlap =
+                    dot(schedule.at(lpt), inv(schedule.at(rpt)));
+                if (!empty(overlap))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool build_delay_map(UBuffer& buf, map<string, vector<pair<string, int> > >& delay_maps, umap* sched, schedule_info& hwinfo) {
+  bool built_dm = true;
+  for (auto outpt : buf.get_out_ports()) {
+    std::set<string> ins;
+    {
+      auto reads = range(buf.access_map.at(outpt));
+      for (auto inpt : buf.get_in_ports()) {
+        auto writes = range(buf.access_map.at(inpt));
+        auto overlap = its(writes, reads);
+        if (!empty(overlap)) {
+          ins.insert(inpt);
+        }
+      }
+    }
+
+    assert(ins.size() == 1);
+    auto inpt = pick(ins);
+
+    auto writes = buf.access_map.at(inpt);
+    auto reads = buf.access_map.at(outpt);
+    cout << "writes: " << str(writes) << endl;
+    cout << "reads : " << str(reads) << endl;
+    cout << "Schedule..." << endl;
+    for (auto m : get_maps(sched)) {
+      cout << tab(1) << str(m) << endl;
+      release(m);
+    }
+
+    auto time_to_write = dot(inv(sched), (writes));
+    auto time_to_read = dot(inv(sched), (reads));
+
+    cout << "Time to write: " << str(time_to_write) << endl;
+    cout << "Time to read : " << str(time_to_read) << endl;
+
+    auto pc_times = dot(time_to_write, inv(time_to_read));
+    cout << "PC times     : " << str(pc_times) << endl;
+    auto dds = isl_union_map_deltas(pc_times);
+    cout << "DDs          : " << str(dds) << endl;
+    if (!empty(dds)) {
+      auto ddc = to_set(dds);
+
+      if (!(isl_set_is_singleton(ddc))) {
+        built_dm = false;
+        break;
+      }
+      assert(isl_set_is_singleton(ddc));
+
+      int dd = to_int(lexminval(ddc));
+      cout << "DD           : " << dd << endl;
+      string writer_name = domain_name(pick(get_maps(writes)));
+      //auto write_op = prg.find_op(writer_name);
+      //cout << "writer op    : " << writer_name << endl;
+      //for (auto e : hwinfo.op_compute_unit_latencies) {
+        //cout << tab(1) << e.first << " -> " << e.second << endl;
+      //}
+      //assert(false);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      //int op_latency = hwinfo.compute_latency(write_op);
+      //assert(op_latency == 0);
+
+      int op_latency = hwinfo.compute_latency(writer_name);
+      //map_find(writer_name, hwinfo.op_compute_unit_latencies);
+      dd = dd - op_latency;
+
+      delay_maps[inpt].push_back({outpt, dd});
+
+    } else {
+      cout << tab(1) << "No overlap" << endl;
+      assert(false);
+    }
+  }
+  return built_dm;
+}
+
+//This is an optimization pass
+//take both access map and schedule and merge the dimension
+pair<isl_map*, isl_map*> merge_dom_dim(isl_map* schedule, isl_map* acc_map) {
+    auto a_map = cpy(acc_map);
+    auto sched = cpy(schedule);
+    int merge_cnt = 0;
+
+    //Get all mergeable dim in order from inner to outer
+    vector<pair<int, int>> all_pair_a =
+        get_all_domain_merge_dims(a_map);
+    vector<pair<int, int>> all_pair_s =
+        get_all_domain_merge_dims(sched);
+
+    cout << "\taccess map merge pair: " << all_pair_a << endl;
+    cout << "\tschedule merge pair: " << all_pair_s << endl;
+    while(!empty(all_pair_a) && !empty(all_pair_s)) {
+        auto pa = all_pair_a.front();
+        auto ps = all_pair_s.front();
+        cout << "merge pair: " << pa << ", " << ps << endl;
+        if (pa.first == ps.first) {
+            unordered_set<int> tmp({pa.first, pa.second});
+            cout << "access map: " << str(a_map) << endl;
+            auto reduce_map = linear_domain_map_with_index(domain(a_map), tmp);
+            a_map = to_map(dot_domain(to_umap(a_map), to_umap(reduce_map)));
+            sched = to_map(dot_domain(to_umap(sched), to_umap(reduce_map)));
+            all_pair_a.erase(all_pair_a.begin());
+            all_pair_s.erase(all_pair_s.begin());
+        } else if(pa.first > ps.first) {
+            all_pair_a.erase(all_pair_a.begin());
+        } else {
+            all_pair_s.erase(all_pair_s.begin());
+        }
+    }
+    return make_pair(sched, a_map);
+}
 
 string get_buf_type(string buf_name) {
     if (contains(buf_name, "agg")) {
@@ -4958,6 +5990,8 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
 void generate_hls_code_unit_test(std::ostream& out, UBuffer& buf) {
   CodegenOptions options;
   options.internal = true;
+  //for compute bank info
+  options.rtl_options.use_external_controllers = false;
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_MULTILINEAR;
 
   generate_hls_code(options, out, buf);
@@ -5438,14 +6472,15 @@ umap* UBuffer::get_lexmax_events(const std::string& outpt) const {
   //cout << "\tafter: " << str(after) << endl;
 
   src_map = its(src_map, after);
-  //cout << "\tsrc map after its after: " << str(src_map) << endl;
+  cout << "\tsrc map after its after: " << str(src_map) << endl;
   src_map = lexmax(src_map);
-  //cout << "\tsrc map final: " << str(src_map) << endl;
+  cout << "\tsrc map final: " << str(src_map) << endl;
 
-  auto time_to_event = inv(sched);
+  auto time_to_event = inv(global_in_schedule_with_guard());
 
+  auto lmm = lexmax(dot(src_map, sched));
   auto lex_max_events =
-    dot(lexmax(dot(src_map, sched)), time_to_event);
+    its(src_map, ::domain(lmm));
 
   release(time_to_event);
   release(src_map);
@@ -5590,7 +6625,10 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
 
 int UBuffer::compute_dd_bound(const std::string& read_port, const std::string& write_port, bool is_max) {
   auto c = compute_dd(read_port, write_port);
-  //cout << "DD: " << str(c) << endl;
+  cout << "DD: " << str(c) << endl;
+  cout << *this << endl;
+  cout << "\tread: " << read_port << endl;
+  cout << "\twrite: " << write_port << endl;
 
   int tight;
   int* b = &tight;
@@ -6186,7 +7224,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       for (auto outpt : get_out_ports()) {
         cout << "Generating banks for port: " << outpt << " on buffer " << name << endl;
         cout << tab(1) << "access map: " << str(access_map.at(outpt)) << endl;
-        cout << endl << endl << *this << endl << endl;
+        //cout << endl << endl << *this << endl << endl;
         umap* reads_to_sources = get_lexmax_events(outpt);
         cout << tab(1) << "lexmax events: " << str(reads_to_sources) << endl;
         uset* producers_for_outpt = range(reads_to_sources);
@@ -6199,8 +7237,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto overlap =
             its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
+          cout << "\tinpt: " << inpt << endl;
+          cout << "\toverlap: " << str(overlap) << endl;
+          cout << "\toverlap ops: " << str(ops_overlap) << endl;
+
           if (!empty(ops_overlap) && !empty(overlap)) {
-            stack_bank bank = compute_bank_info(options, inpt, outpt);
+            stack_bank bank;
+            if (options.rtl_options.use_external_controllers)
+              bank = compute_bank_info(options, inpt, outpt);
+            else
+              bank = compute_bank_info(inpt, outpt, INT_MAX);
             add_bank_between(inpt, outpt, bank);
           }
         }
@@ -6281,6 +7327,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     for(auto bank: get_banks()) {
       auto inpts = banks_to_inputs.at(bank.name);
       auto outpts = banks_to_outputs.at(bank.name);
+      cout << banks_to_outputs.at(bank.name) << endl;
       assert(banks_to_inputs.at(bank.name).size() == 1);
       assert(banks_to_outputs.at(bank.name).size() == 1);
       //int impl_bank = impl.add_new_bank_between(inpts, outpts, to_set(bank.rddom));
@@ -6317,6 +7364,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         //    assert(false);
         //}
     } else {
+        assert(inpts.size() <= options.rtl_options.max_inpt);
 
         //This is used for broadcasting the output port
         //use this customized cmp to sort the pt by bundle name
@@ -6329,15 +7377,31 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             outpt_partitions.insert(it);
         }
 
-        for (string inpt: inpts) {
-            for (auto it : outpt_partitions) {
-                ret.push_back(make_pair(std::set<string>({inpt}), it.second));
-                int bank = impl.add_new_bank_between({inpt}, it.second, to_set(rddom));
-                map_insert(impl.bank_inpt2writers, bank, {inpt});
-                map_insert(impl.bank_outpt2readers, bank, it.second);
+        //One bank will work
+        if (outpt_partitions.size() <= options.rtl_options.max_outpt) {
+          ret.push_back(make_pair(inpts, outpts));
+          int bank = impl.add_new_bank_between(inpts, outpts, to_set(rddom));
+          for (auto it : outpt_partitions) {
+            map_insert(impl.bank_outpt2readers, bank, it.second);
+          }
+          for (auto inpt: inpts) {
+            map_insert(impl.bank_inpt2writers, bank, {inpt});
+          }
+
+        //need to put into separate banks
+        } else {
+            for (string inpt: inpts) {
+                for (auto it : outpt_partitions) {
+                    ret.push_back(make_pair(std::set<string>({inpt}), it.second));
+                    int bank = impl.add_new_bank_between({inpt}, it.second, to_set(rddom));
+                    map_insert(impl.bank_inpt2writers, bank, {inpt});
+                    map_insert(impl.bank_outpt2readers, bank, it.second);
+                }
+
             }
         }
-    }
+        }
+
     return ret;
   }
 
@@ -7002,6 +8066,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return base;
   }
 
+  //This is the interface we are using in garnet mapping
   vector<string> buffer_vectorization(
       CodegenOptions& options,
       vector<string> buf_name_vec,
@@ -7021,8 +8086,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         //Input must be take care
         //need to first pad the buffer output to the multiplier of
         target_buffer.merge_small_dim(fetch_width);
+
+        //comment out dimension padding, only pad the cycle ctride
         //target_buffer.pad_read_dom_inner_most(fetch_width);
-        target_buffer.pad_write_dom_inner_most(fetch_width);
+        //target_buffer.pad_write_dom_inner_most(fetch_width);
 
         int dim_id = target_buffer.get_vectorized_dim(fetch_width);
         if (dim_id == -1) {
@@ -7511,11 +8578,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
   }
 
   //New method to find dynamic schedule
-  isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, bool is_dual_port) {
+  isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, int offset, bool is_dual_port) {
     cout << "\t output sched: "  << str(out_sched)<< endl;
+    cout << "vectorized dim: " << vectorize_loop_dim << endl;
     int fetch_ii = stride_in_dim(out_sched, vectorize_loop_dim);
     //TODO: may need to adjust the delay, /2 is made resnet work
-    auto temp_sched = linear_schedule(out_sched, {1}, - 2 - ahead_step * fetch_ii/2, false);
+    auto temp_sched = linear_schedule(out_sched, {1}, - offset - ahead_step * fetch_ii/2, false);
     cout << "\t temp sched: " << str(temp_sched) << endl;
 
     //GET SRAM2TB list and AGG2SRAM list
@@ -8139,7 +9207,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         agg2sram_sched = set_domain_name(agg2sram_sched, domain_name(sched) + "_agg2sram_0");
         auto sram2tb_sched = to_map(add(aff, 4));
         sram2tb_sched = its(sram2tb_sched, in_dom);
-        sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_sram2tb_0");
+        sram2tb_sched = set_domain_name(sram2tb_sched, domain_name(sched) + "_single_pixel_sram2tb_0");
         cout << "\tinput pt schedule: " << str(aff) << endl;
         cout << "\tagg2sram schedule: " << str(agg2sram_sched) << endl;
         cout << "\tsram2tb schedule: " << str(sram2tb_sched) << endl;
@@ -8169,8 +9237,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           auto new_am = its(to_map(constant_aff(am_aff, i)), in_dom);
           auto new_am_sram= set_range_name(cpy(new_am), range_name(am) + "_sram");
           auto new_am_tb = set_range_name(cpy(new_am), range_name(am) + "_0_tb");
-          new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_sram2tb_0");
-          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_sram2tb_0");
+          new_am_tb = set_domain_name(new_am_tb, domain_name(am) + "_single_pixel_sram2tb_0");
+          new_am_sram = set_domain_name(new_am_sram, domain_name(am) + "_single_pixel_sram2tb_0");
           cout << "\t\t rewrite agg am: " << str(new_am) << endl;
           outpt_vec_am.push_back(new_am_tb);
           outpt_sram_am.push_back(new_am_sram);
@@ -8250,7 +9318,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return ret;
       }
 
-    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt) {
+    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt, int extra_delay/*code for adding delay for update port*/) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         cout << "vec loop dim: " << vectorize_loop_dim << endl;
         auto trans =
@@ -8272,7 +9340,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         assert(fetch_ii % fetch_width == 0);
 
         //get the write schedule with check
-        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1, false);
+        auto final_sched = linear_schedule(sched_vec, {1},
+                fetch_ii / fetch_width * (fetch_width - 1) + 1 + extra_delay, false);
         bool adjust = true;
         while (adjust) {
             adjust = false;
@@ -8316,11 +9385,20 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     }
     cout << "rem: " << str(acc_vec_rem) << endl;
     cout << "new: " << str(acc_vec_new) << endl;
+
+    //TODO: document this.
     //Go through each iteration domain point for div dimension
-    for(isl_set* s: get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims)){
-        cout << "\t" << str(s) << endl;
-        int origin_max = get_dim_max(range(its(acc_vec_new, s)), addr_dim);
-        int trans_max = get_dim_max(range(its(acc_vec_rem, s)), addr_dim);
+    //Get the first value to see if we need to wait extra fetch to start in the stripmined dimension
+    auto new_dom_set = get_domain_unmask_set(acc_vec_new, vectorized_dim, unmask_dims);
+    auto rem_dom_set = get_domain_unmask_set(acc_vec_rem, vectorized_dim, unmask_dims);
+    assert(new_dom_set.size() == rem_dom_set.size());
+    for (auto i = 0; i < new_dom_set.size(); i ++) {
+        isl_set* s_new = new_dom_set.at(i);
+        isl_set* s_rem = rem_dom_set.at(i);
+        cout << "\tnew: " << str(s_new) << endl;
+        cout << "\trem: " << str(s_rem) << endl;
+        int origin_max = get_dim_max(range(its(acc_vec_new, s_new)), addr_dim);
+        int trans_max = get_dim_max(range(its(acc_vec_rem, s_rem)), addr_dim);
         cout << "origin max: " << str(origin_max) << endl;
         cout << "trans max: " << str(trans_max) << endl;
         ahead_step = max(ahead_step, origin_max - trans_max);
@@ -8329,7 +9407,82 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return ahead_step;
   }
 
-  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
+  void UBuffer::simplify_floor_div_expr() {
+    for (auto bd_name: get_out_bundles()) {
+      for (auto out_pt_name : port_bundles.at(bd_name) ) {
+
+        auto am = to_map(access_map.at(out_pt_name));
+        auto sched = to_map(schedule.at(out_pt_name));
+
+
+        //map from input dim to denominator
+        map<int, int> split_dims = get_dim2denom(am);
+        if (split_dims.size()) {
+          cout << "\tSimplify output port: " << out_pt_name << endl;
+          auto trans_map = get_div_trans(am, split_dims);
+
+          auto stripmining_am = dot(inv(trans_map), am);
+          cout << "\t\t After strip mining: " << str(simplify_expr(stripmining_am)) << endl;
+          access_map.at(out_pt_name) = to_umap(simplify(stripmining_am));
+          domain.at(out_pt_name) = ::domain(stripmining_am);
+
+          cout << "\t\tsched before rewrite: " << str(sched) << endl;
+          sched = dot(inv(trans_map), sched);
+          cout << "\t\tsplit new sched: " << str(sched) << endl;
+
+          //update the original schedule for output port schedule generation
+          schedule.at(out_pt_name) = to_umap(sched);
+        }
+      }
+    }
+  }
+
+  bool check_back_to_back_access(map<int, int> & dim2denom) {
+    if (dim2denom.size() <2) {
+      return false;
+    }
+    int dim_diff = dim2denom.rbegin()->first - (std::next(dim2denom.rbegin()))->first;
+    return dim_diff <= 1;
+  }
+
+bool pad_range_one_vec_dim(map<int, int> & dim2denom,
+        isl_map* & acc_vec_new, isl_map* & sched_vec_new,
+        isl_map* & acc_vec_after_pad,  int addr_dim, int fetch_width) {
+
+    //We need to check the sched_vec_new,
+    //if the stripmined inner most dimension is under the outer loop,
+    //Then we do not need to pad, but there are loops between the outer loop and inner loop, we need to pad the inner most dimension
+    bool back_to_back_access = check_back_to_back_access(dim2denom);
+    int pvec_dim = get_inner_most_related_dom_dim_debug(acc_vec_new, addr_dim, fetch_width);
+    cout << "Preliminary vectorization dim: " << pvec_dim << endl;
+    vector<bool> rel_map = relation_map(acc_vec_new);
+
+    bool pad_zero_iteration =false;
+    //TODO male this more formal
+    if ((!(rel_map.at(pvec_dim-1))) && (dim2denom.size() > 1)
+            && (!back_to_back_access) && (pvec_dim-1)) {
+      //Find the iteration dimension and pad 0 to 1
+      cout << str(acc_vec_new) << endl;
+      int in_dim = num_in_dims(acc_vec_new);
+      cout << in_dim << endl;
+      auto pad_acc_map = pad_to_domain_ubuf_map(acc_vec_new, pvec_dim - 1, 1);
+      pad_acc_map = add_relation_ubuf_map(pad_acc_map, pvec_dim - 1, addr_dim);
+      cout << "\tAfter padding the disappear dimension : " << str(pad_acc_map) << endl;
+      acc_vec_after_pad = simplify(pad_acc_map);
+
+      //Also need to check the II, basically double the rate
+      auto pad_sched = pad_to_domain_ubuf_map(sched_vec_new, pvec_dim - 1, 1);
+      pad_sched= add_relation_ubuf_map(pad_sched, pvec_dim - 1, 0);
+      cout <<"Before double rate: "<< str(pad_sched) << endl;
+      pad_sched = double_schedule_rate(pad_sched, pvec_dim - 1, fetch_width);
+      cout << "After double rate: "<< str(pad_sched) << endl;
+      sched_vec_new = pad_sched;
+      pad_zero_iteration = true;
+    }
+    return pad_zero_iteration;
+}
+
+  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int& vectorized_dim, bool is_dual_port) {
 
     isl_ctx* ctx = ::ctx(acc_0);
 
@@ -8345,16 +9498,25 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << str(div_trans) << endl;
     auto acc_vec_new = simplify_expr(dot(inv(div_trans), acc_slice));
     auto sched_vec_new = simplify_expr(dot(inv(div_trans), sched));
+    auto acc_vec_after_pad = cpy(acc_vec_new);
+
+    bool pad_zero_iteration = pad_range_one_vec_dim(dim2denom,
+        acc_vec_new, sched_vec_new, acc_vec_after_pad, addr_dim, fetch_width);
+
+    auto acc_vec_rem = remove_div(acc_vec_after_pad, addr_dim);
+    acc_vec_rem = its(acc_vec_rem, ::domain(acc_vec_after_pad));
+
 
     //chances are that we have floor div in the new expression,
     //We need to remove the floor div, that this the acc_vec_rem
-    auto acc_pattern = AccessPattern(acc_vec_new, ctx);
-    auto acc_vec_rem = acc_pattern.get_access_map(ctx);
-    cout << str(get_aff(acc_vec_new)) << endl;
-    cout << str(get_aff(acc_vec_rem)) << endl;
+    //This is not a precise way to remove the floor
+    //auto acc_pattern = AccessPattern(acc_vec_new, ctx);
+    //auto acc_vec_rem = acc_pattern.get_access_map(ctx);
+    cout << "new: " << str((acc_vec_new)) << endl;
+    cout << "remove: " << str((acc_vec_rem)) << endl;
 
     //Get the vectorized dimension
-    int vectorized_dim =
+    vectorized_dim =
         get_inner_most_related_dom_dim_debug(acc_vec_rem, addr_dim, fetch_width);
     cout << "Vectorization dimension: " << vectorized_dim << endl;
     //cout << "Relation map: " << relation_map(acc_vec_rem) << endl;
@@ -8408,6 +9570,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     //}
 
     //Move the schedule ahead and pad the domain
+    //fetch extra to cover the whole iteration domain after vectorization
     //if (ahead_step) {
     if (get_dim_max(range(acc_vec_rem), addr_dim) <
                 get_dim_max(range(acc_slice), addr_dim) ) {
@@ -8415,13 +9578,103 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
     cout << "sched before adjust: " << str(sched_vec_new) << endl;
+    cout << "schedule adjust forward step: " << ahead_step << endl;
+
+    //No need to pad, it is handled by prefetch step
+    //if (pad_zero_iteration) {
+    //    ahead_step += 1;
+    //    assert(false);
+    //}
 
     //Get final schedule
     auto final_sched =
-        get_sram2tb_schedule_with_check(sched_vec_new, sched_record_map, ahead_step, vectorized_dim, false);
+        get_sram2tb_schedule_with_check(sched_vec_new, sched_record_map, ahead_step, vectorized_dim, 2/*1 cycle read latency, 1 extra cycle */, false);
+
     cout << "final schedule: " << str(final_sched) << endl;
     cout << "final access: " << str(acc_vec_rem) << endl;
     return make_pair(acc_vec_rem, final_sched);
+  }
+
+  std::set<int> get_decouple_tb_in_dim(isl_map* acc_0, int fetch_width, int addr_dim) {
+    isl_ctx* ctx = ::ctx(acc_0);
+
+    //First slice the range get the access range transform
+    auto slice = get_set_slice(range(acc_0), addr_dim, 0/*offset*/, fetch_width);
+    auto acc_slice = dot(acc_0, slice);
+
+    //From the range transform get the domain transform
+    auto dim2denom = get_dim2denom(acc_slice);
+
+    isl_map* tb_out_access_map;
+    std::set<int> proj_dims;
+    if(dim2denom.size() > 1) {
+        int proj_dim_cnt = 0;
+        //only stripmine the outter strip loop
+        cout << dim2denom << endl;
+        cout << str(acc_0) << endl;
+        dim2denom.erase(std::prev(dim2denom.end()));
+
+        //Look at the extent it must need multiple fetch
+        for (auto it: dim2denom) {
+            if(get_dim_extent(::domain(acc_0), it.first) > fetch_width) {
+              proj_dims.insert(it.first + proj_dim_cnt);
+              proj_dim_cnt ++;
+            }
+        }
+    }
+    return proj_dims;
+  }
+
+  pair<isl_map*, isl_map*> get_stripmined_read(isl_map* acc_0, isl_map* sched, int fetch_width, int addr_dim, int vectorized_dim) {
+
+    isl_ctx* ctx = ::ctx(acc_0);
+
+    //First slice the range get the access range transform
+    auto slice = get_set_slice(range(acc_0), addr_dim, 0/*offset*/, fetch_width);
+    auto acc_slice = dot(acc_0, slice);
+
+    //From the range transform get the domain transform
+    auto dim2denom = get_dim2denom(acc_slice);
+
+    isl_map* tb_out_access_map;
+    isl_map* tb_out_sched;
+    std::set<int> proj_dims;
+
+    //TODO back_to back access is just a heuristic what we should do is to caculate dd
+    if ((dim2denom.size() > 1) && (!check_back_to_back_access(dim2denom))) {
+        int proj_dim_cnt = 0;
+        //only stripmine the outter strip loop
+        cout << dim2denom << endl;
+        cout << str(acc_0) << endl;
+        dim2denom.erase(std::prev(dim2denom.end()));
+        for (auto it: dim2denom) {
+            cout << "domain: " << str(::domain(acc_0)) << endl;
+            cout << "dim extent: " << get_dim_extent(::domain(acc_0), it.first) << endl;
+            if(get_dim_extent(::domain(acc_0), it.first) > fetch_width) {
+              proj_dims.insert(it.first + proj_dim_cnt);
+              proj_dim_cnt ++;
+            }
+        }
+    }
+    if (proj_dims.size() > 0) {
+
+        auto div_trans = get_div_trans(acc_slice, dim2denom);
+        //Find the tb output
+        auto acc_stripmine = simplify_expr(dot(inv(div_trans), acc_0));
+        tb_out_sched= simplify_expr(dot(inv(div_trans), sched));
+        cout << "\taccess map for tb out: " << str(acc_stripmine) << endl;
+        cout << "\tproj dim: " << proj_dims << endl;;
+        auto ap_tb = AccessPattern(acc_stripmine, ctx);
+        tb_out_access_map = ap_tb.get_access_map_and_decouple_reuse(ctx, addr_dim, proj_dims);
+    } else {
+        auto acc_pattern = AccessPattern(acc_0, ctx);
+        tb_out_access_map= acc_pattern.get_access_map_and_decouple_reuse(ctx, addr_dim , false);
+        tb_out_sched = sched;
+    }
+
+    cout << "tb output access map: " << str(tb_out_access_map) << endl;
+
+    return make_pair(tb_out_access_map, tb_out_sched);
   }
 
     pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port) {
@@ -8512,7 +9765,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         cout << "\tsched vec before moving: "<< str(sched_vec) << endl;
 
         //Adjust the sram2tb fetch based on the schedule
-        auto final_sched = get_sram2tb_schedule_with_check(sched_vec, sched_record_map, ahead_step, vectorize_loop_dim, is_dual_port);
+        auto final_sched = get_sram2tb_schedule_with_check(sched_vec, sched_record_map, ahead_step, vectorize_loop_dim, 2,  is_dual_port);
         cout << "\tfinal access: " << str(acc_vec) << endl;
         cout << "\tfinal sched: " << str(final_sched) << endl;
         return make_pair(acc_vec, final_sched);
@@ -8627,7 +9880,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               auto sram_ir = get_vectorized_write(
                       to_map(access_map.at(in_pt_name)),
                       to_map(schedule.at(in_pt_name)),
-                      sched_record_map, fetch_width, dim_id, agg_cnt);
+                      sched_record_map, fetch_width, dim_id, agg_cnt,
+                      is_self_loop_in(in_pt_name) ? 1:0);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_agg2sram_" + str(agg_cnt));
               isl_set* dom = ::domain(vectorized_access);
@@ -8695,36 +9949,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               auto sched = to_map(schedule.at(out_pt_name));
 
 
-              //map from input dim to denominator
-              //TODO: move this into a function, and also move into vectorization preprocessing
-              map<int, int> split_dims = get_dim2denom(am);
-              if (split_dims.size()) {
-                auto trans_map = get_div_trans(am, split_dims);
-
-                auto stripmining_am = dot(inv(trans_map), am);
-                cout << "\t After strip mining: " << str(simplify_expr(stripmining_am)) << endl;
-                access_map.at(out_pt_name) = to_umap(simplify(stripmining_am));
-                domain.at(out_pt_name) = ::domain(stripmining_am);
-                string dom_name = domain_name(am) + "_sram2tb";
-
-                cout << "before rewrite: " << str(sched) << endl;
-                sched = dot(inv(trans_map), sched);
-                cout << "split new sched: " << str(sched) << endl;
-
-                //update the original schedule for output port schedule generation
-                schedule.at(out_pt_name) = to_umap(sched);
-
-                //update the access name
-                am = to_map(access_map.at(out_pt_name));
-              }
-
-
-
               //New method for sram read schedule
+              int vectorized_dim = 0;
               auto sram_ir = get_vectorized_read_simplified(
                       to_map(access_map.at(out_pt_name)),
                       to_map(schedule.at(out_pt_name)),
-                      sched_record_map, fetch_width, dim_id, is_dual_port);
+                      sched_record_map, fetch_width, dim_id, vectorized_dim, is_dual_port);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_sram2tb_" + str(tb_cnt));
               isl_set* dom = ::domain(vectorized_access);
@@ -8782,6 +10012,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               auto range_interpolation_maps = get_vectorize_interpolate(
                       range(vectorized_access), dim_id, fetch_width);
               int pt_cnt = 0;
+             std::set<int> proj_dim =
+                 get_decouple_tb_in_dim(to_map(access_map.at(out_pt_name)), fetch_width, dim_id);
               for (auto interpolation: range_interpolation_maps) {
                 string tb_pt_name = out_pt_name + "_out_" + std::to_string(pt_cnt);
                 tb.port_bundles[bd_name + "_tb_in"].push_back(tb_pt_name);
@@ -8792,7 +10024,15 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
                 //always decouple the output access, and remove refetch from SRAM
                 auto acc_pt = AccessPattern(tb_in_access_map, ctx);
-                tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, false);
+
+                if (proj_dim.size() == 0) {
+                  //old method to get tb in access pattern
+                  tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, false);
+                } else {
+                  //new method for get tb in access pattern
+                  tb_in_access_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id, vectorized_dim);
+                }
+
                 //tb.access_map[tb_pt_name] = to_umap(decouple_acc_map);
 
                 auto sram_out_access_map = add_range_suffix(rewrite_access_map, "_sram");
@@ -8820,49 +10060,76 @@ void UBuffer::generate_banks(CodegenOptions& options) {
               cout << "\tAdd TB output port: " << out_pt_name << endl;
 
 
-              auto outpt_acc_map = remap_access_to_new_buffer(out_pt_name, "_" + to_string(tb_cnt) + "_tb");
-              outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, false);
-              outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(tb_cnt) + "_tb");
+              pair<isl_map*, isl_map*> tb_ir = get_stripmined_read(
+                      to_map(access_map.at(out_pt_name)),
+                      to_map(schedule.at(out_pt_name)),
+                      fetch_width, dim_id, vectorized_dim);
 
-              //Strip mining the output loop
-              //TODO: remove stripmining
-              //Strip mining is needed for unit test
-              //if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
-              if (false) {
-              //if (true) {
-                isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
-                std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
-                isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
-                std::cout << "\tdomain stripmining: " << str(sm_domain) << endl;
-                auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
-                auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
-                sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
-                sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
-                sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
-                cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
-                //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
-                tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
-                tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
+              auto outpt_acc_map = add_range_suffix(tb_ir.first, "_" + to_string(tb_cnt) + "_tb");
+              isl_set* sm_domain = ::domain(outpt_acc_map);
+              auto sm_access_map = outpt_acc_map;
+              auto sm_sched = tb_ir.second;
+              sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
+              sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
+              sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
+              cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
+              //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
+              tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+              tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
 
-              } else   {
-                isl_set* sm_domain = domain.at(out_pt_name);
-                auto sm_access_map = outpt_acc_map;
-                auto sm_sched = to_map(schedule.at(out_pt_name));
-                sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
-                sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
-                sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
-                cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
-                //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
-                tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
-                tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
-              }
 
-              cout << "TB  : " << tb << endl;
-              //Add one more step to pad reacess dimension
-              //tb.pad_reaccess_dimension(fetch_width);
 
-              ////Check capacity of tb
-              //auto capacity = tb.capacity();
+              //int dim_added = num_in_dims(vectorized_access) - num_in_dims(am);
+              //cout << "vec access: " << str(vectorized_access) << endl;
+              //cout << "original access: " << str(am) << endl;
+              //cout << "\tvec dim: " << vectorized_dim << endl;
+              //if(dim_added > 0) {
+              //    vectorized_dim -= dim_added;
+              //}
+              //outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, vectorized_dim);
+              //auto outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id, false);
+              //outpt_acc_map = add_range_suffix(outpt_acc_map, "_" + to_string(tb_cnt) + "_tb");
+
+              ////assert(dim_added <= 0);
+              ////Strip mining the output loop
+              ////TODO: remove stripmining
+              ////Strip mining is needed for unit test
+              ////if (acc_pattern.can_stripmining(ctx, dim_id, fetch_width)) {
+              //if (false) {
+              //  isl_map* op_stripmining = acc_pattern.get_op_stripmining(ctx, dim_id, fetch_width, "");
+              //  std::cout << "\ttransform stripmining: " << str(op_stripmining) << endl;
+              //  isl_set* sm_domain = range(its(op_stripmining, domain.at(out_pt_name)));
+              //  std::cout << "\tdomain stripmining: " << str(sm_domain) << endl;
+              //  auto sm_access_map = dot(inv(op_stripmining), outpt_acc_map);
+              //  auto sm_sched = dot(inv(op_stripmining), to_map(schedule.at(out_pt_name)));
+              //  sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
+              //  sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
+              //  sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
+              //  cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
+              //  //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
+              //  tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+              //  tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
+              //  assert(false);
+
+              //} else   {
+              //  isl_set* sm_domain = domain.at(out_pt_name);
+              //  auto sm_access_map = outpt_acc_map;
+              //  auto sm_sched = to_map(schedule.at(out_pt_name));
+              //  sm_domain = add_suffix(sm_domain, "_tb2out_" + str(tb_cnt));
+              //  sm_access_map = add_domain_suffix(sm_access_map, "_tb2out_" + str(tb_cnt));
+              //  sm_sched = add_domain_suffix(sm_sched, "_tb2out_" + str(tb_cnt));
+              //  cout << "\tAccess map decouple reuse: " << str(outpt_acc_map) << endl;
+              //  //tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, sm_sched);
+              //  tb.add_out_pt(out_pt_name+"_out", sm_domain, sm_access_map, its(sm_sched, sm_domain));
+              //  tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
+              //}
+
+              //cout << "TB  : " << tb << endl;
+              ////Add one more step to pad reacess dimension
+              ////tb.pad_reaccess_dimension(fetch_width);
+
+              //////Check capacity of tb
+              ////auto capacity = tb.capacity();
               //cout << "TB size: " << capacity << endl;
               //auto mem = options.mem_hierarchy.at("mem");
               //assert(capacity <= mem.capacity.at("tb") / mem.in_port_width.at("tb"));
@@ -9134,14 +10401,30 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       // at that component
       typedef std::map<int, int> fixed_subaddress;
 
-      map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
-        map<string, fixed_subaddress> addrs;
+      //This is not correct
+      //map<string, fixed_subaddress> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+      //  map<string, fixed_subaddress> addrs;
+      //  for (auto pt : ports) {
+      //    isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
+      //    map<int, isl_val*> constant_offsets = constant_components(access);
+      //    for (auto ent : constant_offsets) {
+      //      addrs[pt][ent.first] = to_int(ent.second);
+      //    }
+      //  }
+      //  return addrs;
+      //}
+
+
+      map<fixed_subaddress, vector<string>> find_fixed_subaddresses(const vector<string>& ports, UBuffer& buf) {
+        map<fixed_subaddress, vector<string>> addrs;
         for (auto pt : ports) {
           isl_multi_aff* access = get_multi_aff(buf.access_map.at(pt));
           map<int, isl_val*> constant_offsets = constant_components(access);
+          fixed_subaddress tmp;
           for (auto ent : constant_offsets) {
-            addrs[pt][ent.first] = to_int(ent.second);
+            tmp.insert({ent.first, to_int(ent.second)});
           }
+          dbhc::map_insert(addrs, tmp, pt);
         }
         return addrs;
       }
@@ -9226,23 +10509,28 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         vector<vector<string> > filtered_io_groups;
         for (auto& g : overlapping) {
           vector<string> ins;
-          vector<string> outs;
+          std::set<string> outs;
           for (auto pt : g) {
             if (buf.is_in_pt(pt)) {
               ins.push_back(pt);
             } else {
               assert(buf.is_out_pt(pt));
-              outs.push_back(pt);
+              outs.insert(pt);
             }
           }
+          auto out_unique_map = buf.get_unique_ports(outs);
+          vector<string> unique_outs;
+          for (auto it: out_unique_map) {
+            unique_outs.push_back(it.first);
+          }
           cout << "overlapping input:" << ins << endl;
-          cout << "overlapping output:" << outs << endl << endl;
+          cout << "overlapping output:" << unique_outs << endl << endl;
           //TODO should take conside the hardware constraint here
           if (ins.size() > 1) {
             filtered_io_groups.push_back(ins);
           }
-          if (outs.size() > 1) {
-            filtered_io_groups.push_back(outs);
+          if (unique_outs.size() > 1) {
+            filtered_io_groups.push_back(unique_outs);
           }
         }
 
@@ -9292,6 +10580,60 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return cyclic_partition_factor;
       }
 
+      //This is the cyclic partition was used in garnet mapping
+      maybe<std::vector<int> > cyclic_partition(CodegenOptions& options, UBuffer& buf) {
+        vector<vector<string> > filtered_io_groups =
+          overlapping_large_io_port_groups(options, buf);
+
+        if (filtered_io_groups.size() == 0) {
+          std::vector<int> empty;
+          return maybe<std::vector<int> >(empty);
+        }
+
+        //get_banking factors
+        vector<int> bk_factors = buf.get_cyclic_banking_factors();
+        int bank_num = std::accumulate(
+                begin(bk_factors), end(bk_factors), 1, std::multiplies<int>());
+        std::vector<int> dims;
+        for (auto g : filtered_io_groups) {
+          assert(g.size() > 0);
+
+          //cout << "Error: No viable banking strategy for " << buf.name << endl;
+          //cout << tab(1) << "Cannot partition group: " << endl;
+          //for (auto pt : g) {
+          //  cout << tab(2) << pt << endl;
+          //  cout << tab(3) << str(buf.access_map.at(pt)) << endl;
+          //  cout << tab(3) << str(buf.schedule.at(pt)) << endl;
+          //}
+          cout << "\tpart size:" <<bank_num << endl;
+          cout << "\tg size: " << g.size() << endl;
+
+          //TODO: fix this, now Consider multiport only for accumulation buffer
+          int ports = 1;
+          if (buf.has_update_op()) {
+            bool is_in_group = buf.is_in_pt(pick(g));
+            ports = is_in_group ?
+              options.rtl_options.max_inpt : options.rtl_options.max_outpt;
+
+          }
+          if (bank_num * ports < g.size()) {
+            //may need banking
+            return {};
+          }
+        }
+        for (auto it: bk_factors)
+          dims.push_back(it);
+
+        cout << "FOUND CYLIC PARTITION OF "
+          << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        for (auto d : dims) {
+          cout << tab(1) << d << endl;
+        }
+
+        return dims;
+      }
+
+
       //This is the embarrassing partition was used in garnet mapping
       maybe<std::set<int> > embarassing_partition(CodegenOptions& options, UBuffer& buf) {
         vector<vector<string> > filtered_io_groups =
@@ -9316,15 +10658,23 @@ void UBuffer::generate_banks(CodegenOptions& options) {
           }
           cout << "\tpart size:" <<parts.size() << endl;
           cout << "\tg size: " << g.size() << endl;
-          bool is_in_group = buf.is_in_pt(pick(g));
-          int ports = is_in_group ?
-              options.rtl_options.max_inpt : options.rtl_options.max_inpt;
+
+          //TODO: fix this, now Consider multiport only for accumulation buffer
+          int ports = 1;
+          if (buf.has_update_op()) {
+            bool is_in_group = buf.is_in_pt(pick(g));
+            ports = is_in_group ?
+              options.rtl_options.max_inpt : options.rtl_options.max_outpt;
+
+          }
+
           if (parts.size() * ports < g.size()) {
             //may need banking
             return {};
           }
           for (auto ent : parts) {
-            for (auto d : ent.second) {
+            //for (auto d : ent.second) {
+            for (auto d : ent.first) {
               dims.insert(d.first);
             }
           }
@@ -9332,8 +10682,18 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
         cout << "FOUND EMBARASSING PARTITION OF "
           << buf.name << " in " << dims.size() << " dimensions..." << endl;
+        int total_banks = 1;
         for (auto d : dims) {
           cout << tab(1) << d << endl;
+          total_banks *= d;
+        }
+        cout << "Total Banks: " << total_banks << endl;
+
+        //Final check all port can fit
+        if (buf.get_all_ports().size() >
+                total_banks * (options.rtl_options.max_inpt + options.rtl_options.max_outpt)) {
+            cout << "Cannot merge port although they did not overlap" << endl;
+            return {};
         }
 
         isl_multi_aff* bank_func = embarassing_partition_function(buf, dims);
@@ -9365,11 +10725,14 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             cout << tab(3) << str(buf.access_map.at(pt)) << endl;
             cout << tab(3) << str(buf.schedule.at(pt)) << endl;
           }
+          cout << "\tpart size :" << parts.size() << endl;
+          cout << "\tgroup size :" << g.size() << endl;
           if (parts.size() < g.size()) {
             return {};
           }
           for (auto ent : parts) {
-            for (auto d : ent.second) {
+            //for (auto d : ent.second) {
+            for (auto d : ent.first) {
               dims.insert(d.first);
             }
           }
@@ -9767,8 +11130,16 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         out << "# nodes: " << dg.nodes.size() << endl;
         out << "# edges: " << dg.weights.size() << endl;
         for (auto e : dg.out_edges) {
+          out << "Group: "<< tab(2) << e.first << endl;
           for (auto dst : e.second) {
-            out << tab(1) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
+            out << tab(4) << e.first << " -> (" << dg.weight(e.first, dst) << ") " << dst << endl;
+          }
+        }
+
+        for (auto e : dg.out_edges) {
+          out << "Fanin Group: "<< tab(2) << e.first << endl;
+          for (auto src: e.second) {
+            out << tab(4) << src << " -> (" << dg.weight(src, e.first) << ") " << e.first << endl;
           }
         }
         return out;
@@ -9805,3 +11176,994 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         release(m);
         return legal;
       }
+
+vector<int> analyze_memory_demands(prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+
+  vector<int> unbanked;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    unbanked.push_back(1);
+  }
+  for (auto f : unbanked) {
+    cout << tab(1) << f << endl;
+    assert(f > 0);
+  }
+
+  cout << buf << endl;
+
+  map<string, vector<pair<string,int>>> shift_registered_outputs = determine_shift_reg_map_new(prg, buf, hwinfo);
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf,hwinfo);
+  std::set<string> sr_ports;
+  for (auto port : shift_registered_outputs) {
+    sr_ports.insert(port.first);
+  }
+  for (auto port : shift_registered_outputs_to_outputs) {
+    sr_ports.insert(port.first);
+  }
+
+  UBuffer reduced = delete_ports(sr_ports, buf);
+  cout << "Reduced..." << endl;
+  cout << reduced << endl;
+
+  if (reduced.get_out_ports().size() > 0) {
+    cout << "In prg: " << prg.name << " a buffer is not a shift register!" << endl;
+    cout << "Shift registered in -> out..." << endl;
+    for (auto e : shift_registered_outputs) {
+      for (auto pt_delay_pair: e.second)
+        cout << tab(1) << e.first << " -> " << pt_delay_pair.second<< endl;
+    }
+    //assert(false);
+    //auto eb = embarassing_partition(reduced, hwinfo);
+    //if (!eb.has_value()) {
+    auto sched = reduced.global_schedule();
+    cout << "Banking schedule..." << endl;
+    for (auto s : get_maps(sched)) {
+      cout << tab(1) << str(s) << endl;
+    }
+    auto op_writes = reduced.producer_map();
+    auto op_reads = reduced.consumer_map();
+
+    auto written = range(op_writes);
+    auto read = range(op_reads);
+    auto all_data = unn(written, read);
+
+    auto read_id = isl_union_set_identity(cpy(read));
+
+    auto read_times = dot(inv(op_reads), sched);
+    //auto simul_reads = dot(read_times, inv(read_times));
+    // Set of simultaneous reads to different locations
+    auto simul_reads_umap =
+      diff(dot(read_times, inv(read_times)), read_id);
+    cout << "Simultaneous reads..." << str(simul_reads_umap) << endl;
+    if (empty(simul_reads_umap)) {
+      return unbanked;
+      //return;
+    }
+    auto simul_reads = to_map(simul_reads_umap);
+    auto diff = isl_map_deltas(cpy(simul_reads));
+    cout << tab(1) << "Deltas: " << str(diff) << endl;
+    //auto lmin = lexmin(diff);
+    auto lmax = lexmax(diff);
+    //cout << tab(1) << "LMin  : " << str(lmin) << endl;
+    cout << tab(1) << "LMax  : " << str(lmax) << endl;
+    vector<int> cycle_factors;
+    for (int d = 0; d < num_dims(diff); d++) {
+      auto pd = project_all_but(diff, d);
+      //auto lmin = lexmin(pd);
+      auto lmaxpt = lexmaxval(pd);
+      int bank_factor = to_int(lmaxpt) + 1;
+      cout << tab(2) << "Bank factor in " << d << ": " << bank_factor << endl;
+      cycle_factors.push_back(max(1, bank_factor));
+      //cout << tab(1) << "LMin " << d << " : " << str(lmin) << endl;
+      //cout << tab(1) << "LMax " << d << " : " << str(lmax) << endl;
+      //int lmax = to_int(sample(lmax));
+    }
+
+    vector<string> dvs;
+    vector<string> addrs;
+    int num_banks = 1;
+    for (int i = 0; i < num_dims(diff); i++) {
+      assert(cycle_factors.at(i) > 0);
+      dvs.push_back("a_" + str(i));
+      addrs.push_back("a_" + str(i) + " % " + str(cycle_factors.at(i)));
+      num_banks *= cycle_factors.at(i);
+    }
+
+    string bank_func =
+      curlies(reduced.name + bracket_list(dvs) + " -> " + bracket_list(addrs));
+    auto bnk = isl_map_read_from_str(reduced.ctx, bank_func.c_str());
+
+    cout << "=== After Analysis the bank func is: " << str(bnk) << endl;
+    assert(banking_scheme_is_legal(bnk, reduced));
+
+    // TODO: Remove this hack
+    if (cycle_factors.size() > 2) {
+      for (int d = 1; d < cycle_factors.size() - 1; d++) {
+        cycle_factors[d] = 1;
+      }
+    }
+    for (auto f : cycle_factors) {
+      cout << tab(1) << f << endl;
+      assert(f > 0);
+    }
+    return cycle_factors;
+    //assert(false);
+    //}
+  }
+  return unbanked;
+  //assert(false);
+}
+
+
+vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+    prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+  vector<pair<string, pair<string, int> >> shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+      cout << buf.name << endl;
+
+      any_reduce_ops_on_buffer = true;
+      cout << "Found reduce op on " << buf.name << endl;
+      break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    cout << "Out -> Out shift registers for " << buf.name << endl;
+
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto outpt_src : buf.get_out_ports()) {
+
+        if(outpt == outpt_src) {
+          continue;
+        }
+
+        auto reads = buf.access_map.at(outpt);
+        auto reads_src = buf.access_map.at(outpt_src);
+        //cout << "reads: " << str(reads) << endl;
+        //cout << "reads_src: " << str(reads_src) << endl;
+
+        auto outpt_read_data = range(reads);
+        auto outpt_src_read_data = range(reads_src);
+        if(num_in_dims(to_map(reads)) != num_in_dims(to_map(reads_src)))
+        {
+          continue;
+        }
+
+        if(!subset(outpt_read_data,outpt_src_read_data))
+        {
+          continue;
+        }
+
+        //cout << str(buf.schedule.at(outpt)) << endl;
+        //cout << str(buf.schedule.at(outpt_src)) << endl;
+        isl_aff * outpt_sched = get_aff(buf.schedule.at(outpt));
+        isl_aff * outpt_src_sched = get_aff(buf.schedule.at(outpt_src));
+        outpt_sched = set_name(outpt_sched,"bump");
+        outpt_src_sched = set_name(outpt_src_sched,"bump");
+        isl_aff * diff = sub(outpt_sched,outpt_src_sched);
+        isl_aff * reads_aff = get_aff(reads);
+        isl_aff * reads_src_aff = get_aff(reads_src);
+        reads_aff = set_name(reads_aff,"bump");
+        reads_src_aff = set_name(reads_src_aff,"bump");
+        isl_aff * diff_loc = sub(reads_aff, reads_src_aff);
+
+        //cout << str(diff) << endl;
+
+        if(!isl_aff_is_cst(diff) || to_int(const_coeff(diff)) < 0)
+        {
+          continue;
+        }
+
+        if (!isl_aff_is_cst(diff_loc) || to_int(const_coeff(diff_loc)) < 0)
+        {
+          continue;
+        }
+
+        auto time_to_read_src = dot(inv(sc), (reads_src));
+        auto time_to_read = dot(inv(sc), (reads));
+
+        int dd = to_int(const_coeff(diff));
+
+        assert(dd >= 0);
+
+        shift_registered_outputs.push_back({outpt,{outpt_src, dd}});
+      }
+
+    }
+  }
+  return shift_registered_outputs;
+}
+
+map<string, pair<string, int> >  determine_shift_reg_map(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+
+  //from output port to a vector of input port delay pair
+  map<string, pair<string, int> > shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    cout << "==== No reduce ops on this buffer" << endl;
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto inpt : buf.get_in_ports()) {
+        string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+        op* read_op = prg.find_op(reader_name);
+
+        auto read = read_op->buffers_read();
+        auto written = read_op->buffers_written();
+
+        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+        cout << "Writer name: " << writer_name << endl;
+        op* write_op = prg.find_op(writer_name);
+
+        cout << "read_op read: " << read << endl;
+        cout << "read_op write: " << read_op->buffers_written() << endl;
+
+        cout << "write_op write: " << written << endl;
+        cout << "write_op read: " << write_op->buffers_read() << endl;
+        //prg.pretty_print();
+        auto read_op_rolled_reduce_bufs = intersection(read, written);
+        auto write_op_rolled_reduce_bufs =
+            intersection(write_op->buffers_read(), write_op->buffers_written());
+
+        // Dont shift register rolled-reduces
+        // If it's not rolled reduce on the buffer trying to optimize, it's fine
+        if (read_op_rolled_reduce_bufs.count(buf.name) == 0 &&
+            write_op_rolled_reduce_bufs.count(buf.name) == 0) {
+            cout << "Calculate DDs for creating shift registers." << endl;
+          auto dd =
+            dependence_distance_singleton(buf, inpt, outpt, sc);
+          if (dd.has_value()) {
+            int dd_raw = dd.get_value();
+            dd_raw -= hwinfo.compute_latency(write_op);
+            if (write_op->buffers_read().size() > 0) {
+              dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
+            }
+            dd_raw += hwinfo.load_latency(buf.name);
+
+            if (!(dd_raw >= 0)) {
+              cout << "Error: Negative dependence distance: " << dd_raw << endl;
+            }
+            assert(dd_raw >= 0);
+            shift_registered_outputs[ outpt] = {inpt, dd_raw};
+          }
+        }
+      }
+    }
+  }
+  return shift_registered_outputs;
+}
+
+map<string, vector<pair<string, int> > > determine_shift_reg_map_new(
+        prog& prg,
+    UBuffer& buf,
+    schedule_info& hwinfo)
+{
+  auto sc = buf.global_schedule();
+  bool any_reduce_ops_on_buffer = false;
+
+  //from output port to a vector of input port delay pair
+  map<string, vector<pair<string, int> > > shift_registered_outputs;
+  for (auto op : prg.all_ops()) {
+    if (elem(buf.name, op->buffers_read()) && elem(buf.name, op->buffers_written())) {
+    //if (intersection(op->buffers_read(), op->buffers_written()).size() != 0) {
+      any_reduce_ops_on_buffer = true;
+      break;
+    }
+  }
+
+  if (!any_reduce_ops_on_buffer) {
+    cout << "==== No reduce ops on this buffer" << endl;
+    for (auto outpt : buf.get_out_ports()) {
+      for (auto inpt : buf.get_in_ports()) {
+        string reader_name = domain_name(pick(get_maps(buf.access_map.at(outpt))));
+        op* read_op = prg.find_op(reader_name);
+
+        auto read = read_op->buffers_read();
+        auto written = read_op->buffers_written();
+
+        string writer_name = domain_name(pick(get_maps(buf.access_map.at(inpt))));
+        cout << "Writer name: " << writer_name << endl;
+        op* write_op = prg.find_op(writer_name);
+
+        cout << "read_op read: " << read << endl;
+        cout << "read_op write: " << read_op->buffers_written() << endl;
+
+        cout << "write_op write: " << written << endl;
+        cout << "write_op read: " << write_op->buffers_read() << endl;
+        //prg.pretty_print();
+        auto read_op_rolled_reduce_bufs = intersection(read, written);
+        auto write_op_rolled_reduce_bufs =
+            intersection(write_op->buffers_read(), write_op->buffers_written());
+
+        // Dont shift register rolled-reduces
+        // If it's not rolled reduce on the buffer trying to optimize, it's fine
+        if (read_op_rolled_reduce_bufs.count(buf.name) == 0 &&
+            write_op_rolled_reduce_bufs.count(buf.name) == 0) {
+            cout << "Calculate DDs for creating shift registers." << endl;
+          auto dd =
+            dependence_distance_singleton(buf, inpt, outpt, sc);
+          if (dd.has_value()) {
+            int dd_raw = dd.get_value();
+            dd_raw -= hwinfo.compute_latency(write_op);
+            if (write_op->buffers_read().size() > 0) {
+              dd_raw -= hwinfo.load_latency(pick(write_op->buffers_read()));
+            }
+            dd_raw += hwinfo.load_latency(buf.name);
+
+            if (!(dd_raw >= 0)) {
+              cout << "Error: Negative dependence distance: " << dd_raw << endl;
+            }
+            assert(dd_raw >= 0);
+            map_insert(shift_registered_outputs, outpt, {inpt, dd_raw});
+          }
+        }
+      }
+    }
+  }
+  return shift_registered_outputs;
+}
+
+
+
+dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  map<string, vector<pair<string,int>>> shift_registered_outputs = determine_shift_reg_map_new(prg, buf, hwinfo);
+
+  dgraph dg;
+  bool fanin_node = false;
+  for (auto pt : shift_registered_outputs) {
+    string outpt = pt.first;
+    if (pt.second.size() > 1) {
+        //handle this case specially
+      for (auto pt_delay_pair: pt.second) {
+        string inpt = pt_delay_pair.first;
+        int delay = pt_delay_pair.second;
+        dg.add_fanin_edge(inpt, outpt, delay);
+      }
+      fanin_node = true;
+    } else {
+      for (auto pt_delay_pair: pt.second) {
+        string inpt = pt_delay_pair.first;
+        int delay = pt_delay_pair.second;
+        dg.add_edge(inpt, outpt, delay);
+      }
+
+    }
+  }
+
+  cout << "DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+//This pass will be called after shift register optimization, in order to find the port reuse,
+//now we only find the ports with same schedule,
+//but we give the threshold to give user a capability to find extra port sharing opportunity
+dgraph build_out_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo, int threshold) {
+
+  dgraph dg;
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs = determine_output_shift_reg_map(prg, buf, hwinfo);
+
+  cout << "out -> out srs: " << shift_registered_outputs_to_outputs.size() << endl;
+  for (auto pt : shift_registered_outputs_to_outputs) {
+    if (pt.second.second <= threshold) {
+      dg.add_edge(pt.second.first, pt.first, pt.second.second);
+    }
+  }
+
+  cout << "out2out DG: ..." << endl;
+  cout << dg << endl;
+  return dg;
+}
+
+std::set<string> output_port_sharing(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo, UBufferImpl& impl) {
+    std::set<string> done_pt = impl.get_sr_outpts();
+  if (done_pt.size())
+    return done_pt;
+  dgraph dg = build_out_to_out_shift_register_graph(options, prg, buf, hwinfo, 0);
+  vector<std::set<string>> port_groups;
+  for (auto it: dg.out_edges) {
+    bool added = false;
+    for (auto& group: port_groups) {
+      if (group.count(it.first)) {
+        group.insert(it.second.begin(), it.second.end());
+        added = true;
+        break;
+      }
+    }
+    if (!added) {
+      std::set<string> tmp = it.second;
+      tmp.insert(it.first);
+      port_groups.push_back(it.second);
+    }
+  }
+  for (auto grp: port_groups) {
+    cout << "port sharing groups: " << grp << endl;
+    for (auto it = grp.begin(); it != grp.end(); it ++) {
+      if (it != grp.begin()) {
+        impl.add_o2o_info(*grp.begin(), *it, 0);
+        done_pt.insert(*it);
+      }
+    }
+  }
+  return done_pt;
+}
+
+//helper function to create all the shift registered port
+void create_subbranch(const std::string& out_pt, dgraph& sr_graph, UBuffer& buf, UBufferImpl &impl) {
+    auto src2dst = sr_graph.get_sub_branch(out_pt);
+    cout << "\tsubbranch size: " << src2dst.size() << endl;
+    for (auto io_pair: src2dst) {
+        string inpt = io_pair.first;
+        string outpt = io_pair.second;
+        int delay = sr_graph.weight(inpt, outpt);
+        if (delay == 0) {
+            inpt = sr_graph.find_origin(inpt);
+        }
+        //auto bk = buf.compute_bank_info(inpt, outpt, delay);
+        //buf.add_bank_between(inpt, outpt, bk);
+        impl.add_o2o_info(inpt, outpt, delay);
+    }
+}
+
+dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+  dgraph shift_registers = build_in_to_out_shift_register_graph(options, prg, buf, hwinfo);
+
+  cout << "Naive Shift registers..." << endl;
+  cout << shift_registers << endl;
+  //cout << buf << endl;
+
+  dgraph dg;
+  for (auto it: shift_registers.fanin_edges) {
+    string dst = it.first;
+    cout << tab(2) << "get dst: " << it.first << endl;
+    for (auto src: it.second) {
+      int delay = shift_registers.weight(src, dst);
+      dg.add_fanin_edge(src, dst, delay);
+      cout << tab(4) << "src: " << src << ", weight = " << delay << endl;
+    }
+  }
+  //dg.fanin_edges = shift_registers.fanin_edges;
+  //for (auto it: dg.fanin_edges) {
+  //    cout << tab(2) << "get dst: " << it.first << endl;
+  //  string dst = it.first;
+  //  for (auto src: it.second) {
+  //      cout << tab(4) << "src: " << src << ", weight = " << shift_registers.weights.at({src, dst});
+  //    dg.weights[{src, dst}] = shift_registers.weights.at({src, dst});
+  //  }
+  //}
+  if (!shift_registers.has_nodes()) {
+    return dg;
+  }
+  for (auto inpt : buf.get_in_ports()) {
+    cout << "inpt: " << inpt << endl;
+    vector<pair<string, int> > vals;
+    //chances are that we only have fanin input in shift register and give up.
+    if (!shift_registers.out_edges.count(inpt))
+      continue;
+    for (auto v : shift_registers.out_edges.at(inpt)) {
+      vals.push_back({v, shift_registers.weight(inpt, v)});
+    }
+    sort_lt(vals, [](const pair<string, int> & data) {return data.second;});
+    for (auto v : vals) {
+      cout << tab(1) << v.first << " -(" << v.second << ")-> " << v.second << endl;
+    }
+
+    //TODO use option.threshold, this is the place to separate shift reg and row buffer
+    vector<vector<pair<string, int> > > reg_chains;
+    split_by(vals, reg_chains, [](const pair<string, int>& a, const pair<string, int>& b) {
+        return abs(a.second - b.second) < 20;
+        });
+
+    cout << "Groups..." << endl;
+    for (auto g : reg_chains) {
+      cout << tab(1) << "Group..." << endl;
+      dg.add_edge(inpt, g.at(0).first, shift_registers.weight(inpt, g.at(0).first));
+      for (int i = 1; i < g.size(); i++) {
+        dg.add_edge(g.at(i - 1).first, g.at(i).first, g.at(i).second - g.at(i - 1).second);
+      }
+      //for (auto e : g) {
+      //cout << tab(2) << e.first << " -> " << e.second << endl;
+      //}
+      //cout << endl;
+    }
+  }
+  cout << dg << endl;
+  //assert(false);
+
+  return dg;
+}
+
+UBufferImpl generate_optimized_memory_implementation(
+        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo) {
+    //TODO: possible bug to comment out
+    //if (prg.is_boundary(buf.name))
+    //    return impl;
+
+
+    //create ubufferimpl from analysis ubuffer data structure
+
+    cout << "create shift register for " << buf << endl;
+    auto impl = port_group2bank(options, prg, buf, hwinfo);
+    cout << impl << endl;
+    std::set<string> done_outpt= output_port_sharing(options, prg, buf, hwinfo, impl);
+
+    auto new_buf = delete_ports(done_outpt, buf);
+    cout << "After shift register optimization: " << impl << endl;
+    cout << "Done ports: " << done_outpt << endl;
+    cout << "reduced buffer: " << new_buf << endl;
+
+    if (!impl.is_pure_shift_register(new_buf.get_out_ports()))
+        generate_banks_garnet(options, new_buf, impl, hwinfo);
+
+
+
+    cout << "After banking optimization: " << impl << endl;
+    //impl.bank_merging(options);
+    impl.sort_bank_port();
+    cout << "After bank merging: " << impl << endl;
+    return impl;
+}
+
+
+//This function will go through the ubufferimpl data type
+//and create some essenstial information for garnet mapping
+
+void lower_to_garnet_implementation(CodegenOptions& options,
+        UBuffer& buf, UBufferImpl& impl, schedule_info& info) {
+
+
+  for (auto it: impl.bank_rddom) {
+    GarnetImpl CGRAImpl;
+    auto bank_id = it.first;
+    UBuffer target_buf = buf.generate_ubuffer(impl, info, bank_id);
+
+    //This is used for tighten the cyclic banking space
+    target_buf.tighten_iteration_domain();
+    target_buf.tighten_address_space();
+    target_buf.set_dim_id();
+
+    cout << "\n\tUBuffer after address tighten" << target_buf << endl;
+
+    //Determine the config mode
+    CGRAImpl.config_mode = buf.determine_config_mode(options, target_buf);
+
+    //If this is memory do double buffer optimization
+    //rewrite the ubuffer IR and change the cgpl control
+    isl_map* cgpl_schedule;
+    bool decouple_ctrl = false;
+    bool substract_glb_latency = false;
+    cgpl_ctrl_optimization(options, target_buf, CGRAImpl.config_mode,
+            cgpl_schedule, decouple_ctrl, substract_glb_latency);
+    CGRAImpl.decouple_ctrl = decouple_ctrl;
+    CGRAImpl.substract_glb_latency = substract_glb_latency;
+    CGRAImpl.cgpl_schedule = cgpl_schedule;
+
+    cout << "\n\tUBuffer after cgpl optimization" << target_buf << endl;
+
+    //Fisrt create the shift register
+    create_accumulation_register_and_rewrite_buf(options, target_buf, CGRAImpl);
+
+    target_buf.remove_redundant_dim();
+    //Generate the ubuffer module for CGRA
+    target_buf.simplify_floor_div_expr();
+
+    if (CGRAImpl.config_mode == "lake") {
+      map<string, UBuffer> vectorized_buf;
+      string ub_ins_name = "ub_" + target_buf.name;
+      vectorized_buf.insert(
+              {target_buf.name+ "_ubuf", target_buf});
+      auto capacity = total_capacity(target_buf);
+
+      cout << "vectorization buffer capacity: " << capacity << endl;
+      CoreIR::Instance* buf;
+      cout << "vectorization buf name: " << target_buf.name << endl;
+      buffer_vectorization(options, {target_buf.name+ "_ubuf"}, vectorized_buf);
+      //This function is not needed
+      //vectorized_buf = decouple_multi_tile_ubuffer(options, vectorized_buf);
+      for (auto buf: vectorized_buf) {
+          cout << "after vectorization codegen: " << buf.first << endl << buf.second << endl;
+          CGRAImpl.sub_component.insert(buf);
+      }
+    }
+    CGRAImpl.target_buf = target_buf;
+
+    //Save the lower information into ubuffer impl
+    impl.lowering_info[bank_id] = CGRAImpl;
+  }
+}
+
+
+
+UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo) {
+    UBufferImpl impl;
+
+    //int in_port_width = options.rtl_options.max_inpt;
+    //int out_port_width = options.rtl_options.max_outpt;
+    auto sr_graph = build_shift_registers(options, prg, buf, hwinfo);
+
+    if (!sr_graph.has_nodes())
+      return impl;
+    for (auto it: sr_graph.fanin_edges) {
+        for (auto src: it.second) {
+            cout << "dst: " << it.first << endl;
+            cout << "src: " << src << endl;
+            int delay = sr_graph.weights.at({src, it.first});
+            if (delay < options.merge_threshold) {
+                impl.add_fanin_info(src, it.first, delay);
+            } else {
+                //TODO: add support for row buffer
+                assert(false);
+            }
+        }
+    }
+
+    //Currently only group output port
+    //TODO: support input port grouping in the future
+    for (auto src: buf.get_in_ports()) {
+        vector<pair<string, int> > out_delays;
+
+        //chances are that we have only fanin
+        if (sr_graph.out_edges.count(src) == 0)
+            continue;
+
+        for (auto dst: sr_graph.out_edges.at(src)) {
+            cout << "edge: " << src << "=>" << dst << ", w=" << sr_graph.weight(src, dst) << endl;
+            out_delays.push_back({dst, sr_graph.weight(src, dst)});
+        }
+        sort(out_delays.begin(), out_delays.end(),
+                [](const pair<string, int>& l,const pair<string, int>& r) {
+                    return l.second > r.second;
+                });
+        for (auto it: out_delays) {
+            cout << "after sort: outpt->" <<it.first << ", w=" << it.second << endl;
+        }
+
+        //The data structure that carry the port and delay informations
+        //std::set<string> out_pts;
+        //map<string, int> read_delay;
+        while(out_delays.size()) {
+            auto pt_delay_pair = out_delays.back();
+            out_delays.pop_back();
+            string pt_name = pt_delay_pair.first;
+            int delay = pt_delay_pair.second;
+
+            //Rewrite the ubuffer prepare for vectorization
+            int depth = sr_graph.max_delay_to_leaf(pt_name);
+            if (depth > 0) {
+                //Only save this meta data in shift register impl
+                impl.shift_depth[pt_name] = depth;
+
+                //TODO: move the access pattern rewrite into ubuffer generation
+                //auto outpt_info = buf.get_shift_pt_access_with_sched(pt_name, depth);
+                //auto new_access_map = outpt_info.first;
+                //auto new_sched = outpt_info.second;
+                //buf.replace_pt(pt_name, new_access_map, new_sched);
+            }
+
+            if (pt_delay_pair.second <= options.merge_threshold) {
+                //add new sr only chain
+                //Rewrite the access map and schedule
+                //auto sr_bank = buf.compute_bank_info(src, pt_name, delay);
+                //buf.add_bank_between(src, pt_name, sr_bank);
+                create_subbranch(pt_name, sr_graph, buf, impl);
+
+                //TODO: use UBufferImpl to substite bank in ubuffer
+                impl.add_i2o_info(src, pt_name, delay);
+                //No need to add a memory tile
+            } else {
+                //out_pts.insert(pt_name);
+                //read_delay.insert(pt_delay_pair);
+                ////saturize the output ports or the last remaining port
+                //if ((out_pts.size() == out_port_width) || (out_delays.size() == 0)) {
+                //    //add the bank that require memory tile
+                //    auto super_bank = buf.compute_bank_info({src}, out_pts, read_delay);
+                //    int bank = impl.add_new_bank_between({src}, out_pts, to_set(buf.global_range()));
+                //    impl.sequentially_assign_inpt({src}, bank);
+                //    impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_pts), bank);
+                //    for (auto out_pt: out_pts) {
+                //        buf.add_bank_between(src, out_pt, super_bank);
+                //        create_subbranch(out_pt, sr_graph, buf, impl);
+
+                //        //TODO: use UBufferImpl to substite bank in ubuffer
+                //        impl.add_i2o_info(src, out_pt, read_delay.at(out_pt));
+                //    }
+                //    read_delay.clear();
+                //    out_pts.clear();
+                //}
+                impl.add_i2o_info(src, pt_name, pt_delay_pair.second);
+                //Need to add a bank of memory tile
+                //TODO: possible bug rddom set to the whole buffer
+                int bank = impl.add_new_bank_between({src}, {pt_name},
+                        //to_set(buf.global_range()));
+                        to_set(unn(range(buf.access_map.at(src)), range(buf.access_map.at(pt_name)))));
+                map_insert(impl.bank_inpt2writers, bank, {src});
+                map_insert(impl.bank_outpt2readers, bank, {pt_name});
+                create_subbranch(pt_name, sr_graph, buf, impl);
+            }
+        }
+
+    }
+    buf.print_bank_info();
+    cout << sr_graph;
+    cout << impl;
+
+    return impl;
+
+    //Add a visit pass on the sr graph for all input, take the data use the threshold
+}
+
+isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl) {
+  cout << "Building implementation of " << buf.name << " Using Embarassing Banking. " << endl;
+
+  vector<int> extents;
+  extents = extents_by_dimension(buf);
+  for (auto d : impl.partition_dims) {
+    impl.partitioned_dimension_extents[d] = extents.at(d);
+  }
+
+  int num_banks = 1;
+  for (auto ent : impl.partitioned_dimension_extents) {
+    num_banks *= ent.second;
+  }
+
+  // Creating a map from bank numbers to values that read them
+  int bank_stride = 1;
+  vector<string> dvs;
+  vector<string> coeffs;
+  for (int d = 0; d < buf.logical_dimension(); d++) {
+    dvs.push_back("d" + str(d));
+    if (elem(d, impl.partition_dims)) {
+      coeffs.push_back(str(bank_stride) + "*" + dvs.at(d));
+      bank_stride *= map_find(d, impl.partitioned_dimension_extents);
+    }
+  }
+
+  coeffs.push_back("0");
+  string bank_func = curlies(buf.name + bracket_list(dvs) + " -> Bank[" + sep_list(coeffs, "", "", " + ") + "]");
+
+  cout << "Bank map: " << bank_func << endl;
+  //assert(false);
+  isl_map* m = isl_map_read_from_str(buf.ctx, bank_func.c_str());
+
+  //There could have been some banks for shift register
+  int cur_bank_number = impl.get_bank_num();
+
+  //TODO: think a more systematic way to keep both delay buffer and banking
+  //TODO: should move this into a separate function
+  if (cur_bank_number != 0) {
+    //move the shift register back in banking, from large to small
+    for (int b = cur_bank_number -1; b >= 0; b --) {
+      impl.bank_readers[b + num_banks] = impl.bank_readers.at(b);
+      impl.bank_readers.erase(b);
+      impl.bank_writers[b + num_banks] = impl.bank_writers.at(b);
+      impl.bank_writers.erase(b);
+      impl.bank_rddom[b+num_banks] = impl.bank_rddom.at(b);
+      for (auto& it: impl.outpt_to_bank) {
+        if (it.second.count(b)) {
+          it.second.erase(b);
+          it.second.insert(b+num_banks);
+        }
+      }
+      for (auto& it: impl.inpt_to_bank) {
+        if (it.second.count(b)) {
+          it.second.erase(b);
+          it.second.insert(b+num_banks);
+        }
+      }
+    }
+  }
+
+  for (auto pt : buf.get_all_ports()) {
+    //cout << "pt :" << pt << endl;
+    for (int b = 0; b < num_banks; b++) {
+      isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
+      assert(!empty(bnk));
+
+      isl_map* bnk_map = dot(to_map(buf.access_map.at(pt)), m);
+      //cout << "\tBank map NO: " << b << " is " << str(bnk_map) << endl;
+      isl_set* accesses_to_bank = its(range(bnk_map), bnk);
+
+      //cout << "\taccess to_ bank: " << str(accesses_to_bank) << endl;
+      if (!empty(accesses_to_bank)) {
+        if (buf.is_out_pt(pt)) {
+          impl.bank_readers[b].insert(pt);
+          impl.outpt_to_bank[pt].insert(b);
+        } else {
+          impl.bank_writers[b].insert(pt);
+          impl.inpt_to_bank[pt].insert(b);
+        }
+      }
+    }
+  }
+
+  return m;
+}
+
+
+void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info) {
+
+    //TODO: implement more banking strategies
+    maybe<std::set<int> > embarassing_banking =
+      embarassing_partition(options, buf);
+    bool has_embarassing_partition = embarassing_banking.has_value();
+    if (has_embarassing_partition) {
+      buf.banking.partition = "cyclic";
+      if (embarassing_banking.get_value().size() == buf.logical_dimension()) {
+        cout << buf.name << " is really a register file" << endl;
+      }
+
+      EmbarrassingBankingImpl bank_impl(impl);
+
+      bank_impl.partition_dims = embarassing_banking.get_value();
+      auto bank_func = build_buffer_impl_embarrassing_banking(buf, hw_info, bank_impl);
+
+      cout << "bank func: " << str(bank_func) << endl;
+      cout << "After banking: " << bank_impl << endl;
+
+      //take the ubuffer implementation add bank to ubuffer
+      for (int bank_id = 0; bank_id < bank_impl.get_partition_bank_num(); bank_id ++) {
+        isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank["+str(bank_id) + "]").c_str());
+        auto rddom = to_uset(domain(its_range(bank_func, bnk)));
+        cout << "rddom before its: " << str(rddom) << endl;
+        rddom = coalesce(its(rddom, buf.global_range()));
+        cout << "rddom after its: " << str(rddom) << endl;
+        auto point = pick(get_points(bnk));
+        cout << "ADD BANK!\n Bank id: " << str(point) << endl;
+        std::set<string> input_sets = bank_impl.bank_writers.at(bank_id);
+        std::set<string> output_sets = bank_impl.bank_readers.at(bank_id);
+        cout << "Before grouping: " << endl;
+        cout << "\tinput set: " << input_sets << endl;
+        cout << "\toutput set: " << output_sets << endl;
+        auto bank_IOs = buf.port_grouping(options, impl, rddom, input_sets, output_sets);
+        for (auto bank_IO_pair: bank_IOs) {
+            cout << "input group: " << bank_IO_pair.first << endl;
+            cout << "output group: " << bank_IO_pair.second << endl;
+          //TODO potential bug for multi bank with broad casting case
+          //TODO bank is not a good intermediate representation and contains too much internal data
+          //     use buffer impl then
+          //if ((bank_IO_pair.first.size() == 1) && (bank_IO_pair.second.size() == 1)) {
+          //  string inpt = pick(bank_IO_pair.first);
+          //  string outpt = pick(bank_IO_pair.second);
+          //  maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+          //  assert(delay_info.has_value());
+          //  auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+          //  buf.add_bank_between(inpt, outpt, bnk_info);
+
+          //  //impl.add_new_bank_between({inpt}, {outpt}, to_set(rddom));
+          //} else {
+          //  auto input_sets = bank_IO_pair.first;
+          //  auto output_sets = bank_IO_pair.second;
+          //  cout << "input sets: " << input_sets << endl;
+          //  cout << "output sets: " << output_sets << endl;
+          //  auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+          //  buf.add_bank_between(input_sets, output_sets, bnk_info);
+
+          //  //impl.add_new_bank_between(input_sets, output_sets, to_set(rddom));
+          //}
+        }
+        //if (buf.overlap_schedule(input_sets) || buf.overlap_schedule(output_sets)) {
+        //    cout << "inputs for bank: " << input_sets << endl;
+        //    cout << "outputs for bank: " << output_sets << endl;
+        //    assert(input_sets.size() == 1);
+        //  for (string inpt : input_sets) {
+        //    for (string outpt: output_sets) {
+        //      //auto bnk_info = buf.compute_bank_info(rddom, point, {inpt}, {outpt});
+        //      maybe<int> delay_info = buf.dependence_distance_max(inpt, outpt);
+        //      assert(delay_info.has_value());
+        //      auto bnk_info = buf.compute_bank_info(inpt, outpt, delay_info.get_value());
+        //      buf.add_bank_between(inpt, outpt, bnk_info);
+        //    }
+        //    buf.merge_bank_broadcast(inpt);
+        //  }
+        //} else {
+        //    auto bnk_info = buf.compute_bank_info(rddom, point, input_sets, output_sets);
+        //    buf.add_bank_between(input_sets, output_sets, bnk_info);
+        //}
+      }
+    }
+    //else if (auto bank_impl = buf.get_cyclic_banking_implement(impl);
+    //            bank_impl.get_bank_num() > 1) {
+    //            //false) {
+
+    else if (auto cyclic_bank = cyclic_partition(options, buf);
+            cyclic_bank.has_value()) {
+
+        cout << "Use cyclic banking algorithm " << endl;
+        CyclicBankingImpl bank_impl(impl, cyclic_bank.get_value());
+        buf.banking.partition = "cyclic";
+        isl_map* bank_partition_map = bank_impl.get_bank_map(buf);
+        for (int b = 0; b < bank_impl.get_bank_num(); b++) {
+          isl_set* bnk = isl_set_read_from_str(buf.ctx, curlies("Bank[" + str(b) + "]").c_str());
+          //This is rddom
+          isl_set* accesses_to_bank = simplify(::domain( its_range(bank_partition_map, bnk)));
+          cout << "rddom: " << str(accesses_to_bank) << endl;
+
+          //Add port
+          std::set<string> input_sets;// = impl.bank_writers.at(b);
+          std::set<string> output_sets;// = impl.bank_readers.at(b);
+          for (auto pt : buf.get_all_ports()) {
+            assert(!empty(bnk));
+
+            //cout << "am: " << str(buf.access_map.at(pt)) << endl;
+            isl_map* bnk_map = its_range(to_map(buf.access_map.at(pt)), accesses_to_bank);
+            //cout << "bank map: " << str(bnk_map) << endl;
+            if (!empty(bnk_map)) {
+              if (buf.is_out_pt(pt)) {
+                output_sets.insert(pt);
+                //impl.bank_readers[b].insert(pt);
+                //impl.outpt_to_bank[pt].insert(b);
+              } else {
+                input_sets.insert(pt);
+                //impl.bank_writers[b].insert(pt);
+                //impl.inpt_to_bank[pt].insert(b);
+              }
+            }
+          }
+          cout << "ADD BANK!\n Bank id: " << b << endl;
+          cout << "bank impl before port group: " << impl << endl;
+          cout << "Before grouping: " << endl;
+          cout << "\tinput set: " << input_sets << endl;
+          cout << "\toutput set: " << output_sets << endl;
+          auto rddom = coalesce(its(to_uset(accesses_to_bank), buf.global_range()));
+          auto bank_IOs = buf.port_grouping(options, impl,
+                  rddom, input_sets, output_sets);
+        }
+        cout << impl << endl;
+    }
+    //FIXME: ASPLOSHACK
+    //This is a hack , we do not know which hierarchy of memory to map at this point
+    else if (buf.num_in_ports() <= options.mem_hierarchy.at("mem").get_inpt_num() &&
+            buf.num_out_ports() <= options.mem_hierarchy.at("mem").get_outpt_num()) {
+        auto rddom = buf.global_range();
+        auto inpts = buf.get_in_ports();
+        auto outpts = buf.get_out_ports();
+        std::set<string> in_port_set = std::set<string>(inpts.begin(), inpts.end());
+        std::set<string> out_port_set = std::set<string>(outpts.begin(), outpts.end());
+        //auto bnk_info = buf.compute_bank_info(in_port_set, out_port_set);
+        //buf.add_bank_between(in_port_set, out_port_set, bnk_info);
+        int impl_bank = impl.add_new_bank_between(in_port_set, out_port_set, to_set(buf.global_range()));
+        cout << "IO of ubuffer: " << in_port_set << out_port_set << endl;
+        impl.sequentially_assign_inpt(buf.sort_pt_by_bundle(in_port_set), impl_bank);
+        impl.sequentially_assign_outpt(buf.sort_pt_by_bundle(out_port_set), impl_bank);
+    }
+    else {
+
+        cout << "Use exhaustive banking! " << endl;
+
+        //This function may stuck in double buffer case
+        buf.generate_banks(options);
+        buf.parse_exhaustive_banking_into_impl(impl);
+        cout << "After exhaustive banking:\n " << impl << endl;
+        //cout << "CANNOT support by current banking strategies!" << endl;
+    }
+}
+
+int buffer_capacity(UBuffer& buf) {
+  int c = 0;
+  for (auto b : buf.get_banks()) {
+    if (b.tp == INNER_BANK_OFFSET_STACK) {
+      c += b.maxdelay;
+    } else {
+      assert(b.rddom != nullptr);
+      c += int_upper_bound(card(b.rddom));
+    }
+  }
+  return c * buf.port_widths;
+}
+

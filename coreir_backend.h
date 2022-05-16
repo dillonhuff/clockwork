@@ -109,6 +109,7 @@ struct affine_controller_ctrl {
   isl_set* dom;
 };
 
+CoreIR::Wireable* op_control_wires(CoreIR::Instance* ctrl);
 
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals, int width);
@@ -160,7 +161,8 @@ void generate_coreir_without_ctrl(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    schedule_info& hwinfo);
+    schedule_info& hwinfo,
+    string dse_compute_filename);
 
   CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w);
@@ -180,16 +182,6 @@ CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
     CoreIR::Wireable* input,
     int elem_width,
     int num_elems);
-
-map<string, pair<string, int> > determine_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
-
-vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
-        prog& prg,
-    UBuffer& buf,
-    schedule_info& hwinfo);
 
 
 
@@ -234,7 +226,7 @@ void generate_platonic_ubuffer(CodegenOptions& options,
 
 void generate_lake_tile_verilog(CodegenOptions& options, CoreIR::Instance* buf);
 
-void add_default_initial_block();
+void add_default_initial_block(string, string);
 
 CoreIR::Wireable* delay_by(CoreIR::ModuleDef* bdef,
     CoreIR::Wireable* w,

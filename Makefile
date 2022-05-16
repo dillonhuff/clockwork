@@ -9,7 +9,7 @@ endif
 
 TARGET = clockwork
 
-CXX_FLAGS = -std=c++17 -g -O0 -I $(BARVINOK_PATH) -I $(OPT_PATH)
+CXX_FLAGS = -std=c++17 -g -O0 -I $(BARVINOK_PATH) -I $(OPT_PATH) -I .
 
 #ifneq ($(COREIR),1)
 #CXX_FLAGS = -std=c++11 -I $(BARVINOK_PATH) -I $(OPT_PATH)
@@ -29,8 +29,8 @@ $(info CoreIR Path is [${COREIR_PATH}])
 COREIR_INCLUDE = $(COREIR_PATH)/include
 COREIR_LIB = $(COREIR_PATH)/lib
 
-CXX_FLAGS += -I . -I $(COREIR_INCLUDE) -D COREIR
-LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
+CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
+LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib -lcoreir-float -lcoreir-float_DW
 endif
 
 ifeq ($(CGRAFLOW),1)
@@ -43,7 +43,7 @@ LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(TEST_FILES))
 PROGS_CPP_FILES := $(shell find example_progs -name "*.cpp")
 PROGS_OBJ := $(patsubst example_progs/%.cpp, $(BUILD_DIR)/%.o, $(PROGS_CPP_FILES))
 
-LIB_CPP_FILES = qexpr.cpp expr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp ubuffer.cpp coreir_backend.cpp cgralib.cpp cwlib.cpp options.cpp lake_target.cpp utils.cpp simple_example_progs.cpp rdai_collateral.cpp verilog_backend.cpp
+LIB_CPP_FILES = qexpr.cpp expr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp ubuffer.cpp coreir_backend.cpp cgralib.cpp cwlib.cpp options.cpp lake_target.cpp utils.cpp simple_example_progs.cpp rdai_collateral.cpp verilog_backend.cpp cgra_flow.cpp
 LIB_CPP_FILES += build_set_test.cpp prog_splitting_test.cpp
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(LIB_CPP_FILES))
 #LIB_CPP_FILES += $(PROGS_CPP_FILES)
