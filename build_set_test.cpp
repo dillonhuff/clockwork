@@ -20767,7 +20767,7 @@ void generate_fpga_clockwork_code_catapult(prog& prg) {
 void fpga_asplos_tests() {
 
   //auto test_programs = stencil_programs();
-  auto test_programs = {harris_color()};//resnet_output_stationary()};
+  auto test_programs = {matmul()};//resnet_output_stationary()};
   for (auto prg : test_programs) {
     cout << "==== FPGA clockwork code for " << prg.name << endl;
     break_up_multi_channel_inputs(prg);
