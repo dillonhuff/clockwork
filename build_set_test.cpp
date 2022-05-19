@@ -15207,15 +15207,15 @@ void test_pond(string dir, bool run_verilator=true) {
   //test_apps.push_back(nlmeans_rolled_7x7());
 
   //test_apps.push_back(nlmeans_simple_blur());
-  //test_apps.push_back(nlmeans_simple());
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
-  //test_apps.push_back(three_level_pond_copy());
-  //test_apps.push_back(three_level_pond_rolled());
-  //test_apps.push_back(conv_1_3());
-  //test_apps.push_back(conv_rolled());
-  //test_apps.push_back(complex_mem_pond_rolled());
-  //test_apps.push_back(complex_mem_pond());
+  test_apps.push_back(nlmeans_simple());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
+  test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(conv_1_3());
+  test_apps.push_back(conv_rolled());
+  test_apps.push_back(complex_mem_pond_rolled());
+  test_apps.push_back(complex_mem_pond());
   test_apps.push_back(resnet_init_unroll_tile());
 
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
@@ -15407,30 +15407,30 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
   //camera pipeline variant tests
   //test_apps.push_back(camera_pipeline_2x2_unroll());
-  ////Still not work need to add a fanin pass support delay row buffer
-  ////test_apps.push_back(camera_pipeline_extra_buf_glb());
-  //test_apps.push_back(camera_pipeline_extra_buf());
-  //test_apps.push_back(camera_pipeline_unrolly());
-  //test_apps.push_back(camera_pipeline_2x2());
+  //Still not work need to add a fanin pass support delay row buffer
+  //test_apps.push_back(camera_pipeline_extra_buf_glb());
+  test_apps.push_back(camera_pipeline_extra_buf());
+  test_apps.push_back(camera_pipeline_unrolly());
+  test_apps.push_back(camera_pipeline_2x2());
 
-  ////ISSCC application without unroll
-  //test_apps.push_back(harris_color());
-  //test_apps.push_back(harris_color_unroll4());
-  //test_apps.push_back(gaussian_isscc());
-  //test_apps.push_back(camera_pipeline_isscc());
-  //test_apps.push_back(unsharp_isscc());
+  //ISSCC application without unroll
+  test_apps.push_back(harris_color());
+  test_apps.push_back(harris_color_unroll4());
+  test_apps.push_back(gaussian_isscc());
+  test_apps.push_back(camera_pipeline_isscc());
+  test_apps.push_back(unsharp_isscc());
 
-  ////GLB tests
-  //test_apps.push_back(unsharp_glb());
-  //test_apps.push_back(gaussian_glb2());
-  //test_apps.push_back(camera_pipeline_glb());
-  //test_apps.push_back(harris_glb2());
-  //test_apps.push_back(up_sample_glb());
-  //test_apps.push_back(gaussian_glb8());
+  //GLB tests
+  test_apps.push_back(unsharp_glb());
+  test_apps.push_back(gaussian_glb2());
+  test_apps.push_back(camera_pipeline_glb());
+  test_apps.push_back(harris_glb2());
+  test_apps.push_back(up_sample_glb());
+  test_apps.push_back(gaussian_glb8());
 
-  ////Dense Linear algebra
-  //test_apps.push_back(glb_channel_reduction());
-  //test_apps.push_back(matmul());
+  //Dense Linear algebra
+  test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(matmul());
 
   //Simplified multi-tile DNN application
   //test_apps.push_back(resnet_init_unroll_tile());
@@ -15443,27 +15443,27 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
-  //test_apps.push_back(resnet1_docker());
-  //test_apps.push_back(resnet1());
-  //test_apps.push_back(resnet_1x1());
-  //test_apps.push_back(resnet3_1());
-  //test_apps.push_back(resnet4_x());
-  //test_apps.push_back(resnet5_1());
-  //test_apps.push_back(resnet5_x());
-  //test_apps.push_back(resnet5_x_new());
-  //test_apps.push_back(resnet5_1_new());
-  //test_apps.push_back(resnet5_1_unroll());
-  //test_apps.push_back(resnet5_1_unroll_cyclic());
-  //test_apps.push_back(resnet5_glb_unroll());
-  //test_apps.push_back(resnet_multi_channel());
+  test_apps.push_back(resnet1_docker());
+  test_apps.push_back(resnet1());
+  test_apps.push_back(resnet_1x1());
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet4_x());
+  test_apps.push_back(resnet5_1());
+  test_apps.push_back(resnet5_x());
+  test_apps.push_back(resnet5_x_new());
+  test_apps.push_back(resnet5_1_new());
+  test_apps.push_back(resnet5_1_unroll());
+  test_apps.push_back(resnet5_1_unroll_cyclic());
+  test_apps.push_back(resnet5_glb_unroll());
+  test_apps.push_back(resnet_multi_channel());
 
   //two different resnet5x tests
-  //test_apps.push_back(resnet5_x_unroll());
-  //test_apps.push_back(resnet5_x_unroll_mic());
+  test_apps.push_back(resnet5_x_unroll());
+  test_apps.push_back(resnet5_x_unroll_mic());
 
-  ////Test with non double buffer, not tested with db
-  //test_apps.push_back(resnet_output_stationary_small());
-  //test_apps.push_back(resnet_output_stationary_tiny());
+  //Test with non double buffer, not tested with db
+  test_apps.push_back(resnet_output_stationary_small());
+  test_apps.push_back(resnet_output_stationary_tiny());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
@@ -18476,6 +18476,7 @@ void align_glb_load_start_cycle(schedule_info& sched, prog& prg) {
     map<string, int> delay_map;
     for (auto name : kernels_to_be_aligned) {
       auto lp = prg.find_non_op(name);
+      //this is the starting cycle under the coarse loop level, no matter how deep the loopnest is
       delay_map[name] = sched.starting_delay_to_leaf(lp);
       max_delay = max(delay_map.at(name), max_delay);
     }
@@ -19678,7 +19679,9 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
 
   //sequential_schedule(sched, root, prg);
   asap_inner_loops_schedule(sched, root, prg, 1);
+  auto init_sched = op_start_times_map(sched, prg);
   cout << "Computed initial sequential schedule" << endl;
+  cout << "\tinit schedule : " << str(init_sched)  << endl;
   sanity_check_iis(sched);
 
 
