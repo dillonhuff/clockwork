@@ -1,32 +1,32 @@
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [7417] }
+  // max: { [8200] }
 
-  // min: { [7201] }
-  // max: { [14507] }
+  // min: { [8201] }
+  // max: { [15507] }
 
-  // min: { [7201] }
-  // max: { [14507] }
+  // min: { [8201] }
+  // max: { [15507] }
 
   // min: { [1] }
   // max: { [7200] }
 
-  // min: { [1] }
-  // max: { [216] }
-
-  // min: { [14509] }
-  // max: { [16860] }
-
   // min: { [7201] }
-  // max: { [14507] }
+  // max: { [7416] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [22313] }
+  // max: { [24664] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [8201] }
+  // max: { [15507] }
+
+  // min: { [7417] }
+  // max: { [8200] }
+
+  // min: { [7417] }
+  // max: { [8200] }
 
   // sched min: { [1] }
-  // sched max: { [16860] }
+  // sched max: { [24664] }
 module cgralib_Mem_amber__IDconv_stencil_0__ctrl_width16__has_chain_enTrue__has_external_addrgenTrue__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__is_romFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;

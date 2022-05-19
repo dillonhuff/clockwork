@@ -1317,20 +1317,16 @@
           ["hw_input_stencil_op_hcompute_hw_input_stencil_write_valid","Bit"]
         ]],
         "instances":{
-          "inner_compute":{
-            "modref":"global.hcompute_hw_input_stencil"
-          },
           "op_hcompute_hw_input_stencil_flow_ctrl":{
             "modref":"global.flow_ctrl__U0"
           }
         },
         "connections":[
-          ["self.input_copy_stencil_op_hcompute_hw_input_stencil_read.0","inner_compute.in0_input_copy_stencil.0"],
-          ["self.hw_input_stencil_op_hcompute_hw_input_stencil_write.0","inner_compute.out_hw_input_stencil"],
           ["self.input_copy_stencil_op_hcompute_hw_input_stencil_read_ready","op_hcompute_hw_input_stencil_flow_ctrl.ready_in_0"],
           ["self.hw_input_stencil_op_hcompute_hw_input_stencil_write_ready","op_hcompute_hw_input_stencil_flow_ctrl.ready_out_0"],
           ["self.input_copy_stencil_op_hcompute_hw_input_stencil_read_valid","op_hcompute_hw_input_stencil_flow_ctrl.valid_in_0"],
-          ["self.hw_input_stencil_op_hcompute_hw_input_stencil_write_valid","op_hcompute_hw_input_stencil_flow_ctrl.valid_out_0"]
+          ["self.hw_input_stencil_op_hcompute_hw_input_stencil_write_valid","op_hcompute_hw_input_stencil_flow_ctrl.valid_out_0"],
+          ["self.input_copy_stencil_op_hcompute_hw_input_stencil_read.0","self.hw_input_stencil_op_hcompute_hw_input_stencil_write.0"]
         ]
       },
       "cu_op_hcompute_hw_output_stencil":{
@@ -1344,20 +1340,16 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write_valid","Bit"]
         ]],
         "instances":{
-          "inner_compute":{
-            "modref":"global.hcompute_hw_output_stencil"
-          },
           "op_hcompute_hw_output_stencil_flow_ctrl":{
             "modref":"global.flow_ctrl__U6"
           }
         },
         "connections":[
-          ["self.nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read.0","inner_compute.in0_nearest_neighbor_stencil.0"],
-          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","inner_compute.out_hw_output_stencil"],
           ["self.nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_ready","op_hcompute_hw_output_stencil_flow_ctrl.ready_in_0"],
           ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write_ready","op_hcompute_hw_output_stencil_flow_ctrl.ready_out_0"],
           ["self.nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read_valid","op_hcompute_hw_output_stencil_flow_ctrl.valid_in_0"],
-          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write_valid","op_hcompute_hw_output_stencil_flow_ctrl.valid_out_0"]
+          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write_valid","op_hcompute_hw_output_stencil_flow_ctrl.valid_out_0"],
+          ["self.nearest_neighbor_stencil_op_hcompute_hw_output_stencil_read.0","self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0"]
         ]
       },
       "cu_op_hcompute_nearest_neighbor_stencil":{
@@ -1371,20 +1363,16 @@
           ["nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write_valid","Bit"]
         ]],
         "instances":{
-          "inner_compute":{
-            "modref":"global.hcompute_nearest_neighbor_stencil"
-          },
           "op_hcompute_nearest_neighbor_stencil_flow_ctrl":{
             "modref":"global.flow_ctrl__U3"
           }
         },
         "connections":[
-          ["self.hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read.0","inner_compute.in0_hw_input_stencil.0"],
-          ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write.0","inner_compute.out_nearest_neighbor_stencil"],
           ["self.hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read_ready","op_hcompute_nearest_neighbor_stencil_flow_ctrl.ready_in_0"],
           ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write_ready","op_hcompute_nearest_neighbor_stencil_flow_ctrl.ready_out_0"],
           ["self.hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read_valid","op_hcompute_nearest_neighbor_stencil_flow_ctrl.valid_in_0"],
-          ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write_valid","op_hcompute_nearest_neighbor_stencil_flow_ctrl.valid_out_0"]
+          ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write_valid","op_hcompute_nearest_neighbor_stencil_flow_ctrl.valid_out_0"],
+          ["self.nearest_neighbor_stencil_op_hcompute_nearest_neighbor_stencil_write.0","self.hw_input_stencil_op_hcompute_nearest_neighbor_stencil_read.0"]
         ]
       },
       "flow_ctrl__U0":{

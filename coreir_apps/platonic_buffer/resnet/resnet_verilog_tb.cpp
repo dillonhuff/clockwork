@@ -3,6 +3,20 @@
 #include "verilated.h"
 #include "Vresnet.h"
 
+#include "verilated_vcd_c.h"
+
+vluint64_t main_time = 0;
+double sc_time_stamp() {
+  return main_time;
+}
+
+void dump_trace(VerilatedVcdC* tfp) {
+  for (int i = 0; i < 5; i ++) {
+    tfp->dump(main_time);
+    main_time++;
+  }
+}
+
 int main() {
   ofstream fout("regression_result_resnet_verilog.txt");
   HWStream<hw_uint<16 > > hw_input_stencil;
@@ -33,25 +47,38 @@ int main() {
   }
 
   Vresnet dut;
+  Vresnet* dut_ptr = &dut;
+  Verilated::traceEverOn(true);
+  VerilatedVcdC* tfp = new VerilatedVcdC;
+  dut_ptr->trace(tfp, 99);
+  tfp->open("sim_wave.vcd");
+
   dut.clk = 0;
   dut.eval();
+  dump_trace(tfp);
   dut.rst_n = 0;
   dut.eval();
+  dump_trace(tfp);
   dut.rst_n = 1;
   dut.eval();
+  dump_trace(tfp);
   dut.clk = 0;
   dut.eval();
+  dump_trace(tfp);
   dut.flush = 1;
   dut.clk = 1;
   dut.eval();
+  dump_trace(tfp);
   dut.flush = 0;
   dut.clk = 0;
   dut.eval();
+  dump_trace(tfp);
   *(dut.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read) = 0;
   *(dut.hw_kernel_stencil_op_hcompute_hw_kernel_global_wrapper_stencil_read) = 0;
   int hw_output_stencil_op_hcompute_hw_output_stencil_write_valid_count = 0;
   dut.clk = 0;
   dut.eval();
+  dump_trace(tfp);
   for (int t = 0; t < (int) pow(2, 16); t++) {
     cout << "t = " << t << endl;
     if (dut.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read_en) {
@@ -70,8 +97,10 @@ int main() {
     }
     dut.clk = 0;
     dut.eval();
+    dump_trace(tfp);
     dut.clk = 1;
     dut.eval();
+    dump_trace(tfp);
   }
     cout << hw_output_stencil_op_hcompute_hw_output_stencil_write_valid_count << endl;
   cout << "# of elements waiting in: hw_input_stencil = " << hw_input_stencil.num_waiting() << endl;

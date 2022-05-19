@@ -1,47 +1,44 @@
-  // min: { [8209] }
-  // max: { [8992] }
+  // min: { [21077] }
+  // max: { [21860] }
 
-  // min: { [901] }
-  // max: { [8207] }
+  // min: { [2261] }
+  // max: { [9567] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [1477] }
+  // max: { [2260] }
 
-  // min: { [8209] }
-  // max: { [8992] }
+  // min: { [17157] }
+  // max: { [17940] }
 
-  // min: { [8209] }
-  // max: { [8992] }
+  // min: { [18725] }
+  // max: { [19508] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [1477] }
+  // max: { [2260] }
 
-  // min: { [901] }
-  // max: { [8207] }
-
-  // min: { [1] }
-  // max: { [900] }
-
-  // min: { [8209] }
-  // max: { [8992] }
+  // min: { [2261] }
+  // max: { [9567] }
 
   // min: { [1] }
   // max: { [900] }
 
-  // min: { [1] }
-  // max: { [784] }
-
-  // min: { [1] }
-  // max: { [784] }
-
-  // min: { [1] }
-  // max: { [784] }
-
-  // min: { [901] }
-  // max: { [8207] }
+  // min: { [19509] }
+  // max: { [20292] }
 
   // min: { [1] }
   // max: { [900] }
+
+  // min: { [1477] }
+  // max: { [2260] }
+
+  // min: { [1477] }
+  // max: { [2260] }
+
+  // min: { [1477] }
+  // max: { [2260] }
+
+  // min: { [2261] }
+  // max: { [9567] }
 
   // min: { [1] }
   // max: { [900] }
@@ -52,53 +49,56 @@
   // min: { [1] }
   // max: { [900] }
 
-  // min: { [8209] }
-  // max: { [8992] }
-
-  // min: { [8209] }
-  // max: { [8992] }
-
-  // min: { [8209] }
-  // max: { [8992] }
-
-  // min: { [901] }
-  // max: { [8207] }
-
-  // min: { [901] }
-  // max: { [8207] }
-
   // min: { [1] }
-  // max: { [576] }
+  // max: { [900] }
+
+  // min: { [17941] }
+  // max: { [18724] }
+
+  // min: { [20293] }
+  // max: { [21076] }
+
+  // min: { [21861] }
+  // max: { [22644] }
+
+  // min: { [2261] }
+  // max: { [9567] }
+
+  // min: { [2261] }
+  // max: { [9567] }
+
+  // min: { [901] }
+  // max: { [1476] }
 
   // min: { [1] }
   // max: { [900] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [1477] }
+  // max: { [2260] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [1477] }
+  // max: { [2260] }
 
-  // min: { [901] }
-  // max: { [8207] }
+  // min: { [2261] }
+  // max: { [9567] }
 
-  // min: { [901] }
-  // max: { [8207] }
+  // min: { [2261] }
+  // max: { [9567] }
 
   // min: { [1] }
   // max: { [900] }
 
-  // min: { [1] }
-  // max: { [784] }
+  // min: { [1477] }
+  // max: { [2260] }
 
-  // min: { [901] }
-  // max: { [8207] }
+  // min: { [2261] }
+  // max: { [9567] }
 
-  // min: { [8209] }
-  // max: { [8992] }
+  // min: { [16373] }
+  // max: { [17156] }
 
   // sched min: { [1] }
-  // sched max: { [8992] }
+  // sched max: { [22644] }
 module cgralib_Mem_amber__IDconv_stencil_0__ctrl_width16__has_chain_enTrue__has_external_addrgenTrue__has_flushFalse__has_read_validFalse__has_resetFalse__has_stencil_validFalse__has_validFalse__is_romFalse__num_inputs2__num_outputs2__use_prebuilt_memFalse__width16 (input clk,input rst_n,input clk_en,input chain_chain_en,input [15:0] data_in_0,input [15:0] write_addr_0,input wen_0,input [15:0] data_in_1,input [15:0] write_addr_1,input wen_1,output logic [15:0] data_out_0,input [15:0] read_addr_0,input ren_0,output logic [15:0] data_out_1,input [15:0] read_addr_1,input ren_1,input [15:0] chain_data_in,output [15:0] chain_data_out); 
   logic [15:0] SRAM [1023:0];
   logic chain_ren;
