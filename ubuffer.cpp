@@ -10725,6 +10725,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
             cout << tab(3) << str(buf.access_map.at(pt)) << endl;
             cout << tab(3) << str(buf.schedule.at(pt)) << endl;
           }
+          cout << "\tpart size :" << parts.size() << endl;
+          cout << "\tgroup size :" << g.size() << endl;
           if (parts.size() < g.size()) {
             return {};
           }

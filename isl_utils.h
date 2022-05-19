@@ -387,6 +387,7 @@ int get_domain_span_range(isl_map* const m, int dim, int out_dim);
 pair<int, int> get_domain_merge_dims(isl_map* m );
 vector<pair<int, int>> get_all_domain_merge_dims(isl_map* m );
 isl_map* merge_domain_dim(isl_map* m);
+bool check_contigous_access(isl_map* m);
 
 map<int, int> get_all_domain_pad_dims(isl_map* sched, isl_map* acc)
 ;
@@ -587,6 +588,8 @@ std::string codegen_c(isl_pw_qpolynomial* pqp);
 int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);
 int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+int int_lower_bound(isl_pw_qpolynomial* range_card);
+int int_upper_bound(isl_pw_qpolynomial* range_card);
 
 //TODO: rename it to get in/out card
 isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim);

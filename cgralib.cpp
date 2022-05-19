@@ -175,6 +175,138 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   Mem->addDefaultGenArgs({{"width",Const::make(c,16)},{"total_depth",Const::make(c,1024)}});
   Mem->setModParamsGen(MemModParamFun);
 
+  // cgralib.Buffet
+  Params cgralibbuffetparams = Params({
+        {"data_width", c->Int()}, // by default 32
+        {"idx_width", c->Int()}, // by default 8
+        {"ID", c->String()} // by default 8
+    });
+
+  cgralib->newTypeGen(
+          "cgralib_buffet_type",
+          cgralibbuffetparams,
+          [](Context* c, Values genargs){
+            uint width = genargs.at("data_width")->get<int>();
+            uint idx_width = genargs.at("idx_width")->get<int>();
+
+            RecordParams recordparams = {
+                {"nreset_i", c->BitIn()},
+                {"clk", c->Named("coreir.clkIn")}
+            };
+
+            //vector<string> in_port_array = {"read_idx", "push_data"};
+            //vector<string> out_port_array = {"read_data"};
+            recordparams.push_back({"read_data", c->Bit()->Arr(width)});
+            recordparams.push_back({"read_data_valid", c->Bit()});
+            recordparams.push_back({"read_data_ready", c->BitIn()});
+
+            recordparams.push_back({"read_idx", c->BitIn()->Arr(idx_width)});
+            recordparams.push_back({"read_idx_valid", c->BitIn()});
+            recordparams.push_back({"read_idx_ready", c->Bit()});
+
+            recordparams.push_back({"update_data", c->BitIn()->Arr(width)});
+            recordparams.push_back({"update_data_valid", c->BitIn()});
+            recordparams.push_back({"update_data_ready", c->Bit()});
+
+            recordparams.push_back({"update_idx", c->BitIn()->Arr(idx_width)});
+            recordparams.push_back({"update_idx_valid", c->BitIn()});
+            recordparams.push_back({"update_idx_ready", c->Bit()});
+
+            recordparams.push_back({"read_will_update", c->BitIn()});
+
+            recordparams.push_back({"push_data", c->BitIn()->Arr(width)});
+            recordparams.push_back({"push_data_valid", c->BitIn()});
+            recordparams.push_back({"push_data_ready", c->Bit()});
+
+            //for (size_t i = 0; i < num_input; i ++) {
+                //recordparams.push_back({"data_in_" + std::to_string(i),
+                        //c->BitIn()->Arr(width)});
+            //}
+            //for (size_t i = 0; i < num_output; i ++) {
+                //recordparams.push_back({"data_out_" + std::to_string(i),
+                        //c->Bit()->Arr(width)});
+            //}
+
+        return c->Record(recordparams);
+    }
+
+  );
+
+  auto cgralib_buffet_gen = cgralib->newGeneratorDecl("Buffet", cgralib->getTypeGen("cgralib_buffet_type"), cgralibbuffetparams);
+  cgralib_buffet_gen->addDefaultGenArgs({{"data_width", Const::make(c, 16)}});
+  cgralib_buffet_gen->addDefaultGenArgs({{"idx_width", Const::make(c, 16)}});
+  cgralib_buffet_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
+
+  auto CGRALibBuffetModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
+    Params p; //params
+    Values d; //defaults
+    //p["mode"] = c->String();
+
+    //p["config"] = CoreIR::JsonType::make(c);
+
+    //p["depth"] = c->Int();
+    //d["depth"] = Const::make(c,1024);
+
+    return {p,d};
+  };
+  cgralib_buffet_gen->setModParamsGen(CGRALibBuffetModParamFun);
+  //
+  //
+  //Buffet library Generator module define done
+  //
+
+
+  // cgralib.sreg
+   Params cgralibsregparams = Params({
+        {"depth", c->Int()},
+        {"data_width", c->Int()},
+        {"ID", c->String()} // by default 8
+    });
+
+  cgralib->newTypeGen(
+          "cgralib_sreg_type",
+          cgralibsregparams,
+          [](Context* c, Values genargs){
+            uint width = genargs.at("data_width")->get<int>();
+            uint depth = genargs.at("depth")->get<int>();
+
+            RecordParams recordparams = {
+                {"rst_n", c->BitIn()},
+                {"clk", c->Named("coreir.clkIn")}
+            };
+
+            recordparams.push_back({"in_data", c->BitIn()->Arr(width)});
+            recordparams.push_back({"valid_in", c->BitIn()});
+            recordparams.push_back({"ready_in", c->Bit()});
+
+            recordparams.push_back({"out_data", c->Bit()->Arr(width)->Arr(depth+1)});
+            recordparams.push_back({"valid_out", c->Bit()});
+            recordparams.push_back({"ready_out", c->BitIn()});
+
+
+        return c->Record(recordparams);
+    }
+
+  );
+
+  auto cgralib_sreg_gen = cgralib->newGeneratorDecl("SIPO_reg", cgralib->getTypeGen("cgralib_sreg_type"), cgralibsregparams);
+  cgralib_sreg_gen->addDefaultGenArgs({{"depth", Const::make(c, 1)}});
+  cgralib_sreg_gen->addDefaultGenArgs({{"data_width", Const::make(c, 16)}});
+  cgralib_buffet_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
+
+  auto CGRALibSregModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
+    Params p; //params
+    Values d; //defaults
+
+    return {p,d};
+  };
+  cgralib_sreg_gen->setModParamsGen(CGRALibSregModParamFun);
+  //
+  //
+  //shift reg library Generator module define done
+  //
+  //
+
   // cgralib.Pond_amber
   Params cgralibpondamberparams = Params({
         {"width", c->Int()}, // for m3 16

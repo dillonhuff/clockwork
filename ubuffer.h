@@ -2474,6 +2474,10 @@ void tighten_address_space() {
         return ret;
     }
 
+    string get_op(const string pt) const {
+        return domain_name(schedule.at(pt));
+    }
+
     //Use for Garnet Codegen
     vector<string> get_ops_sorted_by_bundle() const {
         vector<string> ret;
@@ -3512,6 +3516,15 @@ struct UBufferImpl {
     return ::name(pick(bank_rddom).second);
   }
 
+  int max_shift_depth() const {
+    int max_d = 0;
+    std::for_each(shift_depth.begin(), shift_depth.end(), [&max_d](const auto& it) {
+            max_d = std::max(max_d, it.second);
+    });
+    return max_d;
+  }
+
+
   void sequentially_assign_inpt(vector<string> inpts, int b) {
     vector<std::set<string>> partition;
     for (string inpt: inpts) {
@@ -3710,9 +3723,32 @@ struct UBufferImpl {
     return false;
   }
 
+  int max_row_depth(string inpt) const {
+      int max_depth = 0;
+      for (auto it: shift_registered_outputs) {
+          if (it.second.first == inpt)
+            max_depth = std::max(max_depth, it.second.second);
+      }
+      return max_depth;
+  }
+
   bool is_shift_register_output(string output) const {
     std::set<string> outpts = get_sr_outpts();
     return outpts.count(output);
+  }
+
+  unordered_map<string, int> get_delay(string src) const {
+    unordered_map<string, int> delay_map;
+    delay_map.insert({src, 0});
+    for (auto it: shift_registered_outputs_to_outputs) {
+      int delay = it.second.second;
+      for (auto cand : delay_map) {
+        if (it.second.first == cand.first) {
+            delay_map.insert({it.first, delay + cand.second});
+        }
+      }
+    }
+    return delay_map;
   }
 
   int get_bank_num() const {

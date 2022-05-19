@@ -149,14 +149,8 @@
           ["hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read",["Array",1,["Array",16,"BitIn"]]],
           ["hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
-        "instances":{
-          "inner_compute":{
-            "modref":"global.hcompute_hw_input_global_wrapper_stencil"
-          }
-        },
         "connections":[
-          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","inner_compute.in0_hw_input_stencil.0"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write.0","inner_compute.out_hw_input_global_wrapper_stencil"],
+          ["self.hw_input_stencil_op_hcompute_hw_input_global_wrapper_stencil_read.0","self.hw_input_global_wrapper_stencil_op_hcompute_hw_input_global_wrapper_stencil_write.0"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
@@ -171,15 +165,27 @@
           ["hw_output_stencil_op_hcompute_hw_output_stencil_write",["Array",1,["Array",16,"Bit"]]]
         ]],
         "instances":{
-          "inner_compute":{
-            "modref":"global.hcompute_hw_output_stencil"
+          "inner_compute$add_262_263_264":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "inner_compute$add_264_263_265":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "inner_compute$add_hw_output_s0_x_xi_hw_output_s0_y_yi_262":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["self.hw_output_s0_x_xi","inner_compute.hw_output_s0_x_xi"],
-          ["self.hw_output_s0_y_yi","inner_compute.hw_output_s0_y_yi"],
-          ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_output_stencil_read.0","inner_compute.in0_hw_input_global_wrapper_stencil.0"],
-          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","inner_compute.out_hw_output_stencil"],
+          ["inner_compute$add_hw_output_s0_x_xi_hw_output_s0_y_yi_262.out","inner_compute$add_262_263_264.in0"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_output_stencil_read.0","inner_compute$add_262_263_264.in1"],
+          ["inner_compute$add_264_263_265.in0","inner_compute$add_262_263_264.out"],
+          ["self.hw_input_global_wrapper_stencil_op_hcompute_hw_output_stencil_read.0","inner_compute$add_264_263_265.in1"],
+          ["self.hw_output_stencil_op_hcompute_hw_output_stencil_write.0","inner_compute$add_264_263_265.out"],
+          ["self.hw_output_s0_x_xi","inner_compute$add_hw_output_s0_x_xi_hw_output_s0_y_yi_262.in0"],
+          ["self.hw_output_s0_y_yi","inner_compute$add_hw_output_s0_x_xi_hw_output_s0_y_yi_262.in1"],
           ["self.valid_pass_out","self.valid_pass_in"]
         ]
       },
