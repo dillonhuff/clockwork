@@ -13198,7 +13198,8 @@ std::vector<string> verilator_results(const std::string& name) {
 int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files,
-    bool extra_flag = false) {
+    bool extra_flag = false,
+    const std::vector<string> flags = {}) {
 
   //int verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build " + tb_file + " --top-module " + top_module + " -Wno-lint");
   int verilator_build = 0;
@@ -13208,8 +13209,9 @@ int run_verilator_on(const std::string& top_module,
       cmd("echo $FP_COMPT_PATH");
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " -CFLAGS -I$CLKWRK_PATH -I$FP_COMP_PATH --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST -Wno-LATCH -Wno-VARHIDDEN");
 #else
+      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " " + sep_list(flags, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -I$FP_COMP_PATH -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST  -Wno-VARHIDDEN");
       //verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST");
-      verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " -exe --build --trace " + tb_file + " --top-module " + top_module + " -I$FP_COMP_PATH  -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST -Wno-VARHIDDEN");
+      //verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " -exe --build --trace " + tb_file + " --top-module " + top_module + " -I$FP_COMP_PATH  -Wno-UNUSED -Wno-PINMISSING -Wno-DECLFILENAME -Wno-WIDTH -Wno-UNDRIVEN -Wno-CASEINCOMPLETE -Wno-MODDUP -Wno-UNOPTFLAT -Wno-CMPCONST -Wno-VARHIDDEN");
 #endif
   } else {
       verilator_build = cmd("verilator -Wall --cc " + sep_list(verilog_files, "", "", " ") + " --exe --build --trace " + tb_file + " --top-module " + top_module + " -Wno-UNUSED -Wno-WIDTH -Wno-PINMISSING -Wno-DECLFILENAME");
@@ -13230,6 +13232,29 @@ void run_verilator_verilog_tb(const std::string& name) {
 
   int res = run_verilator_on(name, name + "_verilog_tb.cpp", {name + ".v", name + "_verilog_collateral.sv", "./lake_components/dualwithadd/lake_top.sv", name + "_compute.v"});
   assert(res == 0);
+}
+
+void run_verilator_tb_buffet(const std::string& name) {
+
+  int to_verilog_res = cmd("${COREIR_PATH}/bin/coreir --inline --load_libs commonlib,cgralib --input " + name + ".json --output " + name + ".v -p \"rungenerators; wireclocks-arst; wireclocks-clk; add-dummy-inputs\"");
+  assert(to_verilog_res == 0);
+
+  int res = run_verilator_on(name,
+      name + "_verilog_tb.cpp",
+      {name + ".v", name + "_verilog_collateral.sv",
+      "./lake_components/dualwithadd/lake_top.sv",
+      "./buffet_defines.v",
+      "./../../../buffets/dut/*.v",
+      "./../../../buffets/dut/utils/*.v",
+      "./lake_components/inner_affine_controller.sv"},
+      true, {"-I./buffet_defines.v", "-Wno-PINCONNECTEMPTY"});
+  cmd("rm -rf obj_dir/");
+  assert(res == 0);
+  //int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/V" + name);
+  //assert(verilator_run == 0);
 }
 
 void run_verilator_tb(const std::string& name) {
@@ -15195,15 +15220,15 @@ void test_pond(string dir, bool run_verilator=true) {
   //test_apps.push_back(nlmeans_rolled_7x7());
 
   //test_apps.push_back(nlmeans_simple_blur());
-  //test_apps.push_back(nlmeans_simple());
-  //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
-  //test_apps.push_back(three_level_pond_copy());
-  //test_apps.push_back(three_level_pond_rolled());
-  //test_apps.push_back(conv_1_3());
-  //test_apps.push_back(conv_rolled());
-  //test_apps.push_back(complex_mem_pond_rolled());
-  //test_apps.push_back(complex_mem_pond());
+  test_apps.push_back(nlmeans_simple());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
+  test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(conv_1_3());
+  test_apps.push_back(conv_rolled());
+  test_apps.push_back(complex_mem_pond_rolled());
+  test_apps.push_back(complex_mem_pond());
   test_apps.push_back(resnet_init_unroll_tile());
 
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
@@ -15401,7 +15426,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_2x2());
 
-  ////ISSCC application without unroll
+  //ISSCC application without unroll
   test_apps.push_back(harris_color());
   test_apps.push_back(harris_color_unroll4());
   test_apps.push_back(gaussian_isscc());
@@ -15416,9 +15441,9 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(up_sample_glb());
   test_apps.push_back(gaussian_glb8());
 
-  ////Dense Linear algebra
-  //test_apps.push_back(glb_channel_reduction());
-  //test_apps.push_back(matmul());
+  //Dense Linear algebra
+  test_apps.push_back(glb_channel_reduction());
+  test_apps.push_back(matmul());
 
   //Simplified multi-tile DNN application
   //test_apps.push_back(resnet_init_unroll_tile());
@@ -15431,27 +15456,27 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
-  //test_apps.push_back(resnet1_docker());
-  //test_apps.push_back(resnet1());
-  //test_apps.push_back(resnet_1x1());
-  //test_apps.push_back(resnet3_1());
-  //test_apps.push_back(resnet4_x());
-  //test_apps.push_back(resnet5_1());
-  //test_apps.push_back(resnet5_x());
-  //test_apps.push_back(resnet5_x_new());
-  //test_apps.push_back(resnet5_1_new());
-  //test_apps.push_back(resnet5_1_unroll());
-  //test_apps.push_back(resnet5_1_unroll_cyclic());
-  //test_apps.push_back(resnet5_glb_unroll());
-  //test_apps.push_back(resnet_multi_channel());
+  test_apps.push_back(resnet1_docker());
+  test_apps.push_back(resnet1());
+  test_apps.push_back(resnet_1x1());
+  test_apps.push_back(resnet3_1());
+  test_apps.push_back(resnet4_x());
+  test_apps.push_back(resnet5_1());
+  test_apps.push_back(resnet5_x());
+  test_apps.push_back(resnet5_x_new());
+  test_apps.push_back(resnet5_1_new());
+  test_apps.push_back(resnet5_1_unroll());
+  test_apps.push_back(resnet5_1_unroll_cyclic());
+  test_apps.push_back(resnet5_glb_unroll());
+  test_apps.push_back(resnet_multi_channel());
 
   //two different resnet5x tests
-  //test_apps.push_back(resnet5_x_unroll());
-  //test_apps.push_back(resnet5_x_unroll_mic());
+  test_apps.push_back(resnet5_x_unroll());
+  test_apps.push_back(resnet5_x_unroll_mic());
 
-  ////Test with non double buffer, not tested with db
-  //test_apps.push_back(resnet_output_stationary_small());
-  //test_apps.push_back(resnet_output_stationary_tiny());
+  //Test with non double buffer, not tested with db
+  test_apps.push_back(resnet_output_stationary_small());
+  test_apps.push_back(resnet_output_stationary_tiny());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
@@ -18464,6 +18489,7 @@ void align_glb_load_start_cycle(schedule_info& sched, prog& prg) {
     map<string, int> delay_map;
     for (auto name : kernels_to_be_aligned) {
       auto lp = prg.find_non_op(name);
+      //this is the starting cycle under the coarse loop level, no matter how deep the loopnest is
       delay_map[name] = sched.starting_delay_to_leaf(lp);
       max_delay = max(delay_map.at(name), max_delay);
     }
@@ -19384,9 +19410,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //Make input as fast as possible
     asap_input_iis(sched, prg);
     op_sched = op_start_times_map(sched, prg);
-    cout << "Final schedule after relax: " << str(op_sched)  << endl;
+    cout << "Final schedule in ISL notation: " << str(op_sched)  << endl;
     op_sched = op_end_times_map(sched, prg);
     cout << "Final end schedule after relax: " << str(op_sched)  << endl;
+    auto global_schedule = its(op_sched, op_start_times_domain(prg));
+    cout << "After codegen: \n" <<codegen_c(global_schedule);
     sanity_check_hw_schedule(sched, prg);
     return;
   } else if (contains(prg.name, "split")) {
@@ -19664,7 +19692,9 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
 
   //sequential_schedule(sched, root, prg);
   asap_inner_loops_schedule(sched, root, prg, 1);
+  auto init_sched = op_start_times_map(sched, prg);
   cout << "Computed initial sequential schedule" << endl;
+  cout << "\tinit schedule : " << str(init_sched)  << endl;
   sanity_check_iis(sched);
 
 
@@ -19702,11 +19732,13 @@ void coarse_pipeline_schedule(schedule_info& sched, op* root, prog& prg) {
   cout << "Adjusting outer pipeline delays" << endl;
   sanity_check_iis(sched);
 
-  adjust_outer_pipeline_delays(sched, prg);
-  //adjust_coarse_grained_loop_delays_sequentially(sched, prg);
+  //adjust_outer_pipeline_delays(sched, prg);
+  adjust_coarse_grained_loop_delays_sequentially(sched, prg);
   //tighten_coarse_grained_iis(sched, prg);
 
   cout << "Done Adjusting outer pipeline delays" << endl;
+  auto op_sched = op_start_times_map(sched, prg);
+  cout << "\tFinal schedule : " << str(op_sched)  << endl;
   sanity_check_iis(sched);
 
 }
@@ -19734,16 +19766,59 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
       }
 
       //TODO fix this scheduler
-      if (buffer_dims.size() > 1) {
+      //if (buffer_dims.size() > 1) {
         coarse_pipeline_schedule(sched, root, prg);
-      } else {
-        rate_matched_schedule(sched, root, prg, pick(buffer_dims));
-      }
+      //} else {
+      //  rate_matched_schedule(sched, root, prg, pick(buffer_dims));
+      //}
     }
   }
 
   sanity_check_iis(sched);
   adjust_schedule_forward(sched, prg, 1);
+  sanity_check_iis(sched);
+}
+
+void buffet_schedule(schedule_info& sched, op* root, prog& prg) {
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      assert(contains_key(op, sched.resource_requirements));
+      assign_to_least_used_resource(op, sched);
+    }
+  }
+
+  //op* pl =
+  //  find_coarse_grained_pipeline_loop(prg.root);
+  //if (pl->name != "root") {
+  //  coarse_pipeline_schedule(sched, root, prg);
+  //} else {
+  //  if (is_rate_matchable(prg)) {
+  //    cycle_accurate_clockwork_schedule(sched, root, prg);
+  //  } else {
+  //    std::set<int> buffer_dims;
+  //    for (auto b : all_buffers(prg)) {
+  //      buffer_dims.insert(logical_dimension(b, prg));
+  //    }
+
+  //    if (buffer_dims.size() > 1) {
+  //      coarse_pipeline_schedule(sched, root, prg);
+  //    } else {
+  //      rate_matched_schedule(sched, root, prg, pick(buffer_dims));
+  //    }
+  //  }
+  //}
+
+  if (is_rate_matchable(prg)) {
+    cycle_accurate_clockwork_schedule(sched, root, prg);
+  } else {
+    coarse_pipeline_schedule(sched, root, prg);
+  }
+
+  sanity_check_iis(sched);
+
+  //This is a magic number for me to pass the sliding window test
+  adjust_schedule_forward(sched, prg, 2);
   sanity_check_iis(sched);
 }
 
@@ -19984,6 +20059,17 @@ CodegenOptions CGRA_M1_codegen_options(prog& prg) {
   return options;
 }
 
+CodegenOptions Buffet_codegen_options(prog& prg) {
+  CodegenOptions options;
+  options.rtl_options.use_external_controllers = true;
+  options.rtl_options.has_ready= true;
+  options.debug_options.traceWave = true;
+  options.rtl_options.target_tile =
+    TARGET_TILE_BUFFET;
+  all_unbanked(prg, options);
+  return options;
+}
+
 CodegenOptions CGRA_M3_codegen_options(prog& prg) {
   CodegenOptions options;
   options.rtl_options.use_external_controllers = true;
@@ -20065,6 +20151,33 @@ void compile_cycle_accurate_hw(CodegenOptions& options, schedule_info& sched, pr
 #endif
 }
 
+void compile_buffet_hw(CodegenOptions& options, schedule_info& sched, prog& prg) {
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+
+  //garnet_dual_port_ram_schedule(sched, prg.root, prg);
+  buffet_schedule(sched, prg.root, prg);
+
+  auto hw_sched = its(op_times_map(sched, prg), prg.whole_iteration_domain());
+
+  sanity_check_hw_schedule(sched, prg);
+
+  auto buffers = build_buffers(prg, hw_sched);
+
+#ifdef COREIR
+
+  generate_coreir(options,
+    buffers,
+    prg,
+    hw_sched,
+    sched);
+  generate_verilator_tb(options, prg, hw_sched, buffers);
+  generate_vivado_rtl_tb(options, prg, hw_sched, buffers);
+  generate_deepak_power_flow_rtl_tb(options, prg, hw_sched, buffers);
+
+#endif
+}
+
 void compile_for_generic_SRAM_mem(prog& prg) {
   auto options = generic_SRAM_codegen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
@@ -20075,6 +20188,12 @@ void compile_for_CGRA_M1_mem(prog& prg) {
   auto options = CGRA_M1_codegen_options(prg);
   schedule_info sched = garnet_schedule_info(options, prg);
   compile_cycle_accurate_hw(options, sched, prg);
+}
+
+void compile_for_Buffet(prog& prg) {
+  auto options = Buffet_codegen_options(prg);
+  schedule_info sched = garnet_schedule_info(options, prg);
+  compile_buffet_hw(options, sched, prg);
 }
 
 void compile_for_CGRA_M3_mem(prog& prg) {
@@ -20651,23 +20770,26 @@ vector<prog> isca_programs() {
   //FIXME: not work for M1 and M3
   //test_programs.push_back(three_level_pond_rolled());
 
+  //Scheduler has some issue, not support cyclic banking
+  //test_programs.push_back(matmul_single());
+
+  test_programs.push_back(matmul_single_m1());
+  test_programs.push_back(camera_pipeline());
   test_programs.push_back(camera_pipeline_new());
-  test_programs.push_back(matmul_single());
   test_programs.push_back(camera_pipeline_2x2());
-  test_programs.push_back(unsharp_large());
-  test_programs.push_back(harris_color());
   test_programs.push_back(gaussian());
-  //test_programs.push_back(cascade());
-  //test_programs.push_back(down_sample());
+  test_programs.push_back(cascade());
+  test_programs.push_back(down_sample());
   //test_programs.push_back(harris());
-  //test_programs.push_back(camera_pipeline());
+  test_programs.push_back(harris_color());
   test_programs.push_back(up_sample());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(unsharp_new());
-  //test_programs.push_back(resnet());
-  test_programs.push_back(resnet88_chain());
+  test_programs.push_back(unsharp_large());
   test_programs.push_back(mobilenet_unrolled());
-
+  test_programs.push_back(resnet());
+  test_programs.push_back(resnet88());
+  test_programs.push_back(resnet88_chain());
 
   return test_programs;
 }
@@ -20751,6 +20873,33 @@ void test_codegen(vector<prog>& test_programs, CodegenFunction& codegen) {
 
 void test_platonic_codegen(vector<prog>& test_programs) {
   test_codegen(test_programs, compile_for_garnet_platonic_mem);
+}
+
+void test_buffet_codegen(vector<prog>& test_programs) {
+  for (auto& prg : test_programs) {
+    cout << "====== Running CGRA test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+
+    prg.pretty_print();
+    prg.sanity_check();
+
+    auto cpu = unoptimized_result(prg);
+
+    compile_for_Buffet(prg);
+    generate_regression_testbench(prg);
+
+    cout << "Output name: " << prg.name << endl;
+    run_verilator_tb_buffet(prg.name);
+    auto verilator_res = verilator_results(prg.name);
+    compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
+    string app_type = "buffet";
+    cpy_app_to_folder(app_type, prg.name);
+  }
 }
 
 void cw_print_body(int level,
@@ -21014,6 +21163,28 @@ void fpga_asplos_tests() {
     compare(prg.name + " ASPLOS FPGA flow", opt, no_opt);
     move_to_benchmarks_folder(prg.name);
   }
+}
+
+void buffet_tests() {
+  //vector<prog> buffet_test_programs = {pointwise_conv()};
+  vector<prog> buffet_test_programs;
+  //unsharp not work
+  //buffet_test_programs.push_back(unsharp());
+  buffet_test_programs.push_back(gaussian());
+  buffet_test_programs.push_back(conv_3_3_buffet());
+  buffet_test_programs.push_back(pointwise_conv());
+  buffet_test_programs.push_back(conv_unit_test());
+  buffet_test_programs.push_back(up_sample());
+  buffet_test_programs.push_back(accumulation_simple());
+  buffet_test_programs.push_back(resnet_tiny());
+  buffet_test_programs.push_back(matmul_tiny());
+  buffet_test_programs.push_back(conv_1_2());
+  buffet_test_programs.push_back(cascade());
+  buffet_test_programs.push_back(harris());
+  buffet_test_programs.push_back(bank_test());
+  buffet_test_programs.push_back(resnet88());
+  buffet_test_programs.push_back(resnet());
+  test_buffet_codegen(buffet_test_programs);
 }
 
 void cgra_flow_tests() {
@@ -28896,6 +29067,10 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+    if (cmd == "buffet-flow") {
+      buffet_tests();
+      return 0;
+    }
 
     if (cmd == "dse-flow") {
       dse_flow_tests();

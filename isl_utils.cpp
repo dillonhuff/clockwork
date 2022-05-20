@@ -3743,6 +3743,21 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bnd_int(bound);
 }
 
+int int_lower_bound(isl_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(range_card), isl_fold_min, b);
+  return bnd_int(bound);
+}
+
+int int_upper_bound(isl_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(range_card), isl_fold_max, b);
+  return bnd_int(bound);
+}
+
+
 isl_set* universe(isl_space* s) {
   return isl_set_universe(s);
 }
@@ -4436,6 +4451,20 @@ isl_map* merge_domain_dim(isl_map* m) {
         }
     }
     return mm;
+}
+
+bool check_contigous_access(isl_map* m) {
+    assert(num_out_dims(m) == 1);
+    auto merge_m = remove_irrelevant_in_dim(merge_domain_dim(m));
+    cout << "After flatten: " << str(merge_m) << endl;
+    int in_dim = num_in_dims(merge_m);
+    if (in_dim > 2)
+        return false;
+    int stride = stride_in_dim(merge_m, 1);
+    if (stride != 1)
+        return false;
+    else
+        return true;;
 }
 
 int get_inner_most_related_dom_dim(isl_map* m) {

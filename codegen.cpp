@@ -3377,6 +3377,18 @@ void generate_verilator_tb_reset_sequence(CodegenOptions& options, ostream& rgtb
   //rgtb << tab(1) << "dut.eval();" << endl;
   eval(options, rgtb, 1);
 
+  if (options.rtl_options.target_tile == TARGET_TILE_BUFFET) {
+    //Add a posedge during  reset
+    rgtb << endl << tab(1) << "//Add a posedge during reset" << endl;
+    rgtb << tab(1) << "dut.clk = 0;" << endl;
+    //rgtb << tab(1) << "dut.eval();" << endl;
+    eval(options, rgtb, 1);
+    rgtb << tab(1) << "dut.clk = 1;" << endl;
+    //rgtb << tab(1) << "dut.eval();" << endl;
+    eval(options, rgtb, 1);
+    rgtb << endl;
+  }
+
   rgtb << tab(1) << "dut.rst_n = 1;" << endl;
   //rgtb << tab(1) << "dut.eval();" << endl;
   eval(options, rgtb, 1);
@@ -3468,6 +3480,20 @@ void generate_verilator_tb(
     rgtb << tab(1) << "tfp->open(\"sim_wave.vcd\");" << endl << endl;
   }
 
+
+  if (options.rtl_options.has_ready) {
+    rgtb << tab(1) << "//make sure input enable always ready" << endl;
+    for (auto in: inputs(buffers, prg)) {
+      rgtb << tab(1) << "dut." << in.first + "_" + in.second + "_en_ready = 1;" << endl;
+    }
+    rgtb << endl;
+    rgtb << tab(1) << "//make sure output consumer always ready" << endl;
+    for (auto out: outputs(buffers, prg)) {
+      rgtb << tab(1) << "dut." << out.first + "_" + out.second + "_ready = 1;" << endl;
+    }
+    rgtb << endl;
+  }
+
   generate_verilator_tb_reset_sequence(options, rgtb);
 
   for (auto out : inputs(buffers, prg)) {
@@ -3486,7 +3512,9 @@ void generate_verilator_tb(
   rgtb << tab(1) << "dut.clk = 0;" << endl;
   //rgtb << tab(1) << "dut.eval();" << endl;
   eval(options, rgtb, 1);
+  int max_time = to_int(lexmaxval(to_set(range(hw_sched)))) + 10;
   rgtb << tab(1) << "for (int t = 0; t < (int) pow(2, 16); t++) {" << endl;
+  //rgtb << tab(1) << "for (int t = 0; t < " + str(max_time) + "; t++) {" << endl;
 
   rgtb << tab(2) << "cout << \"t = \" << t << endl;" << endl;
   for (auto out : inputs(buffers, prg)) {
@@ -3498,21 +3526,30 @@ void generate_verilator_tb(
     rgtb << tab(3) << "cout << \"send me data!\" << endl;" << endl;
     rgtb << tab(3) << "*(" << data_name << ") = (int) " << out.first << ".read();" << endl;
     rgtb << tab(2) << "}" << endl;
+    if (options.rtl_options.has_ready) {
+      rgtb << endl << tab(2) << "//send the write enable singal" << endl;
+      rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
+      rgtb << tab(3) << data_name << "_valid = 1;" << endl;
+      rgtb << tab(2) << "} else {" << endl;
+      rgtb << tab(3) << data_name << "_valid = 0;" << endl;
+      rgtb << tab(2) << "}" << endl;
+    }
   }
+
 
   for (auto out : outputs(buffers, prg)) {
     string ctrl_name =
       out.first + "_" + out.second + "_valid";
     string data_name =
       "dut." + out.first + "_" + out.second;
-    rgtb << tab(1) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
-    rgtb << tab(1) << "if (dut." << ctrl_name << ") {" << endl;
-    rgtb << tab(2) << "cout << \"Got data: \" << (int) *(" << data_name << ") << endl;" << endl;
+    rgtb << tab(2) << ctrl_name << "_count += dut." << ctrl_name << ";" << endl;
+    rgtb << tab(2) << "if (dut." << ctrl_name << ") {" << endl;
+    rgtb << tab(3) << "cout << \"Got data: \" << (int) *(" << data_name << ") << endl;" << endl;
     //rgtb << tab(2) << "fout << t << \",\" << \"" << data_name << "\" << \",\" << (int) *(" << data_name << ") << endl;" << endl;
-    rgtb << tab(2) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
+    rgtb << tab(3) << "hw_uint<16> val((int) *(" << data_name << "));" << endl;
     //rgtb << tab(2) << "fout << val << endl;" << endl;
-    rgtb << tab(2) << out.first << ".write(val);" << endl;
-    rgtb << tab(1) << "}" << endl;
+    rgtb << tab(3) << out.first << ".write(val);" << endl;
+    rgtb << tab(2) << "}" << endl;
   }
 
   rgtb << tab(1) << tab(1) << "dut.clk = 0;" << endl;

@@ -1096,6 +1096,11 @@ struct prog {
     assert(false);
   }
 
+  bool is_init_op(const std::string& target_op) {
+    op* v = find_op(target_op);
+    return v->read_addrs().size() == 0;
+  }
+
   int trip_count(const std::string& loop_level) {
     return find_loop(loop_level)->trip_count();
   }
@@ -1969,8 +1974,33 @@ op* find_coarse_grained_pipeline_loop(op* lp);
 op* find_coarse_grained_pipeline_loop(op* lp, prog& prg);
 void find_coarse_grained_pipeline_loops(op* lp, vector<op*> & cgpl_lps, prog& prg);
 
+//vector<pair<string, pair<string, int> >> determine_output_shift_reg_map(
+//    prog& prg,
+//    UBuffer& buf,
+//    schedule_info& hwinfo);
+//
+//map<string, pair<string, int> > determine_shift_reg_map(
+//        prog& prg,
+//    UBuffer& buf,
+//    schedule_info& hwinfo);
+//
+//dgraph build_out_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+//dgraph build_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+//dgraph build_in_to_out_shift_register_graph(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+//dgraph build_shift_registers(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+//UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, schedule_info& hwinfo);
+
+//isl_map* build_buffer_impl_embarrassing_banking(UBuffer& buf, schedule_info& hwinfo, EmbarrassingBankingImpl& impl);
+
+//void generate_banks_garnet(CodegenOptions& options, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
+
+//UBufferImpl generate_optimized_memory_implementation(
+//        CodegenOptions& options, UBuffer & buf, prog & prg, schedule_info& hwinfo);
+
 void loop_perfection(prog& prg);
+
 void loop_perfection_with_root_op(prog& prg);
+
 void sanity_check_iis(schedule_info& sched);
 
 int logical_dimension(const std::string& buf, prog& prg);

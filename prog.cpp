@@ -5334,7 +5334,8 @@ int buffer_store_latency(CodegenOptions& options) {
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_M3 ||
-      options.rtl_options.target_tile == TARGET_TILE_M1) {
+      options.rtl_options.target_tile == TARGET_TILE_M1 ||
+      options.rtl_options.target_tile == TARGET_TILE_BUFFET) {
     return 1;
   }
   assert(false);
@@ -5364,8 +5365,11 @@ int buffer_load_latency(CodegenOptions& options) {
   }
 
   if (options.rtl_options.target_tile == TARGET_TILE_M3 ||
-      options.rtl_options.target_tile == TARGET_TILE_M1) {
+      options.rtl_options.target_tile == TARGET_TILE_M1 ) {
     return 1;
+  }
+  if (options.rtl_options.target_tile == TARGET_TILE_BUFFET) {
+    return 0;
   }
   assert(false);
 }

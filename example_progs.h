@@ -17,6 +17,7 @@ prog counter();
 prog conv_multi(); //multiple-tile-cnn
 prog strided_conv();
 prog accumulation(); //reduce
+prog accumulation_simple(); //reduce
 prog unsharp();
 prog unsharp_new();
 prog unsharp_large();
@@ -25,7 +26,9 @@ prog gaussian(); //stencil
 prog harris(); //stencil
 prog harris_remove(); //manually edit
 prog pointwise(); //point
+prog pointwise_conv(); //use for buffet test
 prog brighten_blur(); //stencil
+prog brighten_blur_paper(); //stencil
 prog halide_harris();
 
 prog nlmeans();
@@ -38,10 +41,15 @@ prog nlmeans_simple_trunc();
 prog nlmeans_simple_blur();
 prog nlmeans_rolled_7x7();
 prog conv_3_3(); //stencil
+prog conv_3_3_buffet(); //stencil
+prog conv_unit_test(); //stencil
+prog bank_test(); //stencil
+
 prog conv_3_3_wide(); //stencil
 prog conv_3_3_rolled(); //stencil
 prog conv_1_2(); //stencil
 prog conv_1_3(); //stencil
+prog conv_1_3_buffet(); //stencil
 prog conv_rolled(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
@@ -131,8 +139,10 @@ prog harris_glb2();
 prog camera_pipeline_glb();
 
 prog matmul();
+prog matmul_tiny();
 prog matmul_unroll2();
 prog matmul_single();
+prog matmul_single_m1();
 prog matmul_fpga();
 
 //resnet without input tiling
