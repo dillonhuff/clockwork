@@ -8,6 +8,7 @@ void compile_for_garnet_single_port_mem(prog& prg, string dir, bool gen_smt_stre
 int run_verilator_on(const std::string& top_module,
     const std::string& tb_file,
     const std::vector<string>& verilog_files,
-    bool extra_flag = false);
+    bool extra_flag = false,
+    const std::vector<string> flags = {});
 void cpy_app_to_folder(const std::string& app_type, const std::string& prg_name);
 std::vector<string> verilator_results(const std::string& name);
