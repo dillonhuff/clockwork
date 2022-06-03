@@ -1850,16 +1850,29 @@ struct schedule_info {
     return map_find(c, op_offset_within_parent);
   }
 
+  int perfect_loop_update_delay(op* lp) {
+    assert(lp->is_loop());
+    assert(lp->children.size() == 1);
+    auto c = pick(lp->children);
+    return offset_in_parent(c) + II(c) * c->trip_count();
+  }
+
   int last_update_delay(op* op) {
     assert(op->is_loop());
     int last_delay = 0;
-    for (auto c : op->children) {
-      int delay = offset_in_parent(c) + total_latency(c);
-      if (delay > last_delay) {
-        last_delay = delay;
+    if (op->children.size() == 1) {
+    //if (false) {
+
+        return perfect_loop_update_delay(op);
+    } else {
+      for (auto c : op->children) {
+        int delay = offset_in_parent(c) + total_latency(c);
+        if (delay > last_delay) {
+          last_delay = delay;
+        }
       }
+      return last_delay;
     }
-    return last_delay;
   }
 
   int starting_delay_to_leaf(op* op) {
