@@ -2486,6 +2486,15 @@ isl_stat bmap_collect_constraints(isl_basic_map* m, void* user) {
   return isl_stat_ok;
 }
 
+vector<isl_constraint*> constraints(umap* um) {
+    vector<isl_constraint*> ret;
+    for(isl_map* m: get_maps(um)) {
+        auto cons = constraints(m);
+        ret.insert(ret.end(), cons.begin(), cons.end());
+    }
+    return ret;
+}
+
 vector<isl_constraint*> constraints(isl_map* m) {
     vector<isl_constraint*> code_holder;
     isl_map_foreach_basic_map(m, bmap_collect_constraints, &code_holder);
@@ -2772,6 +2781,25 @@ int get_out_padding_dimension(isl_map* m, int in_dim) {
     cout << "WARMING: fall back plan just pad in beginning" << endl;
     return 0;
 }
+
+map<int, vector<int>> get_in2out_rel(isl_map* m) {
+  map<int, vector<int>> in2out_rel;
+  auto c_vec =  constraints(m);
+  int in_dim = num_in_dims(m);
+  int out_dim = num_out_dims(m);
+  for (auto c : c_vec) {
+    for (int i = 0; i < in_dim; i ++) {
+      for (int o = 0; o < out_dim; o ++) {
+        if ( isl_constraint_involves_dims(c, isl_dim_in, i, 1)
+          && isl_constraint_involves_dims(c, isl_dim_out, o, 1))
+              map_insert(in2out_rel, i, o);
+
+      }
+    }
+  }
+  return in2out_rel;
+}
+
 
 //Get the map for shift reg
 isl_map* get_shift_map(isl_map* m) {

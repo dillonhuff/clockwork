@@ -1596,6 +1596,9 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
+pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r);
+map<string, vector<int>> align_loop_var_with_pad(op* root, prog& prg);
+void align_loop_var_with_pad(prog& prg);
 std::vector<string> topologically_sort_kernels(prog& prg);
 std::vector<string> topologically_sort_kernels(op* root, prog& prg);
 

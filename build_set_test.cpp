@@ -11922,7 +11922,39 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 
 void playground() {
+    {
+        auto prg = nlmeans_simple();
+        prg.pretty_print();
+        align_loop_var_with_pad(prg);
+        assert(false);
+    }
+    {
+        vector<int> a = {3, 40, 3, 40};
+        vector<int> b = {44, 44};
+        print_alignment(a, b);
+        cout << get_alignment_array(a, b) << endl;
 
+        a = {39, 40, 5, 90};
+        b = {44, 44};
+        print_alignment(a, b);
+        cout << get_alignment_array(a, b) << endl;
+
+        a = {10, 20};
+        b = {20, 10};
+        print_alignment(a, b);
+        cout << get_alignment_array(a, b) << endl;
+
+        assert(false);
+
+    }
+    {
+        vector<int> a = {0,1,-1,-1,-1};
+        vector<int> b = {-1,-1,0,1,-1};
+        auto ret = pad_alignment(a, b);
+        cout << ret.first << endl;
+        cout << ret.second << endl;
+        assert(false);
+    }
     {
       isl_ctx* ctx = isl_ctx_alloc();
       auto rd = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1]-> [8*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8}");
@@ -11943,20 +11975,6 @@ void playground() {
         assert(false);
     }
 
-    {
-        vector<int> a = {3, 40, 3, 40};
-        vector<int> b = {44, 44};
-        print_alignment(a, b);
-        cout << get_alignment_array(a, b) << endl;
-
-        a = {39, 40, 5, 90};
-        b = {44, 44};
-        print_alignment(a, b);
-        cout << get_alignment_array(a, b) << endl;
-
-        assert(false);
-
-    }
     {
       isl_ctx* ctx = isl_ctx_alloc();
       auto sched_wr = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1]-> [8*i0 + i1, 0]: 0<=i0<8 and 0<=i1<8}");
@@ -19442,6 +19460,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
             options.mem_hierarchy.at("mem").fetch_width);
     //sequential_schedule(sched, root, prg);
 
+    //We need a loop here, to tighten the inner II, here is a little arbitrary
     adjust_inner_iis(sched, prg);
     tighten_iis(sched, prg);
 
@@ -19487,7 +19506,33 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   sanity_check_hw_schedule(sched, prg);
   return;
 }
+
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
+  bool single_depth = all_loop_nests_same_depth(prg);
+  int max_depth = max_loop_depth(prg);
+  assert(max_depth >= 1);
+
+  if (!single_depth) {
+    pad_top_level_ops_with_loops(prg);
+    map<string, vector<int> > pad_indexes = align_loop_var_with_pad(root, prg);
+    map<string, vector<int> > op2pad_indexes;
+    for (auto p : pad_indexes) {
+      cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+      auto lp = prg.find_loop(p.first);
+      for (auto rep : lp->descendant_ops()) {
+          op2pad_indexes[rep->name] = p.second;
+      }
+    }
+    insert_pad_loops(prg, op2pad_indexes);
+
+  }
+
+  prg.pretty_print();
+  single_depth = all_loop_nests_same_depth(prg);
+  assert(single_depth);
+}
+
+void pad_to_single_depth_old(schedule_info& sched, op* root, prog& prg) {
   bool single_depth = all_loop_nests_same_depth(prg);
   int max_depth = max_loop_depth(prg);
   assert(max_depth >= 1);
@@ -20773,6 +20818,7 @@ vector<prog> isca_programs() {
   //Scheduler has some issue, not support cyclic banking
   //test_programs.push_back(matmul_single());
 
+  test_programs.push_back(resnet88());
   test_programs.push_back(matmul_single_m1());
   test_programs.push_back(camera_pipeline());
   test_programs.push_back(camera_pipeline_new());

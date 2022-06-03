@@ -466,6 +466,7 @@ isl_map* remove_irrelevant_in_dim(isl_map* m);
 isl_map* set_in_dim_to_val(isl_map* m, int in_dim, int val);
 isl_map* remove_in_dims(isl_map* m, vector<int> remove_dims);
 
+map<int, vector<int>> get_in2out_rel(isl_map* m);
 vector<bool> relation_map(isl_map* m);
 int get_involve_dim(isl_map* m, int out_dim);
 vector<int> out_involve_dim(isl_map* m, int in_dim);
@@ -625,6 +626,7 @@ get_polynomials(isl_union_pw_qpolynomial* p);
 vector<isl_constraint*> constraints(isl_basic_set* s);
 vector<isl_constraint*> constraints(isl_set* s);
 vector<isl_constraint*> constraints(isl_map* s);
+vector<isl_constraint*> constraints(umap* s);
 
 map<string, string> umap_codegen_c(umap* const um);
 
