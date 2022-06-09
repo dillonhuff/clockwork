@@ -15557,10 +15557,13 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //DNN apps
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
-  test_apps.push_back(matmul_single());
-  test_apps.push_back(matmul_unroll2());
   test_apps.push_back(resnet_size_test());
   test_apps.push_back(resnet());
+
+  //Matrix multiply,
+  //this two has issue with the new loop align algorithm
+  test_apps.push_back(matmul_single());
+  test_apps.push_back(matmul_unroll2());
 
   //Big applications
   test_apps.push_back(mobilenet_unrolled());
@@ -18851,7 +18854,7 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
               int prod_ii = sched.II(prod_op->parent);
               int cons_ii = sched.II(cons_op->parent);
               //Relaxation recipe input/output
-              offset = std::max(cons_ii, prod_ii) * fetch_width * 2;
+              offset = std::max(cons_ii, prod_ii) * fetch_width * 2 + 2;
           } else if (equal_start_time && prod_need_index && (cons_start_time < 3)) {
               offset = 3 - cons_start_time;
           }
@@ -19145,6 +19148,7 @@ vector<int> garnet_fuse_ii_level(prog& prg) {
 
 void sanity_check_hw_schedule(schedule_info& sched, prog& prg);
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg);
+void pad_to_same_depth(op* root, prog& prg, map<string, vector<int> > & pad_indices);
 
 ////Return boolean indicate if this is a perfect loop nest from CGPL
 //bool coarse_grained_pipeline_optimization(schedule_info& sched, op* node) {
@@ -19289,19 +19293,25 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
 
 
 void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
-    //FIXME: remove this hack for fft
+  //get the loop alignment information
+  map<string, vector<int> > pad_indices = align_loop_var_with_pad(root, prg);
+
+  //FIXME: remove this hack for fft
   if (contains(prg.name, "fft")) {
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
-  } else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
+  //} else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
+  } else if (is_rate_matchable_loopnest(prg, pad_indices)) {
     prg.pretty_print();
 
     loop_split(prg);
+
+    //Try to align the loop and pad it
+    map<string, vector<int> > pad_indices = align_loop_var_with_pad(root, prg);
+    pad_to_same_depth(root, prg, pad_indices);
+
     prg.sanity_check();
-    //TODO: need another function to choose between pad bottom level or top level
-    //pad_bottom_level_ops_with_loops(prg);
-    pad_to_single_depth(sched, root, prg);
 
     prg.pretty_print();
     cout << prg.name << " is a stencil pipeline" << endl;
@@ -19366,7 +19376,6 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       for (auto var : surrounding) {
         int level = map_find(var, levels);
         auto container = prg.find_loop(var);
-        cout << op->name << endl;
         int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
         int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
@@ -19505,6 +19514,25 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
   return;
+}
+
+void pad_to_same_depth(op* root, prog& prg, map<string, vector<int> > & pad_indexes) {
+  pad_top_level_ops_with_loops(prg);
+  //map<string, vector<int> > pad_indexes = align_loop_var_with_pad(root, prg);
+  map<string, vector<int> > op2pad_indexes;
+  for (auto p : pad_indexes) {
+    cout << tab(1) << p.first << ": " << comma_list(p.second) << endl;
+    auto lp = prg.find_loop(p.first);
+    for (auto rep : lp->descendant_ops()) {
+        op2pad_indexes[rep->name] = p.second;
+    }
+  }
+  insert_pad_loops(prg, op2pad_indexes);
+
+  prg.pretty_print();
+  bool single_depth = all_loop_nests_same_depth(prg);
+  assert(single_depth);
+
 }
 
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {

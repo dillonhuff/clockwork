@@ -1944,6 +1944,8 @@ int num_read_ports(const std::string& b, prog& prg);
 
 
 bool is_rate_matchable(prog& prg);
+//new method for checking rate match pipeline
+bool is_rate_matchable_loopnest(prog& prg, map<string, vector<int> >& pad_indices);
 
 int loop_depth(op* op);
 vector<int> loop_depth_vector(op* op);

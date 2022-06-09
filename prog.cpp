@@ -650,11 +650,51 @@ void align_loop_var_with_pad(prog& prg) {
     align_loop_var_with_pad(prg.root, prg);
 }
 
+
+//Transform align dimension into pad dimension
+//{0, 1,2,5} {0,2,3,5}
+//->
+//{0, -1. 1, 2, 3, 4}
+//{0,  1,  2, 3, 4, -1 }
+pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
+        vector<int> & p_align_dim,
+        vector<int> & c_align_dim) {
+
+    cout << "transform align array to pad dim: \n\t" <<
+        p_align_dim << "\n\t" << c_align_dim << endl;
+    vector<int> pad_dim_p({0}), pad_dim_c({0});
+    assert(p_align_dim.size() == c_align_dim.size());
+    assert(p_align_dim.size() > 1);
+    int p_depth = 1, c_depth = 1;
+    for (int i = 1; i < p_align_dim.size(); i ++) {
+        int p_inc = p_align_dim.at(i) - p_align_dim.at(i-1);
+        int c_inc = c_align_dim.at(i) - c_align_dim.at(i-1);
+        for (int pad_cnt = 0; pad_cnt < c_inc-1; pad_cnt ++) {
+            pad_dim_p.push_back(-1);
+            pad_dim_c.push_back(c_depth++);
+        }
+        for (int pad_cnt = 0; pad_cnt < p_inc-1; pad_cnt ++) {
+            pad_dim_c.push_back(-1);
+            pad_dim_p.push_back(p_depth++);
+        }
+        assert(p_depth == p_align_dim.at(i));
+        assert(c_depth == c_align_dim.at(i));
+        pad_dim_p.push_back(p_align_dim.at(i));
+        pad_dim_c.push_back(c_align_dim.at(i));
+        p_depth ++;
+        c_depth ++;
+    }
+    pad_dim_c.pop_back();
+    pad_dim_p.pop_back();
+    return make_pair(pad_dim_p, pad_dim_c);
+}
+
 /*
  * this function will return the index of matrix of aligning dimension
  * It will be a pair of int
  * first is the producer dimension
  * second is the consumer dimension
+ * from which producer aligned with consumer loop
  */
 
 maybe<pair<vector<int>, vector<int>>> get_loop_info(string p_kernel, string c_kernel, prog& prg) {
@@ -711,54 +751,27 @@ maybe<pair<vector<int>, vector<int>>> get_loop_info(string p_kernel, string c_ke
       int o_most_align;
       for (int o : it.second){
           int lpbd_diff = abs(p_lp_bd.at(i-1) - c_lp_bd.at(o-1));
-          if (lpbd_diff < min_diff)
+          if (lpbd_diff < min_diff) {
               o_most_align = o;
+              min_diff = lpbd_diff;
+          }
       }
       if (it.second.size())
         aligned_dim_pair.push_back(make_pair(i, o_most_align));
   }
-
-  //Parse the alignment relation into pading format
+  cout << "align dim pair: " << endl;
   vector<int> c_align_arr({0}), p_align_arr({0});
-  auto it = aligned_dim_pair.begin();
-  int pad_depth = max(p_lp_bd.size(), c_lp_bd.size());
-  int my_depth = 0;
-  for (int i = 0; i < pad_depth; i ++ ) {
-      if (my_depth < p_lp_bd.size()) {
-          //find the alignment in array
-          if (it->first == my_depth + 1) {
-            p_align_arr.push_back(my_depth+1);
-            it++;
-          } else if (it == aligned_dim_pair.end()){
-            p_align_arr.push_back(my_depth+1);
-          } else {
-            p_align_arr.push_back(-1);
-          }
-          my_depth ++;
-      } else {
-          p_align_arr.push_back(-1);
-      }
+  for (auto it: aligned_dim_pair) {
+    cout << tab(2) << it.first << ", " << it.second << endl;
+    p_align_arr.push_back(it.first);
+    c_align_arr.push_back(it.second);
   }
+  p_align_arr.push_back(p_lp_bd.size()+1);
+  c_align_arr.push_back(c_lp_bd.size()+1);
 
-  it = aligned_dim_pair.begin();
-  my_depth = 0;
-  for (int i = 0; i < pad_depth; i ++ ) {
-      if (my_depth < c_lp_bd.size()) {
-          //find the alignment in array
-          if (it->second== my_depth + 1) {
-            c_align_arr.push_back(my_depth+1);
-            it++;
-          } else if (it == aligned_dim_pair.end()){
-            c_align_arr.push_back(my_depth+1);
-          } else {
-            c_align_arr.push_back(-1);
-          }
-          my_depth ++;
-      } else {
-          c_align_arr.push_back(-1);
-      }
-  }
-  return maybe<pair<vector<int>, vector<int> > >(make_pair(p_align_arr, c_align_arr));
+  return maybe<pair<vector<int>, vector<int> > >(
+          make_pair(p_align_arr, c_align_arr)
+          );
 }
 
 bool same_vec(vector<int>& l, vector<int>& r) {
@@ -775,32 +788,66 @@ bool same_vec(vector<int>& l, vector<int>& r) {
 }
 
 
-//Return two padding index vector
+//Look at the current padding loop and previous padded loop,
+//pad them to the same level
+//return the dimension index that need to be add -1
 pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r) {
+    cout << "\tl :" << l << "\n\tr: " << r << endl;
     vector<int> l_pad, r_pad;
     auto it_l = l.begin();
     auto it_r = r.begin();
+    //std::deque<int> l_pad_tbd, r_pad_tbd;
     while(it_l != l.end() || it_r != r.end()) {
         if (it_l == l.end()) {
-            l_pad.push_back(it_r - r.begin());
+            l_pad.push_back(it_r - r.begin() + r_pad.size());
             it_r ++;
         } else if (it_r == r.end()) {
-            r_pad.push_back(it_l - l.begin());
+            r_pad.push_back(it_l - l.begin() + l_pad.size());
             it_l ++;
         } else if (*it_l == *it_r) {
+            //Matched increment the iterators
             it_l ++;
             it_r ++;
-        } else if (it_l > it_r) {
-            l_pad.push_back(it_r-r.begin());
-            it_r++;
+        } else if (*it_l > *it_r) {
+            //keft dimension need padding, it_r point to -1
+            l_pad.push_back(it_r-r.begin() + r_pad.size());
+            it_r ++;
         } else {
-            r_pad.push_back(it_l-l.begin());
+            //right dimension need padding it_l point to -1(special padding character)
+            r_pad.push_back(it_l-l.begin() + l_pad.size());
             it_l ++;
         }
     }
     return make_pair(l_pad, r_pad);
 }
 
+void pad_loop_depth(pair<vector<int>, vector<int> > & pad_dim_pair,
+    map<string, vector<int> > & padding_map,
+    bool prod_exist, string link_node_name) {
+
+    auto prod_pad_dim = prod_exist ?
+        pad_dim_pair.first : pad_dim_pair.second;
+
+    auto pad_adjust_vec_pair =
+        pad_alignment(padding_map.at(link_node_name), prod_pad_dim);
+    auto prod_pad = pad_adjust_vec_pair.first;
+    auto cons_pad = pad_adjust_vec_pair.second;
+    cout << "\t\tneed padding: " << padding_map.at(link_node_name) << endl;
+    cout << "\t\tprod pad: " << prod_pad << endl;
+    cout << "\t\tcons pad: " << cons_pad << endl;
+    for (int pad_dim: prod_pad) {
+      for (auto & it: padding_map) {
+        vector<int> & pad_vec = it.second;
+        pad_vec.insert(pad_vec.begin() + pad_dim, -1);
+      }
+    }
+    for (int pad_dim: cons_pad) {
+      pad_dim_pair.first.insert(pad_dim_pair.first.begin() + pad_dim, -1);
+      pad_dim_pair.second.insert(pad_dim_pair.second.begin() + pad_dim, -1);
+    }
+}
+
+//Follow the topologically sort order of the application graph
 map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
   std::vector<string> all_kernels = topologically_sort_kernels(root, prg);
   map<string, vector<int> > padding_map;
@@ -815,73 +862,58 @@ map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
         if (align_dim_pair.has_value()) {
           auto prod_align_dim = align_dim_pair.get_value().first;
           auto cons_align_dim = align_dim_pair.get_value().second;
-          cout << "\tprod align array:" << prod_align_dim << endl;
-          cout << "\tcons align array:" << cons_align_dim << endl;
+          if (!std::is_sorted(prod_align_dim.begin(), prod_align_dim.end()) ||
+                  !std::is_sorted(cons_align_dim.begin(), cons_align_dim.end())) {
+            //Find the misalignment
+            cout << "\n[WARNING]: loops are not aligned, need loop reorder." << endl;
+            cout << tab(2) << "================= "<<endl;
+            cout << tab(2) << "PRODUCER LOOPS: "<<endl;
+            cout << tab(2) << "================= "<<endl;
+            prg.find_loop(prod)->pretty_print();
+            cout << tab(2) << "================= "<<endl;
+            cout << tab(2) << "CONSUMER LOOPS: " << endl;
+            cout << tab(2) << "================= "<<endl;
+            prg.find_loop(next_kernel)->pretty_print();
+            return {};
+          }
+
+          pair<vector<int>, vector<int> > pad_dim_pair =
+              aligned_dim_to_pad_dim(prod_align_dim, cons_align_dim);
+          auto prod_pad_dim = pad_dim_pair.first;
+          auto cons_pad_dim = pad_dim_pair.second;
+          cout << "\tprod align array:" << prod_pad_dim << endl;
+          cout << "\tcons align array:" << cons_pad_dim << endl;
           if (padding_map.count(prod)) {
-            if ( !same_vec(padding_map.at(prod),  prod_align_dim)) {
-              auto pad_adjust_vec_pair =
-                  pad_alignment(padding_map.at(prod), prod_align_dim);
-              auto prod_pad = pad_adjust_vec_pair.first;
-              auto cons_pad = pad_adjust_vec_pair.second;
-              cout << "\t\tneed padding: " << padding_map.at(prod) << endl;
-              cout << "\t\tprod pad: " << prod_pad << endl;
-              cout << "\t\tcons pad: " << cons_pad << endl;
-              for (int pad_dim: prod_pad) {
-                for (auto & it: padding_map) {
-                  vector<int> & pad_vec = it.second;
-                  pad_vec.insert(pad_vec.begin() + pad_dim, -1);
-                }
-              }
-              for (int pad_dim: cons_pad) {
-                prod_align_dim.insert(prod_align_dim.begin() + pad_dim, -1);
-                cons_align_dim.insert(cons_align_dim.begin() + pad_dim, -1);
-              }
+            if ( !same_vec(padding_map.at(prod),  prod_pad_dim)) {
+              pad_loop_depth(pad_dim_pair, padding_map, true, prod);
             }
 
 
           } else if (padding_map.count(next_kernel)) {
-
-            if ( !same_vec(padding_map.at(next_kernel),  cons_align_dim)) {
-              auto pad_adjust_vec_pair =
-                  pad_alignment(padding_map.at(next_kernel), cons_align_dim);
-              auto prod_pad = pad_adjust_vec_pair.first;
-              auto cons_pad = pad_adjust_vec_pair.second;
-              cout << "\t\tneed padding: " << padding_map.at(next_kernel) << endl;
-              cout << "\t\tprod pad: " << prod_pad << endl;
-              cout << "\t\tcons pad: " << cons_pad << endl;
-              for (int pad_dim: prod_pad) {
-                for (auto & it: padding_map) {
-                  vector<int> & pad_vec = it.second;
-                  pad_vec.insert(pad_vec.begin() + pad_dim, -1);
-                }
-              }
-              for (int pad_dim: cons_pad) {
-                prod_align_dim.insert(prod_align_dim.begin() + pad_dim, -1);
-                cons_align_dim.insert(cons_align_dim.begin() + pad_dim, -1);
-              }
+            if ( !same_vec(padding_map.at(next_kernel),  cons_pad_dim)) {
+              pad_loop_depth(pad_dim_pair, padding_map, false, next_kernel);
             }
 
           } else {
             if (padding_map.size() > 0) {
               auto sample_padding_map = pick(padding_map).second;
-              if (prod_align_dim.size() != sample_padding_map.size() ||
-                    cons_align_dim.size() != sample_padding_map.size()){
+              if (prod_pad_dim.size() != sample_padding_map.size() ||
+                    cons_pad_dim.size() != sample_padding_map.size()){
                 cout << "floating producer consumer pair: " << prod << "->" << next_kernel << endl;
                 assert(false);
               }
             }
           }
           //Add the information
-          padding_map[prod] = prod_align_dim;
-          padding_map[next_kernel] = cons_align_dim;
+          padding_map[prod] = pad_dim_pair.first;;
+          padding_map[next_kernel] = pad_dim_pair.second;
         } else {
           cout << "\tnot overlapping" << endl;
         }
+        for (auto it: padding_map) {
+          cout << "\n\n\t\tkernel: " << it.first << ", pad vec: " << it.second << endl;
+        }
       }
-    }
-
-    for (auto it: padding_map) {
-      cout << "\t\tkernel: " << it.first << ", pad vec: " << it.second << endl;
     }
   }
   return padding_map;
@@ -3193,6 +3225,19 @@ int num_read_ports(const std::string& b, prog& prg) {
   }
   return num_reads;
 }
+
+bool is_rate_matchable_loopnest(prog& prg, map<string, vector<int> >& pad_indices) {
+
+    if (all_perfect_loop_nests(prg)) {
+        int max_depth = max_loop_depth(prg);
+        int align_loop_depth = pick(pad_indices).second.size();
+        if (align_loop_depth == max_depth) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 bool is_rate_matchable(prog& prg) {
   auto rvars = reduce_vars(prg);
