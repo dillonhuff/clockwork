@@ -1857,15 +1857,21 @@ struct schedule_info {
     assert(lp->is_loop());
     assert(lp->children.size() == 1);
     auto c = pick(lp->children);
-    return offset_in_parent(c) + II(c) * c->trip_count();
+    if (c->is_loop()) {
+      return offset_in_parent(c) + II(c) * c->trip_count();
+    } else if (c->is_op()) {
+      return offset_in_parent(c) + total_latency(c);
+    } else {
+        cout << "ERROR not implement update delay for this op type" << endl;
+        assert(false);
+        return 0;
+    }
   }
 
   int last_update_delay(op* op) {
     assert(op->is_loop());
     int last_delay = 0;
     if (op->children.size() == 1) {
-    //if (false) {
-
         return perfect_loop_update_delay(op);
     } else {
       for (auto c : op->children) {

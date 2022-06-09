@@ -2783,7 +2783,7 @@ int get_out_padding_dimension(isl_map* m, int in_dim) {
 }
 
 map<int, vector<int>> get_in2out_rel(isl_map* m) {
-  map<int, vector<int>> in2out_rel;
+  map<int, vector<int>> in2out_rel, ret;
   auto c_vec =  constraints(m);
   int in_dim = num_in_dims(m);
   int out_dim = num_out_dims(m);
@@ -2797,7 +2797,13 @@ map<int, vector<int>> get_in2out_rel(isl_map* m) {
       }
     }
   }
-  return in2out_rel;
+  //remove the repeated dimension
+  for (auto it: in2out_rel) {
+    std::set<int> tmp(it.second.begin(), it.second.end());
+    std::vector<int> tmp_vec(tmp.begin(), tmp.end());
+    ret[it.first] = tmp_vec;
+  }
+  return ret;
 }
 
 
