@@ -874,6 +874,18 @@ void pad_loop_depth(pair<vector<int>, vector<int> > & pad_dim_pair,
     }
 }
 
+bool recurrence_val(vector<int> & in) {
+    std::set<int> val;
+    for (auto i : in) {
+        if (val.count(i) == 0) {
+          val.insert(i);
+        } else {
+          return true;
+        }
+    }
+    return false;
+}
+
 //Follow the topologically sort order of the application graph
 map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
   std::vector<string> all_kernels = topologically_sort_kernels(root, prg);
@@ -893,6 +905,18 @@ map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
                   !std::is_sorted(cons_align_dim.begin(), cons_align_dim.end())) {
             //Find the misalignment
             cout << "\n[WARNING]: loops are not aligned, need loop reorder." << endl;
+            cout << tab(2) << "================= "<<endl;
+            cout << tab(2) << "PRODUCER LOOPS: "<<endl;
+            cout << tab(2) << "================= "<<endl;
+            prg.find_loop(prod)->pretty_print();
+            cout << tab(2) << "================= "<<endl;
+            cout << tab(2) << "CONSUMER LOOPS: " << endl;
+            cout << tab(2) << "================= "<<endl;
+            prg.find_loop(next_kernel)->pretty_print();
+            return {};
+          }
+          if (recurrence_val(cons_align_dim)) {
+            cout << "\n[WARNING]: has tiling loop, cannot efficiently aligned." << endl;
             cout << tab(2) << "================= "<<endl;
             cout << tab(2) << "PRODUCER LOOPS: "<<endl;
             cout << tab(2) << "================= "<<endl;
