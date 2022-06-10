@@ -888,6 +888,9 @@ bool recurrence_val(vector<int> & in) {
 
 //Follow the topologically sort order of the application graph
 map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
+  if (!all_perfect_loop_nests(prg)) {
+    return {};
+  }
   std::vector<string> all_kernels = topologically_sort_kernels(root, prg);
   map<string, vector<int> > padding_map;
 
