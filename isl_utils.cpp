@@ -5401,24 +5401,31 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
   } else {
     //cout << "Getting div bound for: " << str(aff_bound) << endl;
     //cout << "Div exprs..." << endl;
+    std::set<int> dim_matters;
     for (int i = 0; i < div_dims; i++) {
       auto dexpr = isl_aff_get_div(aff_bound, i);
+      isl_val* k_div = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, i);
       //cout << tab(1) << str(dexpr) << endl;
+      //cout << tab(2) << "coeff: " << str(k_div) << endl;
+      if (to_int(k_div) != 0) {
+          dim_matters.insert(i);
+      }
     }
-    assert(div_dims == 1);
+    assert(dim_matters.size() == 1);
+    auto div_dim = pick(dim_matters);
 
     isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
-    isl_val* k_div = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, 0);
+    isl_val* k_div = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, div_dim);
     isl_val* b = isl_aff_get_constant_val(aff_bound);
-    cout << "aff k = " << str(k) << endl;
-    cout << "aff k_div = " << str(k_div) << endl;
-    cout << "aff b = " << str(b) << endl;
+    //cout << "aff k = " << str(k) << endl;
+    //cout << "aff k_div = " << str(k_div) << endl;
+    //cout << "aff b = " << str(b) << endl;
 
-    isl_aff* div_expr = isl_aff_get_div(aff_bound, 0);
-    cout << "Div: " << str(div_expr) << endl;
+    isl_aff* div_expr = isl_aff_get_div(aff_bound, div_dim);
+    //cout << "Div: " << str(div_expr) << endl;
     auto dkb = extract_div_free_linear_rational_approximation(div_expr);
-    cout << "div k = " << str(dkb.first) << endl;
-    cout << "div b = " << str(dkb.second) << endl;
+    //cout << "div k = " << str(dkb.first) << endl;
+    //cout << "div b = " << str(dkb.second) << endl;
 
     //assert(isl_val_is_zero(dkb.second));
 

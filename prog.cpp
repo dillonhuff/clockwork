@@ -613,6 +613,33 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   }
 }
 
+string pick_kernel_with_most_consumers(std::set<string> & not_yet_sorted,
+        map<string, std::set<string> > & other_producers) {
+    map<string, int> consumer_count;
+    for (auto it: other_producers) {
+      string consumer = it.first;
+      auto producer_set = it.second;
+      if (not_yet_sorted.count(consumer)) {
+        for (string prod: producer_set) {
+          if (not_yet_sorted.count(prod)) {
+            if (consumer_count.count(prod) == 0)
+              consumer_count[prod] = 1;
+            else
+              consumer_count.at(prod) ++;
+          }
+        }
+      }
+    }
+    int max_count = 0;
+    string ret_kernel;
+    for (auto it: consumer_count) {
+      if (it.second > max_count) {
+        ret_kernel = it.first;
+        max_count = it.second;
+      }
+    }
+    return ret_kernel;
+}
 
 std::vector<string> topologically_sort(
         std::set<string> not_yet_sorted,
@@ -638,7 +665,7 @@ std::vector<string> topologically_sort(
 		}
         if (!add_new_kernel) {
             cout << "\tIs topologically symmetric:\n\t" << not_yet_sorted <<  endl;
-            auto kernel_picked = pick(not_yet_sorted);
+            auto kernel_picked = pick_kernel_with_most_consumers(not_yet_sorted, other_producers);
             not_yet_sorted.erase(kernel_picked);
             topologically_sorted_kernels.push_back(kernel_picked);
         }
@@ -3226,13 +3253,53 @@ int num_read_ports(const std::string& b, prog& prg) {
   return num_reads;
 }
 
+bool can_achieve_full_rate(prog& prg, map<string, vector<int> > & pad_indices, int max_depth) {
+    vector<int> loop_depth_record(max_depth-1, 0);
+    string most_compute_intensive_stage;
+    int max_iteration_cnt = 0;
+    for (auto it: pad_indices) {
+        string k = it.first;
+        auto pad_index = it.second;
+        auto lp = prg.find_loop(k);
+        auto vec = loop_depth_vector(lp);
+        if (vec.size() == max_depth - 1) {
+            int multi = std::accumulate(begin(vec), end(vec), 1, std::multiplies<int>());
+            if (multi > max_iteration_cnt) {
+                most_compute_intensive_stage = k;
+                max_iteration_cnt = multi;
+            }
+        }
+        cout << tab(2) << "kernel: " << k << endl;
+        cout << tab(4) << "pad indice: " << pad_index << endl;
+        cout << tab(4) << "loop depth: " << vec << endl;
+        int pad_depth = 0;
+        for (auto idx: pad_index) {
+            if (idx > 0) {
+                loop_depth_record.at(pad_depth - 1) =
+                    max(vec.at(idx-1), loop_depth_record.at(pad_depth - 1));
+            }
+            pad_depth ++;
+        }
+    }
+    cout << tab(2) << "final depth index :" << loop_depth_record << endl;
+    cout << tab(2) << "most intensive kernel:" << most_compute_intensive_stage << endl;
+    auto multi = std::accumulate(begin(loop_depth_record), end(loop_depth_record), 1,
+            std::multiplies<int>());
+    if (multi > max_iteration_cnt*2) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 bool is_rate_matchable_loopnest(prog& prg, map<string, vector<int> >& pad_indices) {
 
     if (all_perfect_loop_nests(prg)) {
         int max_depth = max_loop_depth(prg);
         int align_loop_depth = pick(pad_indices).second.size();
         if (align_loop_depth == max_depth) {
-            return true;
+            if (can_achieve_full_rate(prg, pad_indices, max_depth))
+              return true;
         }
     }
     return false;
