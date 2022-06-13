@@ -848,6 +848,29 @@ pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r) {
     return make_pair(l_pad, r_pad);
 }
 
+//Pad both the origin map and float map
+//node exist in both map
+void pad_loop_depth(map<string, vector<int>> & float_map,
+      map<string, vector<int>> & padding_map,
+      string node_name) {
+  auto pad_adjust_vec_pair =
+      pad_alignment(padding_map.at(node_name), float_map.at(node_name));
+  auto prod_pad = pad_adjust_vec_pair.first;
+  auto cons_pad = pad_adjust_vec_pair.second;
+  for (int pad_dim: prod_pad) {
+    for (auto & it: padding_map) {
+      vector<int> & pad_vec = it.second;
+      pad_vec.insert(pad_vec.begin() + pad_dim, -1);
+    }
+  }
+  for (int pad_dim: cons_pad) {
+    for (auto & it: float_map) {
+      vector<int> & pad_vec = it.second;
+      pad_vec.insert(pad_vec.begin() + pad_dim, -1);
+    }
+  }
+}
+
 void pad_loop_depth(pair<vector<int>, vector<int> > & pad_dim_pair,
     map<string, vector<int> > & padding_map,
     bool prod_exist, string link_node_name) {
@@ -886,6 +909,16 @@ bool recurrence_val(vector<int> & in) {
     return false;
 }
 
+//A union find alogrithm
+maybe<string> union_find_key(map<string, map<string,vector<int> > > & float_info, string prod) {
+    for (auto it: float_info) {
+      if (it.second.count(prod)) {
+        return maybe<string>(it.first);
+      }
+    }
+    return {};
+}
+
 //Follow the topologically sort order of the application graph
 map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
   if (!all_perfect_loop_nests(prg)) {
@@ -893,6 +926,7 @@ map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
   }
   std::vector<string> all_kernels = topologically_sort_kernels(root, prg);
   map<string, vector<int> > padding_map;
+  map<string, map<string, vector<int> > > float_padding_info;
 
   for (auto next_kernel : all_kernels) {
     std::set<string> producers = get_producers(next_kernel, root, prg);
@@ -941,26 +975,58 @@ map<string, vector<int> > align_loop_var_with_pad(op* root, prog& prg){
             if ( !same_vec(padding_map.at(prod),  prod_pad_dim)) {
               pad_loop_depth(pad_dim_pair, padding_map, true, prod);
             }
-
+            //Add the information
+            padding_map[prod] = pad_dim_pair.first;;
+            padding_map[next_kernel] = pad_dim_pair.second;
+            auto has_key = union_find_key(float_padding_info, next_kernel);
+            if (has_key.has_value()) {
+              string float_graph_key = has_key.get_value();
+              pad_loop_depth(float_padding_info.at(float_graph_key), padding_map, next_kernel);
+              padding_map.merge(float_padding_info.at(float_graph_key));
+              float_padding_info.erase(float_graph_key);
+            }
 
           } else if (padding_map.count(next_kernel)) {
             if ( !same_vec(padding_map.at(next_kernel),  cons_pad_dim)) {
               pad_loop_depth(pad_dim_pair, padding_map, false, next_kernel);
             }
+            //Add the information
+            padding_map[prod] = pad_dim_pair.first;;
+            padding_map[next_kernel] = pad_dim_pair.second;
 
           } else {
             if (padding_map.size() > 0) {
               auto sample_padding_map = pick(padding_map).second;
               if (prod_pad_dim.size() != sample_padding_map.size() ||
                     cons_pad_dim.size() != sample_padding_map.size()){
-                cout << "floating producer consumer pair: " << prod << "->" << next_kernel << endl;
-                assert(false);
+                cout << "floating producer consumer pair: " << prod <<
+                    "->" << next_kernel << endl;
+                auto has_key = union_find_key(float_padding_info, prod);
+                if (has_key.has_value()) {
+                  string key = has_key.get_value();
+                  assert(same_vec(
+                              float_padding_info.at(key).at(prod),
+                              prod_pad_dim));
+                  //TODO: may need to pad the float graph as well
+                  float_padding_info[key][prod] = prod_pad_dim;
+                  float_padding_info[key][next_kernel] = cons_pad_dim;
+                } else {
+                  float_padding_info[prod][prod] = prod_pad_dim;
+                  float_padding_info[prod][next_kernel] = cons_pad_dim;
+                }
+              } else {
+
+            //Add the information
+            padding_map[prod] = pad_dim_pair.first;;
+            padding_map[next_kernel] = pad_dim_pair.second;
               }
+            } else {
+
+            //Add the information
+            padding_map[prod] = pad_dim_pair.first;;
+            padding_map[next_kernel] = pad_dim_pair.second;
             }
           }
-          //Add the information
-          padding_map[prod] = pad_dim_pair.first;;
-          padding_map[next_kernel] = pad_dim_pair.second;
         } else {
           cout << "\tnot overlapping" << endl;
         }
