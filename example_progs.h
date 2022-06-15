@@ -41,6 +41,7 @@ prog nlmeans_simple_trunc();
 prog nlmeans_simple_blur();
 prog nlmeans_rolled_7x7();
 prog conv_3_3(); //stencil
+prog conv_3_3_reorder(); //unit test without core ir compute
 prog conv_3_3_buffet(); //stencil
 prog conv_unit_test(); //stencil
 prog bank_test(); //stencil

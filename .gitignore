@@ -1,3 +1,13 @@
+**/lake_collateral
+*_compute_pipelined.json
+unit_tb_*
+after_mapping_*
+*_deepak_power_flow_tb.sv
+*_verilog_collateral.sv
+*_verilog_tb.sv
+*_verilog_tb.cpp
+*_vivado_verilog_tb.sv
+*_bmp_test_harness.cpp
 out
 soda_codes/
 *~

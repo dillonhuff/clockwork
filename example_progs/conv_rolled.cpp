@@ -23,11 +23,6 @@ prog conv_rolled() {
   prg.buffer_port_widths["hw_input_global_wrapper_stencil"] = 16;
   hcompute_hw_input_global_wrapper_stencil->add_store("hw_input_global_wrapper_stencil", "hw_input_global_wrapper_s0_y", "hw_input_global_wrapper_s0_x");
 
-//consuming hw_input_global_wrapper.stencil
-////producing kernela0
-  auto kernel_s0_y = prg.add_loop("kernel_s0_y", 0, 3);
-  auto kernel_s0_x = kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
-
 //consuming kernela0
 ////producing conv.stencil
   auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 10);
