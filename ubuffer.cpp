@@ -1262,7 +1262,7 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
 
       if (impl.is_shift_register_output(outpt)) {
-        int delay = impl.shift_registered_outputs.at(outpt).second;;
+        int delay = impl.shift_registered_outputs.at(outpt).second;
         string inpt = impl.shift_registered_outputs.at(outpt).first;
 
         auto acc_map = to_map(access_map.at(inpt));
@@ -2734,7 +2734,110 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
   }
 }
 
+void UBuffer::generate_linesel_def(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def,
+                                   map<string, int> & pt2index, string mod_name) {
+  auto context = def->getContext();
+  auto ns = context->getNamespace("global");
+  auto num_outputs = impl.shift_registered_outputs.size();
+  auto num_inputs = out_bundles_width();
+  cout << "creating line selector for " << mod_name << " with num_in=" << num_inputs << " num_out=" << num_outputs << endl;
+  //auto mod_name = name + "_op_hcompute_" + dst_name + "_ub_srs";
+  vector<pair<string, CoreIR::Type*> > sr_field {
+    {"in", context->BitIn()->Arr(port_widths)->Arr(num_inputs)},
+    {"out", context->Bit()->Arr(port_widths)->Arr(num_outputs)}
+  };
+  auto linesel = ns->newModuleDecl(mod_name, context->Record(sr_field));
+  auto def_linesel = linesel->newModuleDef();
+
+  int line_cnt = 0;
+  auto self = def_linesel->sel("self");
+
+  for (auto it: impl.get_shift_registered_ports()) {
+    string dst = it.first;
+    string src = it.second.first;
+
+    if (impl.is_memline(src)) {
+      auto output_idx = pt2index[src];
+      def_linesel->connect("self.in." + to_string(output_idx), "self.out." + to_string(line_cnt));
+      std::cout << "Connecting line " << src << " from bundle_idx=" << output_idx << " to line_idx=" << line_cnt << endl;
+      line_cnt++;
+    } else {
+      // we don't need to connect the rest of them
+    }
+
+    linesel->setDef(def_linesel);
+  }
+}
+
+void UBuffer::generate_sreg_def(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def,
+                                map<string, int> & pt2index, map<string, CoreIR::Wireable*>& pt2wire, string mod_name) {
+  auto context = def->getContext();
+  auto ns = context->getNamespace("global");
+  auto num_inputs = impl.shift_registered_outputs.size();
+  auto num_outputs = out_bundles_width();
+  //num_outputs = num_outputs == 10 ? 9 : num_outputs;
+  vector<pair<string, CoreIR::Type*> > sr_field {
+    {"in", context->BitIn()->Arr(port_widths)->Arr(num_inputs)},
+    {"out", context->Bit()->Arr(port_widths)->Arr(num_outputs)}
+  };
+  auto srs = ns->newModuleDecl(mod_name, context->Record(sr_field));
+  auto def_srs = srs->newModuleDef();
+  cout << "creating shift register for " << name << " with num_in=" << num_inputs << " num_out=" << num_outputs << endl;
+
+  int input_cnt = 0;
+  auto self = def_srs->sel("self");
+  map<string, CoreIR::Wireable*> conxs;
+
+  impl.print_info(cout);
+  
+  for (auto it: impl.get_shift_registered_ports()) {
+    //add pt for it.first(an output port)
+    string dst = it.first;
+    string src = it.second.first;
+    int delay = it.second.second;
+
+    CoreIR::Wireable* last_out;
+
+    std::cout << " shift register " << src << " to " << dst << " and delay=" << delay << endl;
+    if (impl.is_memline(src)) {
+      auto output_idx = pt2index[src];
+      def_srs->connect("self.in." + to_string(input_cnt), "self.out." + to_string(output_idx));
+      last_out = self->sel("in")->sel(to_string(input_cnt));
+      input_cnt++;
+      std::cout << "Starting";
+    } else if (impl.is_memline(dst)) {
+      // Wire up this input. This is the input that connects directly to compute (delay=0)
+      std::cout << "wiring def memline from " << src << " to " << dst << " with delay=" << delay << endl;
+      auto src_wire = pt2wire.at(src);
+      auto dst_wire = pt2wire.at(dst);
+      def->connect(src_wire, dst_wire);
+      continue;
+    } else {
+      std::cout << "continuing";
+      assert(impl.is_sr(src));
+      assert(conxs.count(src) > 0);
+      last_out = conxs[src];
+    }
+
+    auto output_idx = pt2index[dst];
+    CoreIR::Wireable* final_out = self->sel("out")->sel(to_string(output_idx));
+    cout << " with shift register input=" << input_cnt << ", connected to out=" << output_idx << endl;
+    for (size_t i = 0; i < delay; i ++) {
+      auto reg = def_srs->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+          {{"width", CoreIR::Const::make(context, port_widths)},
+          {"has_en", CoreIR::Const::make(context, false)}});
+      def_srs->connect(reg->sel("in"), last_out);
+      last_out = reg->sel("out");
+      conxs[dst] = last_out;
+    }
+    def_srs->connect(last_out, final_out);
+  }
+
+  srs->setDef(def_srs);
+}
+
 //helper function to generate shift register
+// jeff setter generate shift registers
 void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
   auto context = def->getContext();
   for (auto it: impl.get_shift_registered_ports()) {
@@ -2744,9 +2847,11 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
     int delay = it.second.second;
     auto wire = pt2wire.at(src);
     CoreIR::Wireable* last_out;
-    if (isIn.at(src))
+    if (isIn.at(src)) {
       last_out = wire;
-    else {
+      std::cout << "Starting with shift register " << src << " to " << dst << endl;
+    } else {
+      std::cout << "continuing with shift register " << src << " to " << dst << " and delay=" << delay << endl;
       auto conns = getConnectWires(wire);
       assert(conns.size() == 1);
       last_out = pick(conns);
@@ -2760,6 +2865,7 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
       last_out = reg->sel("out");
     }
     def->connect(last_out, final_out);
+    std::cout << "final out is " << dst << endl;
   }
 }
 
@@ -3125,6 +3231,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
         bool with_ctrl) {
   auto context = def->getContext();
   map<string, CoreIR::Wireable*> pt2wire;
+  map<string, int> pt2index;
 
   //Sequence of port is based on name of bundle
   for (auto b : get_in_bundles()) {
@@ -3133,18 +3240,20 @@ void UBuffer::generate_coreir(CodegenOptions& options,
     auto inpt_bd_wire = def->sel("self." + b);
     for (auto inpt : port_bundles.at(b)) {
       pt2wire[inpt] = inpt_bd_wire->sel(pt_cnt);
-      cout << "add input: " << inpt << " to pt2wire" << endl;
-      pt_cnt ++;
+      cout << "add input: " << inpt << " to pt2wire" << pt_cnt << endl;
+      pt_cnt++;
     }
   }
   for (auto b : get_out_bundles()) {
     int pix_width = port_widths;
     int pt_cnt = 0;
+    cout << "bundle of size " << port_bundles.at(b).size() << endl;
     auto outpt_bd_wire = def->sel("self." + b);
     for (auto outpt : port_bundles.at(b)) {
       pt2wire[outpt] = outpt_bd_wire->sel(pt_cnt);
-      cout << "add output: " << outpt << " to pt2wire" << endl;
-      pt_cnt ++;
+      pt2index[outpt] = pt_cnt;
+      cout << " add output: " << outpt << " to pt2wire" << pt_cnt << endl;
+      pt_cnt++;
     }
   }
 
@@ -3194,7 +3303,42 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   }
 
   //Generate the shift register connection
-  generate_sreg_and_wire(options, impl, def, pt2wire);
+  string dst_name = "idk";
+  string shared_op_name = "idk";
+  if (impl.get_shift_registered_ports().size() > 0) {
+    auto dst_port = impl.get_shift_registered_ports().at(0);
+    //auto dst = info.name_to_op[dst_port.first]->name;
+    auto dst = dst_port.first;
+    if (dst.find("hcompute_")) {
+      auto len = dst.rfind("_") - (dst.find("hcompute_") + 9);
+      dst_name = dst.substr(dst.find("hcompute_") + 9, len);
+    }
+    std::cout << "creating shift regs for impl to " << dst_name << std::endl;
+    if (info.name_to_op.count("op_hcompute_" + dst_name)) {
+      shared_op_name = info.name_to_op["op_hcompute_" + dst_name]->func;
+      std::cout << " using shared op " << shared_op_name << std::endl;
+    }
+  }
+
+  auto num_users = info.compute_resources[shared_op_name].num_users;
+  if (num_users > 1 && name.find("clkwrk_dsa") == -1) {
+    cout << "not creating shift registers yet since num_users=" << num_users << " for " << dst_name << endl;
+
+    // create template for shift registers
+    auto mod_name = name + "_op_hcompute_" + dst_name + "_ub_srs";
+    generate_sreg_def(options, impl, def, pt2index, pt2wire, mod_name);
+    info.sr_info["op_hcompute_" + dst_name].mod_name = "global." + mod_name;
+    std::cout << "created shift registers called " << mod_name << " for opname=" << shared_op_name << " going to dst=" << dst_name << " for name=" << name << endl;
+
+    // create line selector (select line outputs from all outputs)
+    auto linesel_modname = name + "_op_hcompute_" + dst_name + "_ub_linesel";
+    generate_linesel_def(options, impl, def, pt2index, linesel_modname);
+    info.sr_info["op_hcompute_" + dst_name].linesel_modname = "global." + linesel_modname;
+      
+  } else {
+    cout << "creating shift registers" << endl;
+    generate_sreg_and_wire(options, impl, def, pt2wire);
+  }
 
 }
 

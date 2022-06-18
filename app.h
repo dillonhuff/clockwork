@@ -4,8 +4,10 @@
 #include "utils.h"
 #include "qexpr.h"
 #include "expr.h"
+#include "prog.h"
 
 typedef pair<string, int> op_level;
+struct schedule_info;
 
 static inline
 std::string neg_ii_var(const string& n, const int d) {
@@ -1010,6 +1012,9 @@ map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps);
 
 map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps, schedule_info& info);
+
+map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 
 map<string, isl_aff*>
@@ -1077,6 +1082,12 @@ umap*
 clockwork_schedule_umap(uset* domain,
     umap* validity,
     umap* proximity);
+
+umap*
+clockwork_schedule_umap(uset* domain,
+                        umap* validity,
+                        umap* proximity,
+                        schedule_info& info);
 
 umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);
 
@@ -1349,5 +1360,12 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps);
+map<string, isl_aff*> clockwork_schedule_dimension(
+    vector<isl_set*> domains,
+    vector<isl_map*> deps,
+    map<string, vector<string> >& high_bandwidth_deps,
+    schedule_info& info,
+    int dim);
+
 
 map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms);

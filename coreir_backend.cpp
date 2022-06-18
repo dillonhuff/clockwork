@@ -2359,7 +2359,17 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       //Generate the memory module
       auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, impl, hwinfo);
       def->addInstance(buf.second.name, ub_mod);
-      std::cout << "created memory called " << buf.second.name << std::endl;
+
+      // jeff setter compute_share
+      auto num_users = hwinfo.compute_resources["hcompute_" + buf.second.name].num_users;
+      std::cout << "created memory called " << buf.second.name << " with num_users=" << num_users << std::endl
+                << " where shift registers are: ";
+      for (auto sr_data : impl.get_sr_outpts()) {
+        //std::cout << "[" << sr_data.first << ":" << sr_data.second << "], ";
+        std::cout << sr_data << ", ";
+      }
+      std::cout << std::endl;
+      impl.print_info(std::cout);
       //TODO: add reset connection for garnet mapping
       //cout << "connected reset for " << buf.first << buf.second.name <<  endl;
       def->connect(def->sel(buf.first + ".reset"), def->sel("self.reset"));
@@ -2397,6 +2407,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     cout << "op uses func " << op->func << " with " << num_users << " users" << endl;
     //if (num_users > 1) {
     //if (op->name != "op_" + op->func) {
+    // jeff setter compute sharing compute_sharing
     if (num_users > 1) {
       if (hwinfo.compute_resources[op->func].is_created) {
         std::cout << "Skipping creation of op " << op->name << " since already created. There are num_users=" << num_users << std::endl;
@@ -2417,16 +2428,35 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
           //string mux_name = op->func + "_" + buf_name + "_mux";
           string mux_name = op->func + "_bundle" + std::to_string(bundle_idx) + "_mux";
           bundle_idx += 1;
-          string in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
-          std::cout << "connecting mux input " << mux_name + in_port << " to " << buf_name + "." + bundle_name << std::endl;
-          def->connect(mux_name + in_port, buf_name + "." + bundle_name);
-          //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+          string mux_in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
+
+          string out_name = pg(buf_name, bundle_name);
+          string linesel_name = out_name.substr(0, out_name.size()-5) + "_ub_linesel";
+          std::cout << "check for module definition called " << linesel_name << endl;
+
+          if (prg.is_input(buf_name)) {
+            auto input_bus = "self." + pg(buf_name, bundle_name);
+            std::cout << "there is this special buffer name (skipped) called " << input_bus << std::endl;
+          }
+          
+          // connect to mux based on if shift register sharing exists
+          if (context->hasModule("global." + linesel_name)) {
+            std::cout << "connecting mux input (through sr) " << mux_name + mux_in_port << " to " << buf_name + "." + bundle_name << std::endl;
+            def->addInstance(linesel_name, "global." + linesel_name);
+            def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
+            def->connect(linesel_name + ".out", mux_name + mux_in_port);
+
+          } else {
+            std::cout << "connecting mux input " << mux_name + mux_in_port << " to " << buf_name + "." + bundle_name << std::endl;
+            def->connect(mux_name + mux_in_port, buf_name + "." + bundle_name);
+            //def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+          }
         }
         continue;
       } else {
         // First user of this kernel
         hwinfo.compute_resources[op->func].is_created = true;
-        std::cout << "Created the compute kernel " << op->func << std::endl;
+        std::cout << "Created the compute kernel " << op->func << " where name=" << op->name << std::endl;
 
         // Create the stencil_valid for the memory.
         auto stencil_valid_inst = generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
@@ -2440,27 +2470,69 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
           string bundle_name = bundle.second;
           std::cout << "connecting " << buf_name << " w/ bundle: " << bundle_name << std::endl;
 
-          // create the mux
-          //string mux_name = op->func + "_" + buf_name + "_mux";
-          string mux_name = op->func + "_bundle" + std::to_string(bundle_idx) + "_mux";
-          bundle_idx += 1;
-          assert(def->getInstances().count(op->name));
-          const auto instance_map = def->getInstances();
-          const auto type = instance_map.at(op->name)->sel(pg(buf_name, bundle_name))->getType();
-          const auto aType = Const::make(context, type);
-          //def->addInstance(mux_name, "commonlib.mux2_bundle", {{"type", aType}});
-          const auto aN = Const::make(context, num_users);
-          def->addInstance(mux_name, "commonlib.muxn_onehot", {{"type", aType}, {"N", aN}});
-          std::cout << "Created mux called " << mux_name << std::endl;
+          // extract shift register name and line selector name
+          string out_name = pg(buf_name, bundle_name);
+          string sr_name = out_name.substr(0, out_name.size()-5) + "_ub_srs";
+          string linesel_name = out_name.substr(0, out_name.size()-5) + "_ub_linesel";
+          std::cout << "check for module definition called " << sr_name << endl;
 
-          // wire up the mux
-          string in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
-          string sel_port = ".in.sel." + std::to_string(hwinfo.resource_assignment[op].number);
-          std::cout << "connecting mux input (first): " << mux_name + in_port << " to " << buf_name + "." + bundle_name << std::endl;
-          def->connect(mux_name + in_port, buf_name + "." + bundle_name);
-          //def->connect(mux_name + sel_port, buf_name + "." + bundle_name + "_extra_ctrl");
-          def->connect(mux_name + sel_port, valid_name + ".stencil_valid");
-          def->connect(mux_name + ".out", op->name + "." + pg(buf_name, bundle_name));
+          if (prg.is_input(buf_name)) {
+            auto input_bus = "self." + pg(buf_name, bundle_name);
+            std::cout << "there is this special buffer name called " << input_bus << std::endl;
+          }
+
+          // create shift registers if defined
+          if (context->hasModule("global." + sr_name)) {
+            cout << "found shift registers to connect" << endl;
+            // create shift registers and line sel
+            def->addInstance(sr_name, "global." + sr_name);
+            assert(context->hasModule("global." + linesel_name));
+            auto linesel = def->addInstance(linesel_name, "global." + linesel_name);
+
+            // create the mux
+            string mux_name = op->func + "_bundle" + std::to_string(bundle_idx) + "_mux";
+            bundle_idx += 1;
+            const auto type = linesel->sel("out")->getType()->getFlipped();
+            const auto aType = Const::make(context, type);
+            const auto aN = Const::make(context, num_users);
+            def->addInstance(mux_name, "commonlib.muxn_onehot", {{"type", aType}, {"N", aN}});
+            std::cout << "Created mux called " << mux_name << " with type " << type << std::endl;
+
+            // connections: memory -> linesel -> mux -> shift registers -> kernel
+            string mux_in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
+            string mux_sel_port = ".in.sel." + std::to_string(hwinfo.resource_assignment[op].number);
+
+            def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
+            def->connect(linesel_name + ".out", mux_name + mux_in_port);
+            def->connect(valid_name + ".stencil_valid", mux_name + mux_sel_port);
+            def->connect(mux_name + ".out", sr_name + ".in");
+            def->connect(sr_name + ".out", op->name + "." + pg(buf_name, bundle_name));
+            
+            //std::cout << "connecting mux input (first): " << mux_name + in_port << " to " << buf_name + "." + bundle_name << std::endl;
+            std::cout << "connecting mux output (sr first): " << mux_name + ".out" << " to sr to " << pg(buf_name, bundle_name) << std::endl;
+
+          } else {
+            // create the mux
+            string mux_name = op->func + "_bundle" + std::to_string(bundle_idx) + "_mux";
+            bundle_idx += 1;
+            assert(def->getInstances().count(op->name));
+            const auto instance_map = def->getInstances();
+            const auto type = instance_map.at(op->name)->sel(pg(buf_name, bundle_name))->getType();
+            const auto aType = Const::make(context, type);
+            const auto aN = Const::make(context, num_users);
+            def->addInstance(mux_name, "commonlib.muxn_onehot", {{"type", aType}, {"N", aN}});
+            std::cout << "Created mux called " << mux_name << std::endl;
+
+            // connections: memory -> mux -> kernel
+            string mux_in_port = ".in.data." + std::to_string(hwinfo.resource_assignment[op].number);
+            string mux_sel_port = ".in.sel." + std::to_string(hwinfo.resource_assignment[op].number);
+            std::cout << "connecting mux input (first): " << mux_name + mux_in_port << " to " << buf_name + "." + bundle_name << std::endl;
+            def->connect(mux_name + mux_in_port, buf_name + "." + bundle_name);
+            //def->connect(mux_name + mux_sel_port, buf_name + "." + bundle_name + "_extra_ctrl");
+            def->connect(mux_name + mux_sel_port, valid_name + ".stencil_valid");
+            def->connect(mux_name + ".out", op->name + "." + pg(buf_name, bundle_name));
+            std::cout << "connecting mux output (first): " << mux_name + ".out" << " to " << pg(buf_name, bundle_name) << std::endl;
+          }
         }
       }
     }
@@ -2541,7 +2613,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
         auto input_bus = "self." + pg(buf_name, bundle_name);
-
+        std::cout << "connecting input called " << input_bus << std::endl;
 
         def->connect(def->sel(input_bus),
             def->sel(op->name + "." + pg(buf_name, bundle_name)));
@@ -5295,9 +5367,10 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
         }
       }
 
-      std::cout << "doing module " << mod->getName() << std::endl;
+      std::cout << "doing module " << mod->getName() << " for name " << op->name << std::endl;
       hwinfo.resource_assignment[op] =
         resource_instance({mod->getName(), hwinfo.compute_resources[mod->getName()].num_users});
+      hwinfo.name_to_op[op->name] = op;
       hwinfo.compute_resources[mod->getName()].num_users += 1;
       if (hwinfo.compute_resources[mod->getName()].num_users > 1) {
         std::cout << "Multiple users of " << mod->getName() << "!!!" << std::endl;

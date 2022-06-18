@@ -3432,7 +3432,7 @@ bool share_resource(const std::string& op0, const std::string& op1, schedule_inf
       i1 = r.second;
     }
   }
-  return i0 == i1;
+  return i0.type == i1.type;
 }
 
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
@@ -3440,16 +3440,20 @@ bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
     its(op_times_map(sched, prg), prg.whole_iteration_domain());
   //cout << "Times: " << str(sched_exprs) << endl;
   for (auto op0 : get_maps(sched_exprs)) {
+    cout << "checking resource assignment overlap of " << domain_name(op0) << endl;
     for (auto op1 : get_maps(sched_exprs)) {
       string name0 = domain_name(op0);
       string name1 = domain_name(op1);
       if (name0 != name1 && share_resource(name0, name1, sched)) {
-        //cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
+        cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
         auto times = range(op0);
         auto times1 = range(op1);
         auto overlap = its(times, times1);
-        //cout << tab(2) << "Overlap: " << str(overlap) << endl;
+        
         if (!empty(overlap)) {
+          cout << tab(2) << name0 << ": " << str(op0) << endl;
+          cout << tab(2) << name1 << ": " << str(op1) << endl;
+          cout << tab(2) << "Overlap: " << str(overlap) << endl;
           return false;
         }
       }

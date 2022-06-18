@@ -1741,6 +1741,13 @@ public:
   int resource_quantity = 0;
   bool is_created = false;
   string output_name;
+  int interleave_dimension = 1;
+};
+
+struct shift_register_info {
+public:
+  string mod_name;
+  string linesel_modname;
 };
 
 static
@@ -1757,17 +1764,20 @@ struct schedule_info {
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
   map<string, string> op_compute_unit_names;
+  map<op*, string> resource_requirements;
   //map<string, int> op_compute_unit_latencies;
 
   // Resource constraints
+  // jeff setter compute_share
   bool use_compute_share;
   //map<string, int> resource_users;      // how many ops use this resource
   //map<string, int> resource_quantities; // how many of each op are available
   map<string, compute_resource> compute_resources;
-  map<op*, string> resource_requirements;
 
   // Resource use info
+  map<string, op*> name_to_op;
   map<op*, resource_instance> resource_assignment;
+  map<string, shift_register_info> sr_info;
 
   // Schedule offsets
   map<string, int> loop_iis;

@@ -15153,10 +15153,13 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   }
 }
 
+// jeff setter
 void test_compute_share(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  test_apps.push_back(cascaded());
+  //test_apps.push_back(cascaded());
+  test_apps.push_back(gpyr());
+    
   //ISSCC application without unroll
   //test_apps.push_back(harris_color());
   //test_apps.push_back(gaussian_isscc());
@@ -15208,6 +15211,7 @@ void test_compute_share(bool gen_config_only, bool multi_accessor=false, string 
 #ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
     compile_for_garnet_single_port_mem_with_compute_share(prg, dir, false, gen_config_only, false, false);
+
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
@@ -18728,15 +18732,16 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
   return;
 }
 
-
+// jeff setter
 void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
     //FIXME: remove this hack for fft
   if (contains(prg.name, "fft")) {
     //An hack on the fft schedule
     sequential_schedule(sched, root, prg);
     return;
-    
-  } else if (sched.use_compute_share) {
+
+  } else if (sched.use_compute_share && true) {
+    // compute_share
     sequential_schedule(sched, root, prg);
     return;
     
@@ -18752,7 +18757,12 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //assert(false);
     auto valid = prg.validity_deps();
     auto dom = prg.whole_iteration_domain();
-    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    umap* clksched_map;
+    if (sched.use_compute_share && true) {
+      clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid), sched);
+    } else {
+      clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    }
     cout << "Clockwork schedule..." << endl;
     for (auto m : get_maps(clksched_map)) {
       cout << tab(1) << str(m) << endl;
@@ -18802,7 +18812,14 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       cout << tab(1) << i << endl;
     }
 
-    auto cs = clockwork_schedule(dom, valid, cpy(valid));
+    map<string, vector<isl_aff*> > cs;
+    if (sched.use_compute_share) {
+      map<string, vector<string> > deps;
+      cs = clockwork_schedule(dom, valid, cpy(valid), deps, sched);
+    } else {
+      cs = clockwork_schedule(dom, valid, cpy(valid));
+    }
+
     auto levels = get_variable_levels(prg);
     cout << "Original Loop iis" << endl;
     for (auto op : prg.all_ops()) {
@@ -19188,6 +19205,7 @@ void garnet_dual_port_ram_schedule(schedule_info& sched, op* root, prog& prg) {
 }
 
 schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_dse_compute=false) {
+  cout << "garnet_schedule_info" << endl;
   schedule_info sched;
   sched.use_dse_compute = use_dse_compute;
   for (auto op : prg.all_ops()) {
@@ -19808,6 +19826,10 @@ void compile_for_garnet_single_port_mem_with_compute_share(
 
   tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
   //FIXME: put into separate pass for power analysis
+  
+  // Check that compute share executes on mutually exclusive cycles.
+  assert(no_violated_resource_assignments(sched, prg));
+  cout << "no violated resource assignments :)" << endl;
 
 #ifdef COREIR
   generate_garnet_coreir(buffers_opt, prg, options, sched, use_dse_compute);
@@ -20294,8 +20316,8 @@ void cgra_flow_tests() {
   vector<prog> M3_test_programs = isca_programs();
 
   //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
-  vector<prog> bram_test_programs{resnet88()};
-  //vector<prog> bram_test_programs{pointwise()};
+  //vector<prog> bram_test_programs{resnet88()};
+  vector<prog> bram_test_programs{gaussian()};
   test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
   //vector<prog> M3_test_programs = harris_variants();

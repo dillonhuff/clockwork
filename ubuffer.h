@@ -2385,6 +2385,14 @@ void tighten_address_space() {
         isl_union_map_read_from_str(ctx, sched.c_str());
     }
 
+    int out_bundles_width() const {
+      int size = 0;
+      for (auto b : get_out_bundles()) {
+        size += port_bundles.at(b).size();
+      }
+      return size;
+    }
+
     vector<string> get_out_bundles() const {
       vector<string> outpts;
       for (auto m : port_bundles) {
@@ -2719,6 +2727,8 @@ void tighten_address_space() {
     void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
     //helper function for sreg generation
+    void generate_linesel_def(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, int> & pt2index, string mod_name);
+    void generate_sreg_def(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, int> & pt2index, map<string, CoreIR::Wireable*> & pt2wire, string mod_name);
     void generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire);
     //helper function for wire IO connection
     void wire_ubuf_IO(CodegenOptions& options, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire, CoreIR::Instance* buf, UBufferImpl & impl, schedule_info& info, int bank_id, bool with_ctrl);
@@ -3173,8 +3183,27 @@ struct UBufferImpl {
 
   //Shift register data
   map<string, int> shift_depth;
-  map<string,pair<string,int>> shift_registered_outputs;
-  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+  map<string,pair<string,int>> shift_registered_outputs; // lines
+  vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs; // shift register
+
+  bool is_memline(string name) {
+    for (auto& out : shift_registered_outputs) {
+      //cout << "line name includes " << out.first << endl;
+      if (out.first == name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool is_sr(string name) {
+    for (auto& out : shift_registered_outputs_to_outputs) {
+      if (out.second.first == name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   int get_new_bank_id() {
     return bank_rddom.size();

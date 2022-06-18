@@ -948,6 +948,10 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
     //qfs[qp] = mul(isl_val_int_from_si(ct, 5), ilp.value(qp));
     qfs[qp] = ilp.value(qp);
     qfs[qc] = ilp.value(qc);
+    //qfs[qp] = mul(isl_val_int_from_si(ct, 2), ilp.value(qp));
+    //qfs[qc] = mul(isl_val_int_from_si(ct, 2), ilp.value(qc));
+    std::cout << " adding qfactors: " << qp << "=" << str(qfs[qp])
+              << "  " << qc << "=" << str(qfs[qc]) << std::endl;
   }
   return qfs;
 }
@@ -1002,6 +1006,15 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
   map<string, isl_val*> qfactors =
     compute_qfactors(schedule_params);
+
+  //for (auto& q_pair : qfactors) {
+  //  q_pair.second = mul(q_pair.second, isl_val_int_from_si(ct, 2));
+  //}
+  
+  std::cout << "qfactors are: " << std::endl;
+  for (auto q_pair : qfactors) {
+    std::cout << "  " << q_pair.first << " : " << str(q_pair.second) << std::endl;
+  }
 
   ilp_builder delay_problem(ct);
 
@@ -1136,6 +1149,216 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   cout << "Done with schedule" << endl;
   return schedule_functions;
 }
+
+map<string, isl_aff*> clockwork_schedule_dimension(
+    vector<isl_set*> domains,
+    vector<isl_map*> deps,
+    map<string, vector<string> >& high_bandwidth_deps,
+    schedule_info& info,
+    int dim) {
+
+  std::set<string> dep_names;
+  for (auto d : deps) {
+    dep_names.insert(domain_name(d));
+    dep_names.insert(range_name(d));
+  }
+  std::set<string> dom_names;
+  for (auto d : domains) {
+    if (!elem(name(d), dep_names)) {
+      cout << tab(1) << name(d) << " is not a producer or consumer of any dependency" << endl;
+      assert(false);
+    }
+  }
+  //cout << "Deps..." << endl;
+  assert(deps.size() > 0);
+  isl_ctx* ct = ctx(deps.at(0));
+
+  auto schedule_params =
+    extract_schedule_params(deps);
+
+  map<string, isl_val*> qfactors =
+    compute_qfactors(schedule_params);
+
+  // Increase rate (II) for compute_share kernels
+  for (auto& q_pair : qfactors) {
+    if (dim == 1 && (q_pair.first == "s_op_hcompute_conv1_stencil_1" ||
+                     q_pair.first == "s_op_hcompute_conv2_stencil_1" ||
+                     q_pair.first == "s_op_hcompute_conv2_stencil" || // unneeded
+                     q_pair.first == "s_op_hcompute_conv1_stencil" || // unneeded
+                     q_pair.first == "s_op_hcompute_hw_input_global_wrapper_stencil" || // unneeded
+                     q_pair.first == "s_op_hcompute_hw_output_stencil" || // this causes negatives dependence distance
+                     q_pair.first == "s_op_hcompute_conv1_shift_stencil"
+          )
+      ) {
+      q_pair.second = mul(q_pair.second, isl_val_int_from_si(ct, 2));
+    } else if (dim == 1) {
+      std::cout << "not changing the qfactor for " << q_pair.first << std::endl;
+    }
+    continue;
+    
+    assert(startsWith(q_pair.first, "s_op_"));
+    auto op_name = q_pair.first.substr(2);
+    auto compute_name = info.resource_assignment[info.name_to_op[op_name]].type;
+    std::cout << "looking for " << q_pair.first << std::endl;
+    //assert(info.compute_resources.count(op_name) > 0);
+    if (info.compute_resources.count(compute_name) > 0) {
+      auto interleave_dim = info.compute_resources[op_name].interleave_dimension;
+      auto num_users = info.compute_resources[op_name].num_users;
+      std::cout << op_name << " using interleave dim " << interleave_dim << " vs " << dim
+                << " with num_users=" << num_users << std::endl;
+      if (dim == interleave_dim) {
+        q_pair.second = mul(q_pair.second, isl_val_int_from_si(ct, num_users));
+      }
+    }
+  }
+  
+  std::cout << "qfactors are: " << std::endl;
+  for (auto q_pair : qfactors) {
+    std::cout << "  " << q_pair.first << " : " << str(q_pair.second) << std::endl;
+  }
+
+  ilp_builder delay_problem(ct);
+
+  std::set<string> consumed;
+  std::set<string> outputs;
+  std::set<string> all_names;
+  for (auto d : deps) {
+    consumed.insert(domain_name(d));
+
+    all_names.insert(domain_name(d));
+    all_names.insert(range_name(d));
+  }
+
+  for (auto n : all_names) {
+    if (!elem(n, consumed)) {
+      outputs.insert(n);
+    }
+  }
+
+  //cout << "Outputs..." << endl;
+  map<string, isl_val*> pipeline_delay;
+  for (auto out : outputs) {
+    //cout << tab(1) << out << endl;
+    pipeline_delay[delay_var_name(out)] = one(ct);
+  }
+  std::set<string> operation_names;
+
+  vector<pair<string, isl_val*> > linebuffer_obj_terms;
+
+  vector<map<string, isl_val*> > lb_objs;
+
+  // Add delay legality constraints
+  cout << "Schedule params..." << endl;
+  for (auto s : schedule_params) {
+    cout << tab(1) << str(s.first) << endl;
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    operation_names.insert(consumer);
+    operation_names.insert(producer);
+
+    isl_val* qp = map_find(sched_var_name(producer), qfactors);
+
+    string dc = delay_var_name(consumer);
+    string dp = delay_var_name(producer);
+
+    for (auto sv : s.second) {
+
+      delay_problem.add_geq({{dc, one(ct)}}, isl_val_zero(ct));
+      delay_problem.add_geq({{dp, one(ct)}}, isl_val_zero(ct));
+
+      auto b = sv.second;
+      auto neg_qpb = neg(mul(qp, b));
+      delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+
+    }
+  }
+
+  assert(operation_names.size() == domains.size());
+
+  vector<pair<string, isl_val*> > diffs;
+  map<string, isl_val*> delay_obj;
+  for (auto s : schedule_params) {
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    isl_set* pset = find_set(producer, domains);
+    //isl_val* min = lexminval(cset);
+    isl_val* lp = lexmaxval(pset);
+
+    isl_set* cset = find_set(consumer, domains);
+    //isl_val* min = lexminval(cset);
+    isl_val* lc = lexmaxval(cset);
+
+    isl_val* qc = map_find(sched_var_name(producer), qfactors);
+    isl_val* qp = map_find(sched_var_name(producer), qfactors);
+
+    string dc = delay_var_name(consumer);
+    string dp = delay_var_name(producer);
+
+
+    //if (contains_key(consumer, high_bandwidth_deps) &&
+        //elem(producer, map_find(consumer, high_bandwidth_deps))) {
+      //auto qcoeff = sub(mul(qp, lp), mul(qc, lc));
+      //delay_problem.add_geq({{dp, one(ct)}, {dc, negone(ct)}}, qcoeff);
+    //}
+
+    //delay_obj[dc] = negone(ct);
+    //delay_obj[dp] = negone(ct);
+
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = one(ct);
+
+    diffs.push_back({dc, one(ct)});
+    diffs.push_back({dp, negone(ct)});
+
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = negone(ct);
+  }
+  //assert(false);
+
+  delay_obj = simplify(diffs);
+  //cout << "Delay constraints" << endl;
+  //auto opt_delay = delay_problem.lex_minimize({delay_obj});
+  //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
+  //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
+  //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, linebuffer_obj, delay_obj});
+
+  vector<map<string, isl_val*> > objectives;
+  objectives.push_back(pipeline_delay);
+  objectives.push_back(delay_obj);
+  auto opt_delay = delay_problem.lex_minimize(objectives);
+
+  map<string, isl_aff*> schedule_functions;
+  for (auto f : operation_names) {
+    isl_val* rate = map_find(sched_var_name(f), qfactors);
+    isl_val* delay = delay_problem.value(delay_var_name(f));
+
+    // Offset the delay of each shared component based on their assignment for compute_share.
+    if (f == "op_hcompute_conv2_stencil_1" && dim==1) {
+      delay = add(delay, isl_val_int_from_si(ct, 1));
+    }
+    if (f == "op_hcompute_hw_output_stencil" && dim==1) {
+      delay = add(delay, isl_val_int_from_si(ct, 1));
+    }
+    cout << f << " f rate: " << str(rate) << ", delay: " << str(delay) << endl;
+    string aff_str =
+      "{ [i] -> [(" + str(rate) + "*i + " + str(delay) + ")]}";
+    //cout << tab(1) << "aff str: " << aff_str << endl;
+    schedule_functions[f] = rdaff(ct, aff_str);
+    isl_set* dom = find_set(f, domains);
+    auto sf = map_find(f, schedule_functions);
+    auto minpt = lexmin(dom);
+    auto maxpt = lexmax(dom);
+  }
+
+  for (auto s : domains) {
+    assert(contains_key(name(s), schedule_functions));
+  }
+  cout << "Done with schedule" << endl;
+  return schedule_functions;
+}
+
 
 vector<std::string> topological_sort(const vector<isl_set*>& sets,
     const vector<isl_map*>& maps) {
@@ -1640,7 +1863,7 @@ clockwork_schedule_umap_reversed(uset* domain,
     //reverse(s.second);
   //}
 
-  cout << "Final schedule..." << endl;
+  cout << "Final schedule... (reversed)" << endl;
   for (auto s : scheds) {
     cout << tab(1) << s.first << endl;
     for (auto v : s.second) {
@@ -1693,6 +1916,7 @@ umap*
 clockwork_schedule_umap(uset* domain,
     umap* validity,
     umap* proximity) {
+  cout << "clockwork schedule umap" << endl;
   auto sched = clockwork_schedule(domain, validity, proximity);
 
 
@@ -1733,6 +1957,55 @@ clockwork_schedule_umap(uset* domain,
 
   return qschedule_to_map_final_sort(ctx(domain), scheds);
 }
+
+umap*
+clockwork_schedule_umap(uset* domain,
+                        umap* validity,
+                        umap* proximity,
+                        schedule_info& info) {
+  cout << "clockwork schedule umap with info" << endl;
+  map<string, vector<string> > deps;
+  auto sched = clockwork_schedule(domain, validity, proximity, deps, info);
+
+
+  map<string, vector<QExpr> > scheds;
+  for (auto s : sched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  // schedule is dN, ..., d1, d0
+  for (auto& s : scheds) {
+    reverse(s.second);
+  }
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  return qschedule_to_map_final_sort(ctx(domain), scheds);
+}
+
 
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain,
@@ -1997,6 +2270,80 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
   return scheds;
 }
 
+map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps,
+                   schedule_info& info) {
+
+  //map<string, vector<int> > sites =
+    //pad_insertion_indexes(domain, validity);
+
+  //cout << "Domain" << endl;
+  //for (auto s : sites) {
+    //cout << s.first << " -> " << sep_list(s.second, "[", "]", ", ") << endl;
+  //}
+  //assert(false);
+
+  uset* padded_domain = pad_uset(domain);
+  auto padded_validity = pad_map(validity);
+  auto padded_proximity = pad_map(proximity);
+
+  vector<isl_map*> deps;
+  auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);
+  cout << "Finite validity: " << str(finite_validity) << endl;
+  for (auto m : get_maps(finite_validity)) {
+    assert(m != nullptr);
+
+    // Schedule respects intra-dependencies by construction
+    if (domain_name(m) != range_name(m)) {
+      cout << tab(1) << "Dep = " << str(m) << endl;
+      deps.push_back(m);
+    }
+  }
+  cout << "Got deps" << endl;
+
+  assert(deps.size() > 0);
+
+  int schedule_dim =
+    num_in_dims(get_space(deps.at(0)));
+
+  map<string, vector<isl_aff*> > scheds;
+  cout << "Schedule dim = " << schedule_dim << endl;
+  for (int d = 0; d < schedule_dim; d++) {
+    cout << tab(1) << "scheduling dimension " << d << endl;
+    vector<isl_map*> projected_deps;
+    for (auto dmap : deps) {
+      isl_map* projected = project_all_but(dmap, d);
+      projected_deps.push_back(projected);
+    }
+
+    vector<isl_set*> projected_domains;
+    for (auto dset : get_sets(padded_domain)) {
+      isl_set* projected = project_all_but(dset, d);
+      projected_domains.push_back(projected);
+    }
+
+    auto schedules = clockwork_schedule_dimension(projected_domains, projected_deps, high_bandwidth_deps,
+                                                  info, d);
+    for (auto s : get_sets(domain)) {
+      assert(contains_key(name(s), schedules));
+      release(s);
+    }
+    cout << "Clockwork schedules..." << endl;
+    for (auto s : schedules) {
+      cout << tab(1) << s.first << ": " << str(s.second) << endl;
+      scheds[s.first].push_back(s.second);
+    }
+  }
+
+  for (auto s : get_sets(domain)) {
+    assert(contains_key(name(s), scheds));
+    release(s);
+  }
+
+  return scheds;
+}
+
+
 umap* experimental_opt(uset* domain,
     umap* validity,
     umap* proximity) {
@@ -2085,7 +2432,7 @@ void ilp_builder::add_geq(const std::map<string, isl_val*>& coeffs, isl_val* con
     s = isl_basic_set_add_constraint(s, c);
     assert(isl_val_is_int(constant));
 
-  }
+}
 
 void print_hw_schedule(const std::string& latency_to_minimize,
     uset* dom,
