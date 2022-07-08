@@ -15154,11 +15154,13 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 }
 
 // jeff setter
+// source user_settings/kiwi_jeff_settings.sh 
+// make all -j4 && ./clockwork compute-share
 void test_compute_share(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  //test_apps.push_back(cascaded());
-  test_apps.push_back(gpyr());
+  test_apps.push_back(cascaded());
+  //test_apps.push_back(gpyr());
     
   //ISSCC application without unroll
   //test_apps.push_back(harris_color());
@@ -18431,6 +18433,7 @@ void adjust_schedule_forward(schedule_info& sched, prog& prg, int offset = 1) {
   //cout << "schedule: " << str(op_start_times_map(sched, prg)) << endl;;
   //cout << "iteration domain: " << str(op_start_times_domain(prg)) << endl;;
 
+  // adjusting right here
   auto start_times = its(op_start_times_map(sched, prg), op_start_times_domain(prg));
   cout << "Start times..." << endl;
   cout << str(start_times) << endl;
@@ -18732,7 +18735,7 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
   return;
 }
 
-// jeff setter
+// jeff setter jeff_setter
 void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
     //FIXME: remove this hack for fft
   if (contains(prg.name, "fft")) {
@@ -18740,7 +18743,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     sequential_schedule(sched, root, prg);
     return;
 
-  } else if (sched.use_compute_share && true) {
+  } else if (sched.use_compute_share && false) {
     // compute_share
     sequential_schedule(sched, root, prg);
     return;
@@ -18758,7 +18761,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     auto valid = prg.validity_deps();
     auto dom = prg.whole_iteration_domain();
     umap* clksched_map;
-    if (sched.use_compute_share && true) {
+    if (sched.use_compute_share && false) {
       clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid), sched);
     } else {
       clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
@@ -18793,11 +18796,84 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     lengths.push_back(1);
     reverse(bounds);
 
+    // Create a list of the shared compute stages.
+    vector<compute_resource> shared_resources;
+    for (auto& name_resource : sched.compute_resources) {
+      if (name_resource.second.num_users > 1) {
+        shared_resources.emplace_back(name_resource.second);
+      }
+    }
+    // The maximum lengths in each dimension for shared compute kernels.
+    vector<int> shared_lengths(lengths.size());
+    // Shared kernel runtimes.
+    map<string, int> op_runtimes;
+
+    // Determine the longest loop length for the interleaving dimension for shared compute kernels.
+    auto domain_map = get_sets_in_map(dom);
+    for (auto& shared_resource : shared_resources) {
+      int loop_len = 0;
+      const auto& names = shared_resource.op_names;
+      auto interleave_dim = shared_resource.interleave_dimension;
+      for (auto& name : names) {
+        op* op = sched.name_to_op[name];
+        auto prods = op->buffers_read();
+        cout << "producers for " << name << ": " << endl;
+        int max_len = 0;
+        for (auto& prod : prods) {
+          cout << prod << " ";
+          if (domain_map.count("op_hcompute_" + prod)) {
+            auto domain = domain_map["op_hcompute_" + prod];
+            cout << str(domain);
+            auto pr = project_all_but(domain, interleave_dim);
+            int lmin = to_int(lexminval(pr));
+            int lmax = to_int(lexmaxval(pr));
+            int llen = lmax - lmin + 1;
+            max_len = max(max_len, llen);
+          }
+          cout << endl;
+        }
+        //op_runtimes[name] = max_len;
+        loop_len += max_len;
+        cout << endl;
+      }
+      cout << "loop_len=" << loop_len << " for resource " << shared_resource.output_name << " in dim=" << shared_resource.interleave_dimension << endl;
+      if (shared_lengths.at(interleave_dim) < loop_len) {
+        shared_lengths[interleave_dim] = loop_len;
+      }
+    }
+
+    // Calculate the delay based on the phase difference for subsequent kernels.
+    map<string, pair<int, int>> sharer_delays;
+    for (auto& shared_resource : shared_resources) {
+      int cumulative_delay = 0;
+      int interleave_dim = shared_resource.interleave_dimension;
+      for (auto& name : shared_resource.op_names) {
+        sharer_delays[name] = {cumulative_delay, interleave_dim + 1};
+
+        auto domain = domain_map[name];
+        auto pr = project_all_but(domain, interleave_dim);
+        int lmin = to_int(lexminval(pr));
+        int lmax = to_int(lexmaxval(pr));
+        int llen = lmax - lmin + 1;
+        op_runtimes[name] = llen;
+        
+        cumulative_delay += op_runtimes[name];
+        cout << "Delay for " << name << " is " << sharer_delays[name].first << endl;
+      }
+    }
+    sched.sharer_delays = sharer_delays;
+
+    // These are the strides for each loop level. Use the shared loop length
+    // if it is larger than the default length.
     vector<int> fused_level_iis;
     fused_level_iis.resize(lengths.size());
     fused_level_iis[fused_level_iis.size() - 1] = 1;
     for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
       fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
+      //if (l == interleave_dim && loop_len > fused_level_iis[l]) {
+      if (shared_lengths[l] > fused_level_iis[l]) {
+        fused_level_iis[l] = shared_lengths[l];
+      }
     }
 
     cout << "lengths" << endl;
@@ -18813,17 +18889,18 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     }
 
     map<string, vector<isl_aff*> > cs;
-    if (sched.use_compute_share) {
+    if (sched.use_compute_share && true) {
       map<string, vector<string> > deps;
       cs = clockwork_schedule(dom, valid, cpy(valid), deps, sched);
     } else {
       cs = clockwork_schedule(dom, valid, cpy(valid));
     }
-
+    
     auto levels = get_variable_levels(prg);
     cout << "Original Loop iis" << endl;
     for (auto op : prg.all_ops()) {
       vector<string> surrounding = surrounding_vars(op, prg);
+      int index = 0;
       for (auto var : surrounding) {
         int level = map_find(var, levels);
         auto container = prg.find_loop(var);
@@ -18831,12 +18908,47 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
         int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
         int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
         cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
-        sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+        // Here the strides are computed from the q factor and previous loop latency.
+        // The previous loop latencies are known before even scheduling due to depending
+        // only on the iteration domain size and not the actual schedule and interleaving.
+
+        sched.loop_iis[var] = qfactor*fused_level_iis.at(level); 
         sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+        if (index == 1) {
+          if (var == "hw_output_s0_y_xo" || var == "conv2_s1_y") { // this is correct
+            //sched.op_offset_within_parent[container] += 62; // any value 60 to 64 works; 62 is correct
+          }
+        }          
+
+        /*
+        //if (qfactor == 2 && (fused_level_iis.at(level) == 64 || fused_level_iis.at(level) == 62)) {
+        //if (endsWith(var, "_y") || var == "hw_output_s0_y_xo") {
+        if (index == 1) {
+          sched.loop_iis[var] = 126;//sum of latencies of shared resources
+          sched.op_offset_within_parent[container] = delay*126;//*63;//fused_level_iis.at(level);
+          
+          sched.loop_iis[var] = qfactor*fused_level_iis.at(level); 
+          sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+
+          //if (var == "hw_output_s0_y_xo" || var == "conv2_s1_y" || var == "conv1_s1_y" || var == "conv1_shift_s0_y") {
+          if (var == "hw_output_s0_y_xo" || var == "conv2_s1_y") { // this is correct
+            sched.op_offset_within_parent[container] += 62; // any value 60 to 64 works; 62 is correct
+          }
+        //} else if (var == "root") {
+        //  sched.loop_iis[var] = 64*126;//8192;//8064;
+        //  sched.op_offset_within_parent[container] = 0;
+        } else {
+          sched.loop_iis[var] = qfactor*fused_level_iis.at(level); 
+          sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+        }
+        */
         //sched.instance_latencies[container] = 1;
         cout << tab(2) << "ii = " << sched.II(container) << endl;
+        cout << tab(2) << "loopii = " << sched.loop_iis[var] << " offset = " << sched.op_offset_within_parent[container] << endl;
+        index += 1;
       }
     }
+    
     //int total_latency = 0;
     //for (auto op : inner_ops(prg)) {
     //    cout << "inner ops: " << op->name << ", total latency: "<< total_latency << endl;
@@ -18873,6 +18985,9 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       scheduled.push_back(op);
     }
 
+    auto op_sched_orig = op_start_times_map(sched, prg);
+    cout << "Original schedule: " << str(op_sched_orig)  << endl;
+    
     //Hack for rom, Rom need to be conservative
     //because the affine controller output on cycle of flush is undeterministic
     //if (prg.name == "rom" ) {
@@ -19815,7 +19930,7 @@ void compile_for_garnet_single_port_mem_with_compute_share(
 
   schedule_info sched = garnet_schedule_info(options, prg, use_dse_compute);
   sched.use_compute_share = true;
-  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg); // changes to scheduleing here
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());

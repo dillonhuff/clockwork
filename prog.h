@@ -1742,6 +1742,7 @@ public:
   bool is_created = false;
   string output_name;
   int interleave_dimension = 1;
+  vector<string> op_names;
 };
 
 struct shift_register_info {
@@ -1773,6 +1774,7 @@ struct schedule_info {
   //map<string, int> resource_users;      // how many ops use this resource
   //map<string, int> resource_quantities; // how many of each op are available
   map<string, compute_resource> compute_resources;
+  map<string, pair<int, int>> sharer_delays;
 
   // Resource use info
   map<string, op*> name_to_op;

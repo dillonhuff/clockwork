@@ -1190,7 +1190,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
                      q_pair.first == "s_op_hcompute_conv1_shift_stencil"
           )
       ) {
-      q_pair.second = mul(q_pair.second, isl_val_int_from_si(ct, 2));
+      //q_pair.second = mul(q_pair.second, isl_val_int_from_si(ct, 2));
     } else if (dim == 1) {
       std::cout << "not changing the qfactor for " << q_pair.first << std::endl;
     }
@@ -1244,7 +1244,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   std::set<string> operation_names;
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
-
   vector<map<string, isl_val*> > lb_objs;
 
   // Add delay legality constraints
@@ -1269,8 +1268,21 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
       auto b = sv.second;
       auto neg_qpb = neg(mul(qp, b));
-      delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
 
+      // For the interleave dimension for shared compute, add a delay to non-primary kernels.
+      //int interleave_dim = 2;
+      //map<string, pair<int, int>> sharer_delays({{"op_hcompute_conv2_stencil_1", {62, 2}}});
+      auto& sharer_delays = info.sharer_delays;
+      
+      if (sharer_delays.count(consumer) > 0 && dim == sharer_delays[consumer].second) {
+        int delay_time = sharer_delays.at(consumer).first;
+        isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time));
+        delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, delay);
+        cout << "Adding eq with extra delay: " << consumer << " - " << producer << " >= " << str(delay) << endl; 
+      } else {
+        delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+        cout << "Adding eq: " << consumer << " - " << producer << " >= -" << str(qp) << " * " << str(b) << endl; 
+      }
     }
   }
 
@@ -1336,10 +1348,10 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
     // Offset the delay of each shared component based on their assignment for compute_share.
     if (f == "op_hcompute_conv2_stencil_1" && dim==1) {
-      delay = add(delay, isl_val_int_from_si(ct, 1));
+      //delay = add(delay, isl_val_int_from_si(ct, 1));
     }
     if (f == "op_hcompute_hw_output_stencil" && dim==1) {
-      delay = add(delay, isl_val_int_from_si(ct, 1));
+      //delay = add(delay, isl_val_int_from_si(ct, 1));
     }
     cout << f << " f rate: " << str(rate) << ", delay: " << str(delay) << endl;
     string aff_str =
@@ -1962,7 +1974,8 @@ umap*
 clockwork_schedule_umap(uset* domain,
                         umap* validity,
                         umap* proximity,
-                        schedule_info& info) {
+                        schedule_info& info
+                        ) {
   cout << "clockwork schedule umap with info" << endl;
   map<string, vector<string> > deps;
   auto sched = clockwork_schedule(domain, validity, proximity, deps, info);
@@ -2200,7 +2213,8 @@ pad_insertion_indexes(uset* domain, umap* validity) {
 }
 
 map<string, vector<isl_aff*> >
-clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
+clockwork_schedule(uset* domain, umap* validity, umap* proximity,
+                   map<string, vector<string> >& high_bandwidth_deps) {
 
   //map<string, vector<int> > sites =
     //pad_insertion_indexes(domain, validity);

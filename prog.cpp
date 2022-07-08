@@ -3435,16 +3435,20 @@ bool share_resource(const std::string& op0, const std::string& op1, schedule_inf
   return i0.type == i1.type;
 }
 
+// Note: this function checks if a compute unit is used multiple times,
+// but it does not consider the time needed to fill the shift registers.
 bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
   auto sched_exprs =
     its(op_times_map(sched, prg), prg.whole_iteration_domain());
-  //cout << "Times: " << str(sched_exprs) << endl;
+
+  cout << "Times: " << str(sched_exprs) << endl;
   for (auto op0 : get_maps(sched_exprs)) {
     cout << "checking resource assignment overlap of " << domain_name(op0) << endl;
     for (auto op1 : get_maps(sched_exprs)) {
       string name0 = domain_name(op0);
       string name1 = domain_name(op1);
       if (name0 != name1 && share_resource(name0, name1, sched)) {
+      //if (name0 == "op_hcompute_hw_input_global_wrapper_stencil" && name1 == "op_hcompute_conv1_shift_stencil") {
         cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;
         auto times = range(op0);
         auto times1 = range(op1);

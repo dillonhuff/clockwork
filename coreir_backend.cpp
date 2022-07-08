@@ -5372,6 +5372,7 @@ void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
         resource_instance({mod->getName(), hwinfo.compute_resources[mod->getName()].num_users});
       hwinfo.name_to_op[op->name] = op;
       hwinfo.compute_resources[mod->getName()].num_users += 1;
+      hwinfo.compute_resources[mod->getName()].op_names.emplace_back(op->name);
       if (hwinfo.compute_resources[mod->getName()].num_users > 1) {
         std::cout << "Multiple users of " << mod->getName() << "!!!" << std::endl;
         continue;
