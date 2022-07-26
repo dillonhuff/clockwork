@@ -3387,7 +3387,7 @@ bool can_achieve_full_rate(prog& prg, map<string, vector<int> > & pad_indices, i
 
 bool is_rate_matchable_loopnest(prog& prg, map<string, vector<int> >& pad_indices) {
 
-    if (all_perfect_loop_nests(prg)) {
+    if (all_perfect_loop_nests(prg) && pad_indices.size()) {
         int max_depth = max_loop_depth(prg);
         int align_loop_depth = pick(pad_indices).second.size();
         if (align_loop_depth == max_depth) {
