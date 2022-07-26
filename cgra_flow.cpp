@@ -2,7 +2,7 @@
 #include "coreir_backend.h"
 
 #ifdef CGRAFLOW
-vector<string> cgra_flow_result(prog& prg, string dir) {
+vector<string> cgra_flow_result(prog& prg, string dir, bool enable_pond) {
 
     string name = prg.name;
     //auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
@@ -14,6 +14,11 @@ vector<string> cgra_flow_result(prog& prg, string dir) {
     //verilog_files.push_back("laketop.sv");
     verilog_files.push_back("LakeTop_flat.v");
     verilog_files.push_back("lake_module_wrappers.v");
+    if (enable_pond) {
+      verilog_files.push_back("PondTop_flat.v");
+      verilog_files.push_back("pondtop.sv");
+      verilog_files.push_back("pond_module_wrappers.v");
+    }
     add_default_initial_block("laketop", "endmodule   // sram_sp__0");
     bool extra_flag_for_lake = true;
     int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
@@ -21,7 +26,11 @@ vector<string> cgra_flow_result(prog& prg, string dir) {
     cmd("rm lake_module_wrappers.v");
     cmd("rm laketop_new.sv");
     cmd("rm LakeTop_flat.v");
-
+    if (enable_pond) {
+      cmd("rm PondTop_flat.v");
+      cmd("rm pondtop.sv");
+      cmd("rm pond_module_wrappers.v");
+    }
     auto verilator_res = verilator_results(prg.name);
     return verilator_res;
 
