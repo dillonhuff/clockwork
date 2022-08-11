@@ -1191,8 +1191,10 @@ map<string, isl_aff*> clockwork_schedule_dimension(
           )
       ) {
       //q_pair.second = mul(q_pair.second, isl_val_int_from_si(ct, 2));
-    } else if (dim == 1) {
-      std::cout << "not changing the qfactor for " << q_pair.first << std::endl;
+    } else {
+      //std::cout << "not changing the qfactor for " << q_pair.first << std::endl;
+      std::cout << " qfactor for " << q_pair.first << " is " << q_pair.second << std::endl;
+      //q_pair.second = isl_val_int_from_si(ct, 1);
     }
     continue;
     
@@ -1273,10 +1275,12 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       //int interleave_dim = 2;
       //map<string, pair<int, int>> sharer_delays({{"op_hcompute_conv2_stencil_1", {62, 2}}});
       auto& sharer_delays = info.sharer_delays;
-      
-      if (sharer_delays.count(consumer) > 0 && dim == sharer_delays[consumer].second) {
-        int delay_time = sharer_delays.at(consumer).first;
-        isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time));
+
+      cout << "dim=" << dim << ", found=" << (sharer_delays.count(consumer) > 0) << endl;
+      if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size()) {
+        int delay_time = sharer_delays.at(consumer).at(dim);
+        //isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time));
+        isl_val* delay = isl_val_int_from_si(ct, -1 * delay_time);
         delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, delay);
         cout << "Adding eq with extra delay: " << consumer << " - " << producer << " >= " << str(delay) << endl; 
       } else {

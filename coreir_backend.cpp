@@ -2432,6 +2432,7 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
           string out_name = pg(buf_name, bundle_name);
           string linesel_name = out_name.substr(0, out_name.size()-5) + "_ub_linesel";
+          string sr_name = out_name.substr(0, out_name.size()-5) + "_ub_srs";
           std::cout << "check for module definition called " << linesel_name << endl;
 
           if (prg.is_input(buf_name)) {
@@ -2443,8 +2444,23 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
           if (context->hasModule("global." + linesel_name)) {
             std::cout << "connecting mux input (through sr) " << mux_name + mux_in_port << " to " << buf_name + "." + bundle_name << std::endl;
             def->addInstance(linesel_name, "global." + linesel_name);
-            def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
-            def->connect(linesel_name + ".out", mux_name + mux_in_port);
+
+            // create shift registers if defined
+            if (context->hasModule("global." + sr_name)) {
+              cout << "found shift registers to connect" << endl;
+              // create shift registers and line sel
+              def->addInstance(sr_name, "global." + sr_name);
+              def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
+              def->connect(linesel_name + ".out", sr_name + ".in");
+              def->connect(sr_name + ".out", mux_name + mux_in_port);
+              //if ("hw_in_global_wrapper_stencil_op_hcompute_blur0_1_stencil_ub_linesel" != linesel_name) {
+            } else {
+              def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
+              def->connect(linesel_name + ".out", mux_name + mux_in_port);
+              //} else {
+              // FIXME: we need to check if these shift registers exist or not.
+              //def->connect(buf_name + "." + bundle_name, mux_name + mux_in_port);
+            }
 
           } else {
             std::cout << "connecting mux input " << mux_name + mux_in_port << " to " << buf_name + "." + bundle_name << std::endl;

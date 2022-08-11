@@ -2103,7 +2103,9 @@ op* strip_mine(const int factor, op* loop, prog& prg) {
   cout << tab(1) << "new tc = " << new_tc << endl;
   int new_start = loop->start;
 
-  auto inner = loop->add_loop(prg.un("sm"), 0, factor);
+  string loopname = loop->name + "_inner";
+  //auto inner = loop->add_loop(prg.un("sm"), 0, factor);
+  auto inner = loop->add_loop(loopname, 0, factor);
   loop->start = new_start;
   loop->end_exclusive = new_start + new_tc;
 
@@ -4412,7 +4414,7 @@ umap* prog::validity_deps() {
   vector<umap*> validity_dep_maps;
   for (auto b : all_buffers(*this)) {
     cout << "Computing validity deps for " << b << endl;
-
+    
     vector<uset*> user_domains;
     vector<umap*> user_schedules;
     for (auto op : find_readers(b, *this)) {

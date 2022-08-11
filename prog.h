@@ -1774,7 +1774,7 @@ struct schedule_info {
   //map<string, int> resource_users;      // how many ops use this resource
   //map<string, int> resource_quantities; // how many of each op are available
   map<string, compute_resource> compute_resources;
-  map<string, pair<int, int>> sharer_delays;
+  map<string, vector<int>> sharer_delays;
 
   // Resource use info
   map<string, op*> name_to_op;
