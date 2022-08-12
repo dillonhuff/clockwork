@@ -2446,10 +2446,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
             def->addInstance(linesel_name, "global." + linesel_name);
 
             // create shift registers if defined
-            if (context->hasModule("global." + sr_name)) {
+            string existing_sr = hwinfo.compute_resources[op->func].sr_name;
+            if (context->hasModule("global." + sr_name) && !context->hasModule("global." + existing_sr)) {
               cout << "found shift registers to connect" << endl;
               // create shift registers and line sel
               def->addInstance(sr_name, "global." + sr_name);
+              hwinfo.compute_resources[op->func].sr_name = sr_name;
               def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
               def->connect(linesel_name + ".out", sr_name + ".in");
               def->connect(sr_name + ".out", mux_name + mux_in_port);
@@ -2499,9 +2501,10 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
           // create shift registers if defined
           if (context->hasModule("global." + sr_name)) {
-            cout << "found shift registers to connect" << endl;
+            cout << "found shift registers to connect: " << sr_name << endl;
             // create shift registers and line sel
             def->addInstance(sr_name, "global." + sr_name);
+            hwinfo.compute_resources[op->func].sr_name = sr_name;
             assert(context->hasModule("global." + linesel_name));
             auto linesel = def->addInstance(linesel_name, "global." + linesel_name);
 

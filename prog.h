@@ -1741,7 +1741,8 @@ public:
   int resource_quantity = 0;
   bool is_created = false;
   string output_name;
-  int interleave_dimension = 1;
+  string sr_name;
+  int interleave_dimension = 1; // Loop level where one iteration goes through all kernels (0 being innermost)
   vector<string> op_names;
 };
 

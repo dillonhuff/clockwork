@@ -1277,12 +1277,19 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       auto& sharer_delays = info.sharer_delays;
 
       cout << "dim=" << dim << ", found=" << (sharer_delays.count(consumer) > 0) << endl;
+      //if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size() && producer == "op_hcompute_conv1_shift_stencil") {
       if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size()) {
         int delay_time = sharer_delays.at(consumer).at(dim);
-        //isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time));
-        isl_val* delay = isl_val_int_from_si(ct, -1 * delay_time);
+        if (delay_time != 0) {
+        isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time));
+        //isl_val* delay = isl_val_int_from_si(ct, -1 * delay_time);
         delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, delay);
         cout << "Adding eq with extra delay: " << consumer << " - " << producer << " >= " << str(delay) << endl; 
+        } else {
+          delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+          cout << "Adding eq: " << consumer << " - " << producer << " >= -" << str(qp) << " * " << str(b) << endl; 
+        }
+
       } else {
         delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
         cout << "Adding eq: " << consumer << " - " << producer << " >= -" << str(qp) << " * " << str(b) << endl; 
