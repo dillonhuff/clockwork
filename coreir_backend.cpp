@@ -4225,8 +4225,8 @@ void map_memory(CodegenOptions& options, Module* top, map<string, UBuffer> & buf
 
   c->addPass(new MapperPasses::RomSubstituteMetaMapper);
   c->runPasses({"romsubstitutemetamapper"});
-  c->addPass(new MapperPasses::MemSubstituteMetaMapper);
-  c->runPasses({"memsubstitutemetamapper"});
+  //c->addPass(new MapperPasses::MemSubstituteMetaMapper);
+  //c->runPasses({"memsubstitutemetamapper"});
   c->addPass(new MapperPasses::PondSubstituteMetaMapper(top));
   c->runPasses({"pondsubstitutemetamapper"});
   c->addPass(new MapperPasses::RegfileSubstituteMetaMapper);
