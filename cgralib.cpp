@@ -467,9 +467,9 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             bool has_external_addrgen = genargs.at("has_external_addrgen")->get<bool>();
             for (size_t i = 0; i < num_input; i ++) {
-                recordparams.push_back({lake_port_map.at("data_in_" + std::to_string(i)),
+                recordparams.push_back({"data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
-                recordparams.push_back({lake_port_map.at("chain_data_in_" + std::to_string(i)),
+                recordparams.push_back({"chain_data_in_" + std::to_string(i),
                         c->BitIn()->Arr(width)});
 
                 if (has_external_addrgen) {
@@ -483,7 +483,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
             bool has_read_valid = genargs.at("has_read_valid")->get<bool>();
             for (size_t i = 0; i < num_output; i ++) {
-                recordparams.push_back({lake_port_map.at("data_out_" + std::to_string(i)),
+                recordparams.push_back({"data_out_" + std::to_string(i),
                         c->Bit()->Arr(width)});
 
                 if (has_read_valid) {
@@ -506,16 +506,16 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             bool is_rom  = genargs.at("is_rom")->get<bool>();
 
             if (is_rom) {
-              recordparams.push_back({lake_port_map.at("wen_in_0"), c->BitIn()});
-              recordparams.push_back({lake_port_map.at("ren_in_0"), c->BitIn()});
-              recordparams.push_back({lake_port_map.at("addr_in_0"), c->BitIn()->Arr(width)});
+              recordparams.push_back({"wen_in_0", c->BitIn()});
+              recordparams.push_back({"ren_in_0", c->BitIn()});
+              recordparams.push_back({"addr_in_0", c->BitIn()->Arr(width)});
             }
 
             if (has_valid) {
               recordparams.push_back({"valid", c->Bit()});
             }
             if (has_stencil_valid) {
-              recordparams.push_back({lake_port_map.at("stencil_valid"), c->Bit()});
+              recordparams.push_back({"stencil_valid", c->Bit()});
             }
             if (has_flush) {
               recordparams.push_back({"flush", c->BitIn()});
