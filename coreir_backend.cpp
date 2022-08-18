@@ -3705,6 +3705,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Mem", genargs, modargs);
+  buf->setMetaData(config_file);
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   auto buf_sel = buf->getSelects();
