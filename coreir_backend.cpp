@@ -3687,7 +3687,7 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
   {"has_reset", Const::make(c, false)},
   {"has_stencil_valid", Const::make(c, true)},
   {"has_valid", Const::make(c, false)},
-  {"is_rom", Const::make(c, false)},
+  {"is_rom", Const::make(c, true)},
   {"use_prebuilt_mem", Const::make(c, true)},
   {"has_chain_en", Const::make(c, false)},
   {"num_inputs", Const::make(c, 2)},
@@ -3992,7 +3992,7 @@ class RomSubstituteMetaMapper: public CoreIR::InstanceVisitorPass {
 
 
 bool RomReplaceMetaMapper(Instance* cnst) {
-  cout << tab(2) << "new rom syntax transformation!" << endl;
+  cout << tab(2) << "new memory syntax transformation!" << endl;
   cout << tab(2) << toString(cnst) << endl;
 
   Context* c = cnst->getContext();
@@ -4001,43 +4001,78 @@ bool RomReplaceMetaMapper(Instance* cnst) {
     cout << tab(2) << "Sel: " << itr.first << endl;
   }
   ModuleDef* def = cnst->getContainer();
-  auto genargs = cnst->getModuleRef()->getGenArgs();
 
-  int depth = genargs.at("depth")->get<int>();
-  int width = genargs.at("width")->get<int>();
+  Values genargs({{"has_external_addrgen", Const::make(c, false)},
+  {"has_flush", Const::make(c, true)},
+  {"has_read_valid", Const::make(c, false)},
+  {"has_reset", Const::make(c, false)},
+  {"has_stencil_valid", Const::make(c, true)},
+  {"has_valid", Const::make(c, false)},
+  {"is_rom", Const::make(c, true)},
+  {"use_prebuilt_mem", Const::make(c, true)},
+  {"has_chain_en", Const::make(c, false)},
+  {"num_inputs", Const::make(c, 2)},
+  {"num_outputs", Const::make(c, 2)},
+  {"width", Const::make(c, 16)}});
+
+  //auto config_file = cnst->getMetaData()["config"];
+  auto realgenargs = cnst->getModuleRef()->getGenArgs();
 
   json config_file;
+
+  int depth = realgenargs.at("depth")->get<int>();
+  int width = realgenargs.at("width")->get<int>();
 
   config_file["mode"] = "sram";
   config_file["is_rom"] = true;
   config_file["width"] = width;
   config_file["depth"] = depth;
-  config_file["init"] = cnst->getModArgs().at("init")->get<Json>();
-
-  vector<Module*> loaded;
-  if (!loadHeader(c, "mem_header.json", loaded)) {c->die();}
-
-  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet", (Module*)loaded[0]);
-
-  buf->setMetaData(config_file);
-
-  Module* cnst_mod_ref = cnst->getModuleRef();
+  config_file["init"] = cnst->getModArgs().at("init")->get<Json>(); 
+  
+  auto init = cnst->getModArgs().at("init")->get<Json>();
+  CoreIR::Values modargs = {
+      {"config", CoreIR::Const::make(c, config_file)},
+      {"init", CoreIR::Const::make(c, init)},
+      {"mode", CoreIR::Const::make(c, "rom")}
+  };
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
-
-  // vector<string> cnst_ports = cnst_mod_ref->getType()->getFields();
-
-  cout << "Wiring raddr" << endl;
-  def->connect(pt->sel("in")->sel("raddr"), buf->sel(lake_port_map.at("addr_in_0")));
-
-  cout << "Wiring ren" << endl;
-  def->connect(pt->sel("in")->sel("ren"), buf->sel(lake_port_map.at("ren_in_0")));
-
-  cout << "Wiring rdata" << endl;
-  def->connect(buf->sel("O0"), pt->sel("in")->sel("rdata"));
-
+  Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
+          "cgralib.Mem", genargs, modargs);
+  buf->setMetaData(config_file);
   def->removeInstance(cnst);
+  //def->connect(pt->sel("in"), buf);
+  auto buf_sel = buf->getSelects();
+  //for (auto itr: allSels) {
+  //  cout << tab(2) << "garnet buf sel: " << itr.first << endl;
+  //  string premap_pt_name = itr.first;
+  //  def->connect(pt->sel("in")->sel(premap_pt_name),
+  //            buf->sel(premap_pt_name));
+  //}
+
+  def->connect(pt->sel("in")->sel("raddr"), buf->sel("addr_in_0"));
+  def->connect(pt->sel("in")->sel("ren"), buf->sel("ren_in_0"));
+  def->connect(buf->sel("data_out_0"), pt->sel("in")->sel("rdata"));
+
   inlineInstance(pt);
   inlineInstance(buf);
+
+  //remove rst_n
+  /*
+  auto rst_n_conSet = buf->sel("rst_n")->getConnectedWireables();
+  vector<Wireable*> conns(rst_n_conSet.begin(), rst_n_conSet.end());
+  assert(conns.size() == 1);
+  auto conn = conns[0];
+  def->disconnect(buf->sel("rst_n"),conn);
+
+  //TODO:remove chain_en
+  if (genargs.at("has_chain_en")->get<bool>()) {
+    auto chain_en_conSet = buf->sel("chain_chain_en")->getConnectedWireables();
+    vector<Wireable*> conns_ce(chain_en_conSet.begin(), chain_en_conSet.end());
+    for (auto conn: conns_ce) {
+      def->disconnect(buf->sel("chain_chain_en"),conn);
+    }
+  }
+  */
   return true;
 }
 
