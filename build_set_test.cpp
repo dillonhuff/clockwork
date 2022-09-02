@@ -11923,7 +11923,7 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 void playground() {
     {
-        auto prg = nlmeans_simple();
+        auto prg = stereo();
         prg.pretty_print();
         align_loop_var_with_pad(prg);
         assert(false);
@@ -15237,7 +15237,7 @@ void test_pond(string dir, bool run_verilator=true) {
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
 
-  //test_apps.push_back(nlmeans_simple_blur());
+  test_apps.push_back(nlmeans_simple_blur());
   test_apps.push_back(nlmeans_simple());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
@@ -15535,6 +15535,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fp_arith());
   //test_apps.push_back(camera_pipeline_2x2_unroll());
 
+  //Not work yet
+  //test_apps.push_back(stereo_unroll());
+  //
   //CGRA tests
   test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(conv_3_3());
@@ -15623,9 +15626,11 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(camera_pipeline_new());
   test_apps.push_back(resnet88());
+  test_apps.push_back(camera_pipeline_new());
+
+  //Not working TODO: merge dp_tile branch and check if fix this error
+  test_apps.push_back(up_sample());
   test_apps.push_back(laplacian_pyramid_docker());
   test_apps.push_back(laplacian_pyramid());
 

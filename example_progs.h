@@ -86,6 +86,7 @@ prog demosaic_2x2();
 prog demosaic_unrolled();
 prog bilateral();
 prog stereo();
+prog stereo_unroll();
 prog histogram();
 prog mobilenet();
 prog mobilenet_small();
