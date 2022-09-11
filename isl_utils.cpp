@@ -4595,6 +4595,26 @@ isl_map* get_domain_mask(isl_map* m, int vec_dim) {
     return trans;
 }
 
+isl_map* get_domain_mask_reverse(isl_map* m, int vec_dim) {
+    int dim = num_in_dims(m);
+    string dom_name = domain_name(m);
+    vector<string> var_new, var_mask;
+    for (int i = 0; i < dim; i++) {
+        if (i > vec_dim) {
+            var_new.push_back("i" + str(i));
+            var_mask.push_back("i" + str(i));
+        } else {
+            auto dom = domain(m);
+            var_mask.push_back("i" + str(i) + "=" + str(get_dim_min(dom, i)));
+        }
+    }
+    string map_str = "{"+dom_name + bracket_list(var_new) + "->"
+        + dom_name + bracket_list(var_mask)+"}";
+    auto trans = isl_map_read_from_str(ctx(m), map_str.c_str());
+    cout << "mask : " << str(trans) << endl;
+    return trans;
+}
+
 vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unmask_dims) {
     int dim = num_in_dims(m);
     auto dom = domain(m);

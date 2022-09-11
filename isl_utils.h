@@ -392,6 +392,7 @@ map<int, int> get_all_domain_pad_dims(isl_map* sched, isl_map* acc)
 ;
 //vectorization transformation
 isl_map* get_domain_mask(isl_map* m, int vec_dim);
+isl_map* get_domain_mask_reverse(isl_map* m, int vec_dim);
 //For checking loop bound
 vector<isl_set*> get_domain_unmask_set(isl_map* m, int vec_dim, vector<int> unmask_dims);
 

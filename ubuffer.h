@@ -2475,6 +2475,29 @@ void tighten_address_space() {
     }
 
     //Use for Garnet Codegen
+    vector<string> get_ops_sorted(string mem_name) const {
+      if (mem_name == "regfile") {
+        vector<string> ret;
+        for (auto b : port_bundles) {
+          auto op = get_bundle_op(b.first);
+          if (is_update_op(op)) {
+            if (!elem(op, ret))
+              ret.push_back(op);
+          }
+        }
+        for (auto b : port_bundles) {
+          auto op = get_bundle_op(b.first);
+          if (!is_update_op(op)) {
+            if (!elem(op, ret))
+              ret.push_back(op);
+          }
+        }
+        return ret;
+      } else {
+        return get_ops_sorted_by_bundle();
+      }
+    }
+
     vector<string> get_ops_sorted_by_bundle() const {
         vector<string> ret;
         for (auto b : port_bundles) {
@@ -3007,7 +3030,7 @@ void tighten_address_space() {
     //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
-    void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+    //void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
     void generate_coreir_refactor(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
     //helper function for sreg generation
@@ -3047,7 +3070,7 @@ void tighten_address_space() {
         CoreIR::ModuleDef* def,
         CodegenOptions options,
         string ub_ins_name,
-        string config_mode,
+        string config_mode, bool has_stencil_valid,
         size_t input_num, size_t output_num);
 
     void emit_lake_config_collateral(CodegenOptions options, string dir);
@@ -3470,6 +3493,7 @@ struct GarnetImpl {
   bool insert_shift_register = false;
   UBuffer accum_reg;
   string reduce_PE_inpt, reduce_PE_outpt;
+  isl_map* restart_sched;
 
   bool substract_glb_latency;
   bool decouple_ctrl;
@@ -3621,6 +3645,7 @@ struct UBufferImpl {
   void bank_merging(CodegenOptions & options);
   void bank_merging_and_rewrite(CodegenOptions & options);
   void sort_bank_port();
+  void sort_bank_port_for_pond(string , UBuffer& , int);
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);
 
