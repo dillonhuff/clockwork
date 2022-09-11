@@ -2154,8 +2154,8 @@ void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
-  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv -a -v -dp -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -onyx -c " + options.dir + "lake_collateral/" + ub_ins_name +
+          "/config.json -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv -a -v -dp -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
   assert(res_lake == 0);
   //cmd("mkdir -p "+options.dir+"verilog");
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
@@ -2245,16 +2245,25 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   //dump the collateral file
   json config = buf->getMetaData()["config"];
   config["mode"] = "UB";
-  emit_lake_config_collateral(options, ub_ins_name, config);
 
   //run the lake generation cmd
-  if (config_mode == "lake")
-      run_lake_verilog_codegen(options, v_name, ub_ins_name);
-  else if (config_mode == "lake_dp")
-      run_lake_dp_verilog_codegen(options, v_name, ub_ins_name);
-  else if (config_mode == "pond")
+  if (config_mode == "lake") {
+
+    emit_lake_config_collateral(options, ub_ins_name, config);
+    run_lake_verilog_codegen(options, v_name, ub_ins_name);
+  }
+  else if (config_mode == "lake_dp") {
+
+    emit_lake_config_collateral(options, ub_ins_name, config);
+    run_lake_dp_verilog_codegen(options, v_name, ub_ins_name);
+  }
+  else if (config_mode == "pond") {
+      buf->getMetaData()["mode"] = "pond";
+      config["mode"] = "pond";
+      cout << config << endl;
+      emit_lake_config_collateral(options, ub_ins_name, config);
       run_pond_verilog_codegen(options, v_name, ub_ins_name);
-  else {
+  } else {
       cout << "Config mode: " << config_mode << endl;
       cout << "Not implemented yet. " << endl;
       assert(false);

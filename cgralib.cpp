@@ -312,6 +312,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"width", c->Int()}, // for m3 16
         {"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
         {"num_outputs", c->Int()}, // ''
+        {"has_stencil_valid", c->Bool()},
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
     });
 
@@ -322,6 +323,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             uint width = genargs.at("width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
+            bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
@@ -337,7 +339,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_pond_" + to_string(i), c->Bit()->Arr(width)});
             }
-            recordparams.push_back({"valid_out_pond", c->Bit()});
+            if (has_stencil_valid)
+              recordparams.push_back({"valid_out_pond", c->Bit()});
             recordparams.push_back({"flush", c->BitIn()});
 
         return c->Record(recordparams);
@@ -348,6 +351,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   auto cgralib_pond_amber_gen = cgralib->newGeneratorDecl("Pond_amber", cgralib->getTypeGen("cgralib_pond_amber_type"), cgralibpondamberparams);
   cgralib_pond_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
   cgralib_pond_amber_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
+  cgralib_pond_amber_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
   cgralib_pond_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
 
 
@@ -364,6 +368,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
         {"width", c->Int()}, // for m3 16
         {"num_inputs", c->Int()}, // the number of ports you *actually use in a given config*
         {"num_outputs", c->Int()}, // ''
+        {"has_stencil_valid", c->Bool()},
         {"ID", c->String()},            //for codegen, TODO: remove after coreIR fix
     });
 
@@ -374,6 +379,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             uint width = genargs.at("width")->get<int>();
             uint num_input = genargs.at("num_inputs")->get<int>();
             uint num_output = genargs.at("num_outputs")->get<int>();
+            bool has_stencil_valid = genargs.at("has_stencil_valid")->get<bool>();
 
             RecordParams recordparams = {
                 {"rst_n", c->BitIn()},
@@ -389,7 +395,8 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
             for (size_t i = 0; i < num_output; i ++) {
                 recordparams.push_back({"data_out_pond_" + to_string(i), c->Bit()->Arr(width)});
             }
-            recordparams.push_back({"valid_out_pond", c->Bit()});
+            if (has_stencil_valid)
+              recordparams.push_back({"valid_out_pond", c->Bit()});
             recordparams.push_back({"flush", c->BitIn()});
 
         return c->Record(recordparams);
@@ -399,6 +406,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
 
   auto cgralib_pond_gen = cgralib->newGeneratorDecl("Pond", cgralib->getTypeGen("cgralib_pond_type"), cgralibpondparams);
   cgralib_pond_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_pond_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, true)}});
   cgralib_pond_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_pond_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
 
