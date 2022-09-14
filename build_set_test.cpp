@@ -11923,6 +11923,19 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 void playground() {
     {
+
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto m = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1,i2,i3]-> [16*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8 and 0<=i2<=1 and 0<=i3<=16}");
+      auto s = get_domain_mask(m, 2);
+      auto m_mask = dot(s, m);
+      auto sv = get_domain_mask_reverse(m, 2);
+      auto m_mask_rev = dot(sv, m);
+      cout << "mask: " << str(m_mask) << endl;
+      cout << "mask_rev: " << str(m_mask_rev) << endl;
+      assert(false);
+    }
+
+    {
         auto prg = stereo();
         prg.pretty_print();
         align_loop_var_with_pad(prg);
@@ -15239,22 +15252,23 @@ void test_pond(string dir, bool run_verilator=true) {
 
   test_apps.push_back(nlmeans_simple_blur());
   test_apps.push_back(nlmeans_simple());
+  test_apps.push_back(three_level_pond());
+  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(three_level_pond_copy());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond_copy());
-  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(resnet_init_unroll_tile());
+
+  //Accumulation register
   test_apps.push_back(conv_1_3());
   test_apps.push_back(conv_rolled());
+
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(complex_mem_pond());
-  test_apps.push_back(resnet_init_unroll_tile());
 
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
   //test_apps.push_back(fft8_unroll8_split());
 
-  //TODO: tobe tested with new pond
-  //test_apps.push_back(three_level_pond());
-  //test_apps.push_back(three_level_pond_rolled());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -15471,7 +15485,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet2_x_full());
 
   //For debug the 7x7 layer
-  //test_apps.push_back(resnet_last());
+  test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
   test_apps.push_back(resnet1_docker());
@@ -15493,8 +15507,8 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_x_unroll_mic());
 
   //Test with non double buffer, not tested with db
-  test_apps.push_back(resnet_output_stationary_small());
-  test_apps.push_back(resnet_output_stationary_tiny());
+  //test_apps.push_back(resnet_output_stationary_small());
+  //test_apps.push_back(resnet_output_stationary_tiny());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
