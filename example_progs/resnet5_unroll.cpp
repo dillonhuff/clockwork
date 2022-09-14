@@ -2,8 +2,8 @@
 
 prog resnet5_1_unroll_cyclic() {
   prog prg;
-  prg.compute_unit_file = "resnet5_1_unroll_compute.h";
-  prg.name = "resnet5_1_unroll";
+  prg.compute_unit_file = "resnet5_1_unroll_cyclic_compute.h";
+  prg.name = "resnet5_1_unroll_cyclic";
 
 // Stencil<int16_t, 256, 15, 15> &input_host_stencil = arg_0;
   prg.add_input("input_host_stencil");
@@ -47,7 +47,7 @@ prog resnet5_1_unroll_cyclic() {
 ////producing output_cgra.stencil
   auto output_cgra_s0_y = output_glb_s0_w_w_glb->add_loop("output_cgra_s0_y", 0, 7);
   auto output_cgra_s0_x = output_cgra_s0_y->add_loop("output_cgra_s0_x", 0, 7);
-  auto output_cgra_s0_w = output_cgra_s0_x->add_loop("output_cgra_s0_w", 0, 8);
+  auto output_cgra_s0_w = output_cgra_s0_x->add_loop("output_cgra_s0_w", 0, 4);
 
 //store is: output_cgra.stencil(0, output_cgra_s0_x, output_cgra_s0_y) = (int16)0
   auto hcompute_output_cgra_stencil = output_cgra_s0_w->add_op("op_hcompute_output_cgra_stencil");
@@ -126,7 +126,7 @@ prog resnet5_1_unroll_cyclic() {
 //store is: kernel_cgra.stencil(((kernel_cgra_s0_z_z_z_cgra*2) + 1), kernel_cgra_s0_w_w_cgra, kernel_cgra_s0_x, kernel_cgra_s0_y) = kernel_glb.stencil(((((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra)*2) + -7), (((output_glb_s0_w_w_glb*8) + kernel_cgra_s0_w_w_cgra) + 504), kernel_cgra_s0_x, kernel_cgra_s0_y)
   auto hcompute_kernel_cgra_stencil_1 = kernel_cgra_s0_z_z_z_cgra->add_op("op_hcompute_kernel_cgra_stencil_1");
   hcompute_kernel_cgra_stencil_1->add_function("hcompute_kernel_cgra_stencil_1");
-  hcompute_kernel_cgra_stencil_1->add_load("kernel_glb_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "(((output_glb_s0_w_w_glb*32) + (kernel_cgra_s0_w_cgra*8) + kernel_cgra_s0_w_w_cgra))", "((output_cgra_s1_r_z_rz_glb*4) + kernel_cgra_s0_z_z_z_cgra*2) + 1");
+  hcompute_kernel_cgra_stencil_1->add_load("kernel_glb_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "(((output_glb_s0_w_w_glb*32) + (kernel_cgra_s0_w_cgra*8) + kernel_cgra_s0_w_w_cgra))", "((output_cgra_s1_r_z_rz_glb*8) + kernel_cgra_s0_z_z_z_cgra*2) + 1");
   hcompute_kernel_cgra_stencil_1->add_store("kernel_cgra_stencil", "kernel_cgra_s0_y", "kernel_cgra_s0_x", "8*kernel_cgra_s0_w_cgra + kernel_cgra_s0_w_w_cgra", "((kernel_cgra_s0_z_z_z_cgra*2) + 1)");
 
 //consuming kernel_cgra.stencil
