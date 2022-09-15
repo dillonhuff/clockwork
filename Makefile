@@ -68,14 +68,14 @@ libcoreir-cwlib.$(LIB_EXT): cwlib.o
 ifeq ($(UNAME), Darwin)
 	$(CXX) $(CXX_FLAGS) -dynamiclib -undefined dynamic_lookup $^ -o lib/$@
 else
-	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@
+	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@ -lcoreir
 endif
 
 libcoreir-cgralib.$(LIB_EXT): cgralib.o
 ifeq ($(UNAME), Darwin)
 	$(CXX) $(CXX_FLAGS) -dynamiclib -undefined dynamic_lookup $^ -o lib/$@
 else
-	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@
+	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@ -lcoreir
 endif
 
 $(PROGS_OBJ): $(BUILD_DIR)/%.o: example_progs/%.cpp
