@@ -217,10 +217,10 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   );
 
   auto cgralib_pond_amber_gen = cgralib->newGeneratorDecl("Pond_amber", cgralib->getTypeGen("cgralib_pond_amber_type"), cgralibpondamberparams);
-  cgralib_pond_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_pond_amber_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 2)}});
   cgralib_pond_amber_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
   cgralib_pond_amber_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, false)}});
-  cgralib_pond_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
+  cgralib_pond_amber_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 2)}});
 
 
   auto CGRALibPondAmberModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {
@@ -273,10 +273,10 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
   );
 
   auto cgralib_pond_gen = cgralib->newGeneratorDecl("Pond", cgralib->getTypeGen("cgralib_pond_type"), cgralibpondparams);
-  cgralib_pond_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 1)}});
+  cgralib_pond_gen->addDefaultGenArgs({{"num_inputs", Const::make(c, 2)}});
   cgralib_pond_gen->addDefaultGenArgs({{"has_stencil_valid", Const::make(c, true)}});
   cgralib_pond_gen->addDefaultGenArgs({{"ID", Const::make(c, "")}});
-  cgralib_pond_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 1)}});
+  cgralib_pond_gen->addDefaultGenArgs({{"num_outputs", Const::make(c, 2)}});
 
 
   auto CGRALibPondModParamFun = [](Context* c,Values genargs) -> std::pair<Params,Values> {

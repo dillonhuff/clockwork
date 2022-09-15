@@ -1489,7 +1489,7 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
         sort(outpt2readers.begin(), outpt2readers.end(),
                 [&buf](std::set<string>& l, std::set<string>& r)
                 { if (buf.is_self_loop(pick(l)))
-                    return true;
+                    return false;
                   else
                     return pick(l) < pick(r);
                 });
@@ -1500,7 +1500,7 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
         sort(in2writers.begin(), in2writers.end(),
                 [&buf](std::set<string>& l, std::set<string>& r)
                 { if (buf.is_self_loop(pick(l)))
-                    return true;
+                    return false;
                   else
                     return pick(l) < pick(r);
                 });
@@ -2392,8 +2392,115 @@ pair<isl_map*, isl_map*> pad_domain( isl_map* sched, isl_map* acc) {
     return {sched, acc};
 }
 
+//New refactored config gen pass for memory
+Json UBuffer::generate_ubuf_args(CodegenOptions& options, 
+    UBuffer& ubuf, string mem_name) {
+ Json ret;
+
+ //Metadata
+ auto mem = options.mem_hierarchy.at(mem_name);
+ int word_width = mem.word_width.at(mem_name);
+ int capacity = mem.capacity.at(mem_name);
+ int in_cnt = 0, out_cnt = 0;
+ string ctrl_name = pick(mem.controller_name);
+ 
+ //TODO: change into a method that sort input by update first, then by name
+ for (auto inpt: ubuf.get_in_ports_update_priority()) {
+   auto acc_map = to_map(ubuf.access_map.at(inpt));
+   acc_map = remove_irrelevant_in_dim(acc_map);
+   auto sched = to_map(ubuf.schedule.at(inpt));
+   auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+   auto linear_acc_map = dot(acc_map, reduce_map);
+   cout << tab(1) << "Before Merge: " << endl;
+   cout << tab(2) << "acc map: " << str(acc_map) << endl;
+   cout << tab(2) << "sched: " << str(sched) << endl;
+   cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+   cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
+   
+   //add a simplify optimization pass,
+   //reutrn:    pair(schedulem access_map)
+   auto pad_pair = pad_domain(sched, (linear_acc_map));
+   auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   auto new_sched = m_pair.first;
+   cout << tab(1) << "After Merge: " << endl;
+   cout << tab(2) << "schedule: " << str(new_sched) << endl;
+   cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+   
+
+   //Add accessor info
+   auto aff = get_aff(new_sched);
+   auto dom = ::domain(new_sched);
+   auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+   
+   //Add addressor info
+   int port_width = mem.in_port_width.at(mem_name);
+   auto addressor = generate_addressor_config_from_aff_expr(
+       get_aff(m_pair.second), 
+       false, false, word_width, capacity, port_width);
+   config_info.merge(addressor);
+   cout << "\tWrite map: " << str(acc_map) << endl;
+
+   //Add configuration
+   if (mem_name == "regfile") {
+     add_lake_config(ret, config_info, num_in_dims(aff), 
+         "in2"+ctrl_name+"_" + str(options.rtl_options.max_inpt - 1 - in_cnt));
+   } else {
+     add_lake_config(ret, config_info, num_in_dims(aff), 
+         "in2"+ctrl_name+"_" + str(in_cnt));
+   }
+   in_cnt ++;
+ }
+
+ for (auto inpt: ubuf.get_out_ports_update_priority()) {
+   auto acc_map = to_map(ubuf.access_map.at(inpt));
+   acc_map = remove_irrelevant_in_dim(acc_map);
+   auto sched = to_map(ubuf.schedule.at(inpt));
+   auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+   auto linear_acc_map = dot(acc_map, reduce_map);
+   cout << tab(1) << "Before Merge: " << endl;
+   cout << tab(2) << "acc map: " << str(acc_map) << endl;
+   cout << tab(2) << "sched: " << str(sched) << endl;
+   cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+   cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
+   
+   //add a simplify optimization pass,
+   //reutrn:    pair(schedulem access_map)
+   auto pad_pair = pad_domain(sched, (linear_acc_map));
+   auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   auto new_sched = m_pair.first;
+   cout << tab(1) << "After Merge: " << endl;
+   cout << tab(2) << "schedule: " << str(new_sched) << endl;
+   cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+   
+
+   //Add accessor info
+   auto aff = get_aff(new_sched);
+   auto dom = ::domain(new_sched);
+   auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+   
+   //Add addressor info
+   int port_width = mem.out_port_width.at(mem_name);
+   auto addressor = generate_addressor_config_from_aff_expr(
+       get_aff(m_pair.second), 
+       true, false, word_width, capacity, port_width);
+   config_info.merge(addressor);
+   cout << "\tWrite map: " << str(acc_map) << endl;
+
+   //Add configuration
+   if (mem_name == "regfile") {
+     add_lake_config(ret, config_info, num_in_dims(aff), 
+         ctrl_name + "2out" + "_" + str(options.rtl_options.max_outpt - 1 - out_cnt));
+   } else {
+     add_lake_config(ret, config_info, num_in_dims(aff), 
+         ctrl_name + "2out" + "_" + str(out_cnt));
+   }
+   out_cnt ++;
+ }
+ return ret;
+}
+
 //Simplify the single fetch width memory codegen
-Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string mem_name) {
+Json UBuffer::generate_ubuf_args_old(CodegenOptions& options, UBuffer& ubuf, string mem_name) {
 
     Json ret;
 
@@ -2409,6 +2516,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
         m = remove_irrelevant_in_dim(m);
+        cout << "op name: " << op_name << endl;
+        cout << "Schedule: " << str(m) << endl;
         op2sched[op_name] = m;
         auto out_acc_umap = ubuf.producer_map();
         for (auto out_acc_map: get_maps(out_acc_umap)) {
@@ -2732,15 +2841,20 @@ CoreIR::Instance* generate_pond_instance(
 
   auto context = def->getContext();
   CoreIR::Instance* buf;
+  assert(options.rtl_options.max_inpt == 2);
+  assert(options.rtl_options.max_outpt == 2);
   CoreIR::Values genargs = {
     {"width", CoreIR::Const::make(context, 16)},
-    {"num_inputs", CoreIR::Const::make(context, input_num)},
-    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    //FIXME: always generate 2 port pond since that's the hardware config
+    {"num_inputs", CoreIR::Const::make(context, options.rtl_options.max_inpt)},
+    {"num_outputs", CoreIR::Const::make(context, options.rtl_options.max_outpt)},
     {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
     {"ID", CoreIR::Const::make(context, context->getUnique())}
   };
   cout << "Add pond node with input_num = " << input_num
-      << ", output_num = " << output_num << endl;
+      << ", output_num = " << output_num << endl
+      << "max in pt: " << options.rtl_options.max_inpt << endl
+      << "max out pt: " << options.rtl_options.max_outpt << endl;
   auto* g = context->getGenerator("cgralib.Pond_amber");
   //auto* generatedModule = g->getModule(genargs);
   //g->getMetaData()["verilog_name"] =
@@ -3062,8 +3176,8 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
   CoreIR::Instance* buf;
   CoreIR::Values genargs = {
     {"width", CoreIR::Const::make(context, port_widths)},
-    {"num_inputs", CoreIR::Const::make(context, input_num)},
-    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"num_inputs", CoreIR::Const::make(context, options.rtl_options.max_inpt)},
+    {"num_outputs", CoreIR::Const::make(context, options.rtl_options.max_outpt)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
   };
   cout << "Add pond node with input_num = " << input_num
@@ -3172,22 +3286,28 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
-string memDatainPort(string mode, int pt_cnt) {
+string memDatainPort(CodegenOptions& options, string mode, int pt_cnt) {
     if (mode == "lake"  || mode == "glb")
         return "data_in_" + to_string(pt_cnt);
-    else if (mode == "pond" || mode == "lake_dp") {
+    else if ( mode == "lake_dp") {
         return "data_in_pond_" + to_string(pt_cnt);
+    } else if (mode == "pond") { 
+        int inpt_cnt = options.rtl_options.max_inpt;
+        return "data_in_pond_" + to_string(inpt_cnt - 1 - pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
     }
 }
 
-string memDataoutPort(string mode, int pt_cnt) {
+string memDataoutPort(CodegenOptions& options, string mode, int pt_cnt) {
     if (mode == "lake" || mode == "glb")
         return "data_out_" + to_string(pt_cnt);
-    else if (mode == "pond" || mode == "lake_dp") {
+    else if (mode == "lake_dp") {
         return "data_out_pond_" + to_string(pt_cnt);
+    } else if (mode == "pond") { 
+        int outpt_cnt = options.rtl_options.max_outpt;
+        return "data_out_pond_" + to_string(outpt_cnt - 1 - pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
@@ -3222,7 +3342,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
     assert(inpt_broadcast_set.size() == 1);
     for (auto inpt: inpt_broadcast_set) {
       if (isIn.at(inpt)){
-        def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
+        def->connect(buf->sel(memDatainPort(options, config_mode, inpt_cnt)), pt2wire.at(inpt));
 
         //There is no control signal
         if (with_ctrl) {
@@ -3243,11 +3363,11 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
       //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
       //auto outpt = *(outpt_it);
       //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
-      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
+      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(options, config_mode, outpt_cnt));
       //CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
       if (impl.outpt_to_bank.at(outpt).size() == 1) {
         //no chaining
-        def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+        def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), pt2wire.at(outpt));
       } else {
 
         chain_en = true;
@@ -3256,19 +3376,19 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
           //lake chaining wiring method
           if(conns.size() == 0) {
             //First chaining wiring, wire to the output
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), pt2wire.at(outpt));
           } else {
             assert(conns.size() == 1);
             cout << "pt count: " << outpt_cnt << endl;
             CoreIR::Wireable* last_dangling_chain_data_in =
               findChainDataIn(pick(conns), outpt_cnt);
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), last_dangling_chain_data_in);
           }
 
         } else if (config_mode == "pond" || config_mode == "lake_dp") {
           if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
             //last port directly connec to the wire
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)),  pt2wire.at(outpt));
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)),  pt2wire.at(outpt));
           } else {
             Instance* dataout_pth = addPassthrough(
                     pt2wire.at(outpt), "dataout_pt_" + context->getUnique());
@@ -3287,7 +3407,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
                     "coreir.mux",
                     {{"width", CoreIR::Const::make(context, this->port_widths)}});
             def->connect(dataout_pth->sel("out"), next_val->sel("out"));
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in1"));
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), next_val->sel("in1"));
             def->connect(op_control_wires(mux_ctrl), next_val->sel("sel"));
             inlineInstance(dataout_pth);
             pt2wire.at(outpt) = next_val->sel("in0");
@@ -3932,10 +4052,10 @@ void insert_accumulation_register(CodegenOptions& options,  CoreIR::ModuleDef* d
   def->connect(accum_reg_ins->sel("flush"), cgpl_ctrl->sel("stencil_valid"));
 
   //Wire the PE interface with accumulation register
-  def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  def->connect(accum_reg_ins->sel(memDatainPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_inpt));
   //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
-  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_outpt));
-  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(config_mode_, 1));
+  def->connect(accum_reg_ins->sel(memDataoutPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(options, config_mode_, 0));
 }
 
 
@@ -4042,10 +4162,10 @@ void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* d
   string config_mode_ = accum_reg_ins->getMetaData()["mode"];
 
   //Wire the PE interface with accumulation register
-  def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 1)), pt2wire.at(pick(inpts)));
+  def->connect(accum_reg_ins->sel(memDatainPort(options, config_mode_, 1)), pt2wire.at(pick(inpts)));
   //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
-  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(pick(outpts)));
-  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(config_mode_, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(options, config_mode_, 1)), pt2wire.at(pick(outpts)));
+  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(options, config_mode_, 0));
 
   cout << "buffer after accumu reg insert: " << buf << endl;
 

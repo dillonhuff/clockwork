@@ -2723,10 +2723,42 @@ void tighten_address_space() {
       return outpts;
     }
 
+    //Special function that for pond optimization
+    vector<string> get_in_ports_update_priority() const {
+      vector<string> outpts;
+      for (auto m : isIn) {
+        if (m.second && !is_self_loop(m.first)) {
+          outpts.push_back(m.first);
+        }
+      }
+      for (auto m: isIn) {
+        if (m.second && is_self_loop(m.first)) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
     vector<string> get_out_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {
         if (!m.second) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
+    //Special function that for pond optimization
+    vector<string> get_out_ports_update_priority() const {
+      vector<string> outpts;
+      for (auto m : isIn) {
+        if (!m.second && !is_self_loop(m.first)) {
+          outpts.push_back(m.first);
+        }
+      }
+      for (auto m: isIn) {
+        if (!m.second && is_self_loop(m.first)) {
           outpts.push_back(m.first);
         }
       }
@@ -2869,7 +2901,7 @@ void tighten_address_space() {
       return in_bd && out_bd;
     }
 
-    bool is_self_loop(string pt_name) {
+    bool is_self_loop(string pt_name) const {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_vec = stmt2bd.at(op_name);
@@ -3057,6 +3089,7 @@ void tighten_address_space() {
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
     Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
+    Json generate_ubuf_args_old(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(
