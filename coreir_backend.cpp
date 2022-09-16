@@ -3100,8 +3100,7 @@ RemoveFlush(): InstancePass(
 bool runOnInstance(Instance* inst) {
     //define the pass here
     if (inst->getModuleRef()->isGenerated()) {
-      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" || 
-           inst->getModuleRef()->getGenerator()->getName() == "Pond_amber") &&
+      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber") &&
               inst->canSel("flush")) {
          auto def= inst->getContainer();
          def->disconnect(inst->sel("flush"));
@@ -3711,11 +3710,18 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
       {"init", CoreIR::Const::make(c, init)},
       {"mode", CoreIR::Const::make(c, "lake")}
   };
+
+  json metadata;
+
+  metadata["config"] = config_file;
+  metadata["init"] = init;
+  metadata["mode"] = "lake";
+
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Mem", genargs, modargs);
-  buf->setMetaData(config_file);
+  buf->setMetaData(metadata);
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   auto buf_sel = buf->getSelects();
@@ -3921,10 +3927,15 @@ bool RegfileReplaceMetaMapper(Instance* cnst) {
       {"config", CoreIR::Const::make(c, config_file)},
       {"mode", CoreIR::Const::make(c, "pond")}
   };
+
+  json metadata;
+  metadata["config"] = config_file;
+  metadata["mode"] = "pond";
+
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Pond", genargs, modargs);
-  buf->setMetaData(config_file);
+  buf->setMetaData(metadata);
   def->removeInstance(cnst);
 
   auto buf_sel = buf->getSelects();
@@ -4002,12 +4013,16 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   int depth = realgenargs.at("depth")->get<int>();
   int width = realgenargs.at("width")->get<int>();
 
-  config_file["mode"] = "sram";
-  config_file["is_rom"] = true;
-  config_file["width"] = width;
-  config_file["depth"] = depth;
-  config_file["init"] = cnst->getModArgs().at("init")->get<Json>(); 
-  
+  json metadata;
+
+  metadata["mode"] = "sram";
+  metadata["is_rom"] = true;
+  metadata["width"] = width;
+  metadata["depth"] = depth;
+  metadata["init"] = cnst->getModArgs().at("init")->get<Json>();
+  metadata["config"] = config_file;
+
+
   auto init = cnst->getModArgs().at("init")->get<Json>();
   CoreIR::Values modargs = {
       {"config", CoreIR::Const::make(c, config_file)},
@@ -4017,7 +4032,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Mem", genargs, modargs);
-  buf->setMetaData(config_file);
+  buf->setMetaData(metadata);
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   auto buf_sel = buf->getSelects();
