@@ -4008,8 +4008,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   //auto config_file = cnst->getMetaData()["config"];
   auto realgenargs = cnst->getModuleRef()->getGenArgs();
 
-  json config_file;
-
+  json config_file = json({});
   int depth = realgenargs.at("depth")->get<int>();
   int width = realgenargs.at("width")->get<int>();
 
@@ -4021,7 +4020,6 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   metadata["depth"] = depth;
   metadata["init"] = cnst->getModArgs().at("init")->get<Json>();
   metadata["config"] = config_file;
-
 
   auto init = cnst->getModArgs().at("init")->get<Json>();
   CoreIR::Values modargs = {
