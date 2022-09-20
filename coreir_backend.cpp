@@ -1003,9 +1003,12 @@ void load_mem_ext(Context* c) {
       {"config", Const::make(c, config)}});
     //def->addInstance("c1","corebit.const",{{"value",Const::make(c,true)}});
     //def->addInstance("c0","corebit.const",{{"value",Const::make(c,false)}});
-    def->connect("self.rdata","cgramem." + lake_port_map.at("data_out_0"));
-    def->connect("self.ren","cgramem." + lake_port_map.at("ren_in_0"));
-    def->connect("self.raddr", "cgramem." + lake_port_map.at("addr_in_0"));
+    //def->connect("self.rdata","cgramem." + lake_port_map.at("data_out_0"));
+    //def->connect("self.ren","cgramem." + lake_port_map.at("ren_in_0"));
+    //def->connect("self.raddr", "cgramem." + lake_port_map.at("addr_in_0"));
+    def->connect("self.rdata","cgramem.data_out_0");
+    def->connect("self.ren","cgramem.ren_in_0");
+    def->connect("self.raddr", "cgramem.addr_in_0");
   });
 }
 
@@ -2253,6 +2256,8 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
     run_lake_verilog_codegen(options, v_name, ub_ins_name);
   }
   else if (config_mode == "lake_dp") {
+      buf->getMetaData()["mode"] = "lake_dp";
+      config["mode"] = "pond";
 
     emit_lake_config_collateral(options, ub_ins_name, config);
     run_lake_dp_verilog_codegen(options, v_name, ub_ins_name);
@@ -3806,11 +3811,11 @@ bool InitMove(Instance* cnst) {
   Instance* buf = def->addInstance(cnst->getInstname()+"_rom",
           "cgralib.Mem", genargs, modargs);
   reconnectInWire(def, cnst->sel("raddr"),
-          buf->sel(lake_port_map.at("addr_in_0")));
+          buf->sel("addr_in_0"));
   reconnectInWire(def, cnst->sel("ren"),
-          buf->sel(lake_port_map.at("ren_in_0")));
+          buf->sel("ren_in_0"));
   reconnectOutWire(def, cnst->sel("rdata"),
-          buf->sel(lake_port_map.at("data_out_0")));
+          buf->sel("data_out_0"));
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   //inlineInstance(pt);
@@ -3905,10 +3910,10 @@ bool MemtileReplace(Instance* cnst) {
   for (auto itr: allSels) {
     cout << tab(2) << "garnet buf sel: " << itr.first << endl;
     string premap_pt_name = itr.first;
-    if (lake_port_map.count(premap_pt_name))
-      def->connect(pt->sel("in")->sel(premap_pt_name),
-              buf->sel(lake_port_map.at(premap_pt_name)));
-    else
+    //if (lake_port_map.count(premap_pt_name))
+    //  def->connect(pt->sel("in")->sel(premap_pt_name),
+    //          buf->sel(lake_port_map.at(premap_pt_name)));
+    //else
       def->connect(pt->sel("in")->sel(premap_pt_name),
               buf->sel(premap_pt_name));
   }
