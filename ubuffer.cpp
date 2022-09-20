@@ -1491,7 +1491,7 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                 { if (buf.is_self_loop(pick(l)))
                     return false;
                   else
-                    return pick(l) < pick(r);
+                    return pick(l) > pick(r);
                 });
     }
 
@@ -1502,7 +1502,7 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                 { if (buf.is_self_loop(pick(l)))
                     return false;
                   else
-                    return pick(l) < pick(r);
+                    return pick(l) > pick(r);
                 });
     }
 }
