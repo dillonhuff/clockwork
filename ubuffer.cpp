@@ -1490,6 +1490,8 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                 [&buf](std::set<string>& l, std::set<string>& r)
                 { if (buf.is_self_loop(pick(l)))
                     return false;
+                  else if (buf.is_self_loop(pick(r)))
+                    return true;
                   else
                     return pick(l) > pick(r);
                 });
@@ -1501,6 +1503,8 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                 [&buf](std::set<string>& l, std::set<string>& r)
                 { if (buf.is_self_loop(pick(l)))
                     return false;
+                  else if (buf.is_self_loop(pick(r)))
+                    return true;
                   else
                     return pick(l) > pick(r);
                 });
@@ -2409,6 +2413,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    auto acc_map = to_map(ubuf.access_map.at(inpt));
    acc_map = remove_irrelevant_in_dim(acc_map);
    auto sched = to_map(ubuf.schedule.at(inpt));
+   sched = remove_irrelevant_in_dim(sched);
    auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
    auto linear_acc_map = dot(acc_map, reduce_map);
    cout << tab(1) << "Before Merge: " << endl;
@@ -2442,8 +2447,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
 
    //Add configuration
    if (mem_name == "regfile") {
-     add_lake_config(ret, config_info, num_in_dims(aff), 
+     //FIXME: a hack to proritize self loop controller
+     if (ubuf.is_self_loop(inpt)) {
+       add_lake_config(ret, config_info, num_in_dims(aff),
+         "in2"+ctrl_name+"_0");
+     } else {
+       add_lake_config(ret, config_info, num_in_dims(aff),
          "in2"+ctrl_name+"_" + str(options.rtl_options.max_inpt - 1 - in_cnt));
+     }
    } else {
      add_lake_config(ret, config_info, num_in_dims(aff), 
          "in2"+ctrl_name+"_" + str(in_cnt));
@@ -2455,6 +2466,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    auto acc_map = to_map(ubuf.access_map.at(inpt));
    acc_map = remove_irrelevant_in_dim(acc_map);
    auto sched = to_map(ubuf.schedule.at(inpt));
+   sched = remove_irrelevant_in_dim(sched);
    auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
    auto linear_acc_map = dot(acc_map, reduce_map);
    cout << tab(1) << "Before Merge: " << endl;
@@ -2488,8 +2500,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
 
    //Add configuration
    if (mem_name == "regfile") {
-     add_lake_config(ret, config_info, num_in_dims(aff), 
+     //FIXME: a hack in output port config mapping use config 0 if dim is larger than 2
+     if (ubuf.is_self_loop(inpt) || num_in_dims(aff) > 2) {
+       add_lake_config(ret, config_info, num_in_dims(aff),
+         ctrl_name + "2out_0");
+     } else {
+       add_lake_config(ret, config_info, num_in_dims(aff),
          ctrl_name + "2out" + "_" + str(options.rtl_options.max_outpt - 1 - out_cnt));
+     }
    } else {
      add_lake_config(ret, config_info, num_in_dims(aff), 
          ctrl_name + "2out" + "_" + str(out_cnt));
@@ -3136,6 +3154,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
       {"width", CoreIR::Const::make(context, 16)},
       {"num_inputs", CoreIR::Const::make(context, 1)},
       {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_stencil_valid", CoreIR::Const::make(context, true)},
       {"ID", CoreIR::Const::make(context, context->getUnique())},
     };
     auto* g = context->getGenerator("cgralib.Pond_amber");
@@ -3342,6 +3361,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
     assert(inpt_broadcast_set.size() == 1);
     for (auto inpt: inpt_broadcast_set) {
       if (isIn.at(inpt)){
+        //cout << "BUF Wire inpt: " << memDatainPort(options, config_mode, inpt_cnt) << " with " << pt2wire.at(inpt)->toString() << endl;
         def->connect(buf->sel(memDatainPort(options, config_mode, inpt_cnt)), pt2wire.at(inpt));
 
         //There is no control signal
@@ -3389,6 +3409,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
           if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
             //last port directly connec to the wire
             def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)),  pt2wire.at(outpt));
+            //cout << "BUF Wire outpt: " << memDataoutPort(options, config_mode, outpt_cnt) << " with " << pt2wire.at(outpt)->toString() << endl;
           } else {
             Instance* dataout_pth = addPassthrough(
                     pt2wire.at(outpt), "dataout_pt_" + context->getUnique());
@@ -3971,13 +3992,13 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
   for(string inpt: buf.get_in_ports()) {
     if (::name(buf.domain.at(inpt)) == op_name) {
       inpts.push_back(inpt);
-      string pt_name = inpt + "_accum_in_0";
+      string pt_name = inpt + "_accum_in_1";
       auto reg_in_am = add_domain_suffix(am_mask_rev, "_write_pe");
       auto reg_in_sched= add_domain_suffix(out_sched, "_write_pe");
       accum_reg.port_bundles[op_name + "_write_0"].push_back(pt_name);
       accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
 
-      pt_name = inpt + "_accum_in_1";
+      pt_name = inpt + "_accum_in_0";
       int addr_dim = num_out_dims(am);
       vector<int> range_idx(addr_dim, 0);
       string init_am_str= "{" + domain_name(am) + "[i=0, 0]->" +
@@ -4001,7 +4022,7 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
       //accum_reg.port_bundles[op_name + "_read_0"].push_back(pt_name);
       //accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
 
-      auto pt_name = outpt + "_accum_out_1";
+      auto pt_name = outpt + "_accum_out_0";
       auto reg_out_am = add_domain_suffix(am_mask_rev, "_read_pe");
       auto reg_out_sched= add_domain_suffix(out_sched, "_read_pe");
       accum_reg.port_bundles[op_name + "_read_1"].push_back(pt_name);
