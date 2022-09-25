@@ -3109,26 +3109,40 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
 };
 
 class RemoveFlush: public CoreIR::InstancePass {
-    public:
-RemoveFlush(): InstancePass(
-            "removeflush",
-            "Remove flush wiring for garnet mapping"
-            ) {}
-bool runOnInstance(Instance* inst) {
-    //define the pass here
-    if (inst->getModuleRef()->isGenerated()) {
-      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber") &&
-              inst->canSel("flush")) {
-         auto def= inst->getContainer();
-         def->disconnect(inst->sel("flush"));
-         return true;
-      } else {
-        return false;
-      }
-    } else {
+  public:
+    RemoveFlush(): InstancePass(
+                "removeflush",
+                "Remove flush wiring for garnet mapping"
+                ) {}
+    bool runOnInstance(Instance* inst) {
+      //define the pass here
+      if (inst->getModuleRef()->isGenerated()) {
+        if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber") &&
+                inst->canSel("flush")) {
+          auto def= inst->getContainer();
+          def->disconnect(inst->sel("flush"));
+          return true;
+        } else if ((inst->getModuleRef()->getGenerator()->getName() == "Pond_amber") &&
+                inst->canSel("flush")) {
+
+          auto conns = inst->sel("flush")->getConnectedWireables();
+          bool connected_to_flush = false;
+          for (auto conn: conns) {
+            if (conn->toString() == "io1in_reset.out") {
+              connected_to_flush = true;
+              break;
+            }
+          }
+
+          if (connected_to_flush) {
+            auto def = inst->getContainer();
+            def->disconnect(inst->sel("flush"));
+            return true;
+          }
+        }
+      }  
       return false;
     }
-}
 
 };
 
