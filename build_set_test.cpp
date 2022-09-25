@@ -15506,7 +15506,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_glb_unroll());
   test_apps.push_back(resnet_multi_channel());
 
-  two different resnet5x tests
+  //two different resnet5x tests
   test_apps.push_back(resnet5_x_unroll());
   test_apps.push_back(resnet5_x_unroll_mic());
 
