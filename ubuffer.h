@@ -2730,13 +2730,13 @@ void tighten_address_space() {
     //Special function that for pond optimization
     vector<string> get_in_ports_update_priority() const {
       vector<string> outpts;
-      for (auto m : isIn) {
-        if (m.second && !is_self_loop(m.first)) {
+      for (auto m: isIn) {
+        if (m.second && is_self_loop(m.first)) {
           outpts.push_back(m.first);
         }
       }
-      for (auto m: isIn) {
-        if (m.second && is_self_loop(m.first)) {
+      for (auto m : isIn) {
+        if (m.second && !is_self_loop(m.first)) {
           outpts.push_back(m.first);
         }
       }
@@ -2756,13 +2756,13 @@ void tighten_address_space() {
     //Special function that for pond optimization
     vector<string> get_out_ports_update_priority() const {
       vector<string> outpts;
-      for (auto m : isIn) {
-        if (!m.second && !is_self_loop(m.first)) {
+      for (auto m: isIn) {
+        if (!m.second && is_self_loop(m.first)) {
           outpts.push_back(m.first);
         }
       }
-      for (auto m: isIn) {
-        if (!m.second && is_self_loop(m.first)) {
+      for (auto m : isIn) {
+        if (!m.second && !is_self_loop(m.first)) {
           outpts.push_back(m.first);
         }
       }
