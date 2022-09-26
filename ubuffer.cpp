@@ -1481,10 +1481,11 @@ void UBufferImpl::sort_bank_port() {
 }
 
 //sort for pond with a different strategy
-void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int bank_id) {
-    if (config_mode != "pond")
+void UBufferImpl::sort_bank_port_for_lake(string config_mode, UBuffer& buf, int bank_id) {
+    if (config_mode != "lake")
         return;
     {
+        //The logic below here is self loop (update operation) port is always the smallest, using port 0, and the other port follows the alphabet sequence
         vector<std::set<string>>& outpt2readers = bank_outpt2readers.at(bank_id);
         sort(outpt2readers.begin(), outpt2readers.end(),
                 [&buf](std::set<string>& l, std::set<string>& r)
@@ -1505,6 +1506,37 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                     return false;
                   else if (buf.is_self_loop(pick(r)))
                     return true;
+                  else
+                    return pick(l) > pick(r);
+                });
+    }
+}
+
+void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int bank_id) {
+    if (config_mode != "pond")
+      return;
+    {
+        //The logic below here is self loop (update operation) port is always the smallest, using port 0, and the other port follows the alphabet sequence
+        vector<std::set<string>>& outpt2readers = bank_outpt2readers.at(bank_id);
+        sort(outpt2readers.begin(), outpt2readers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
+                  else
+                    return pick(l) > pick(r);
+                });
+    }
+
+    {
+        vector<std::set<string>>& in2writers = bank_inpt2writers.at(bank_id);
+        sort(in2writers.begin(), in2writers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
                   else
                     return pick(l) > pick(r);
                 });
@@ -2424,12 +2456,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    
    //add a simplify optimization pass,
    //reutrn:    pair(schedulem access_map)
+   //FIXME: add a handle for running this pass
    auto pad_pair = pad_domain(sched, (linear_acc_map));
    auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
    auto new_sched = m_pair.first;
    cout << tab(1) << "After Merge: " << endl;
    cout << tab(2) << "schedule: " << str(new_sched) << endl;
    cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+   //auto new_sched = sched;
    
 
    //Add accessor info
@@ -2441,24 +2475,13 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    int port_width = mem.in_port_width.at(mem_name);
    auto addressor = generate_addressor_config_from_aff_expr(
        get_aff(m_pair.second), 
+       //get_aff(linear_acc_map),
        false, false, word_width, capacity, port_width);
    config_info.merge(addressor);
    cout << "\tWrite map: " << str(acc_map) << endl;
 
-   //Add configuration
-   if (mem_name == "regfile") {
-     //FIXME: a hack to proritize self loop controller
-     if (ubuf.is_self_loop(inpt)) {
-       add_lake_config(ret, config_info, num_in_dims(aff),
-         "in2"+ctrl_name+"_0");
-     } else {
-       add_lake_config(ret, config_info, num_in_dims(aff),
-         "in2"+ctrl_name+"_" + str(options.rtl_options.max_inpt - 1 - in_cnt));
-     }
-   } else {
-     add_lake_config(ret, config_info, num_in_dims(aff), 
-         "in2"+ctrl_name+"_" + str(in_cnt));
-   }
+   add_lake_config(ret, config_info, num_in_dims(aff),
+           "in2"+ctrl_name+"_" + str(in_cnt));
    in_cnt ++;
  }
 
@@ -2483,6 +2506,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    cout << tab(1) << "After Merge: " << endl;
    cout << tab(2) << "schedule: " << str(new_sched) << endl;
    cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+   //auto new_sched = sched;
    
 
    //Add accessor info
@@ -2494,24 +2518,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    int port_width = mem.out_port_width.at(mem_name);
    auto addressor = generate_addressor_config_from_aff_expr(
        get_aff(m_pair.second), 
+       //get_aff(linear_acc_map), 
        true, false, word_width, capacity, port_width);
    config_info.merge(addressor);
    cout << "\tWrite map: " << str(acc_map) << endl;
 
    //Add configuration
-   if (mem_name == "regfile") {
-     //FIXME: a hack in output port config mapping use config 0 if dim is larger than 2
-     if (ubuf.is_self_loop(inpt) || num_in_dims(aff) > 2) {
-       add_lake_config(ret, config_info, num_in_dims(aff),
-         ctrl_name + "2out_0");
-     } else {
-       add_lake_config(ret, config_info, num_in_dims(aff),
-         ctrl_name + "2out" + "_" + str(options.rtl_options.max_outpt - 1 - out_cnt));
-     }
-   } else {
-     add_lake_config(ret, config_info, num_in_dims(aff), 
-         ctrl_name + "2out" + "_" + str(out_cnt));
-   }
+   add_lake_config(ret, config_info, num_in_dims(aff),
+           ctrl_name + "2out" + "_" + str(out_cnt));
    out_cnt ++;
  }
  return ret;
@@ -3312,7 +3326,7 @@ string memDatainPort(CodegenOptions& options, string mode, int pt_cnt) {
         return "data_in_pond_" + to_string(pt_cnt);
     } else if (mode == "pond") { 
         int inpt_cnt = options.rtl_options.max_inpt;
-        return "data_in_pond_" + to_string(inpt_cnt - 1 - pt_cnt);
+        return "data_in_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
@@ -3326,7 +3340,7 @@ string memDataoutPort(CodegenOptions& options, string mode, int pt_cnt) {
         return "data_out_pond_" + to_string(pt_cnt);
     } else if (mode == "pond") { 
         int outpt_cnt = options.rtl_options.max_outpt;
-        return "data_out_pond_" + to_string(outpt_cnt - 1 - pt_cnt);
+        return "data_out_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
         assert(false);
@@ -9990,8 +10004,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           sram.hardware.in_port_width = fetch_width;
           sram.hardware.out_port_width = fetch_width;
           sram.hardware.vectorization_dim = maybe<int>(dim_id);
-          vector<string> in_bundle = get_in_bundles();
-          vector<string> out_bundle = get_out_bundles();
+          vector<string> in_bundle = get_in_bundles_update_priority();
+          vector<string> out_bundle = get_out_bundles_update_priority();
 
           cout << "in bundle  = " << in_bundle.size() << endl;
           cout << "out bundle = " << out_bundle.size() << endl;
@@ -11984,6 +11998,7 @@ void lower_to_garnet_implementation(CodegenOptions& options,
 
     //TODO: change this into a mutation pass
     impl.sort_bank_port_for_pond(CGRAImpl.config_mode, target_buf, bank_id);
+    impl.sort_bank_port_for_lake(CGRAImpl.config_mode, target_buf, bank_id);
 
     //Save the lower information into ubuffer impl
     impl.lowering_info[bank_id] = CGRAImpl;
