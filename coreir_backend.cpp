@@ -1833,24 +1833,31 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cout << "Runing cmd$ python /nobackup/joeyliu/aha/lake/tests/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name  <<  endl;
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   cmd("echo $LAKE_PATH");
-  if (options.mem_hierarchy.at("mem").fetch_width == 4) {
-    int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
-    assert(res_lake == 0);
-  } else {
-    int res_lake = cmd("python $LAKE_PATH/tests/test_pohan_wrapper.py -f " + options.dir + "lake_collateral/" + ub_ins_name + "/config.json -b LakeWrapper -w " + v_name);
-    assert(res_lake == 0);
-  }
-  cmd("mkdir -p "+options.dir+"verilog");
-  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d 512");
+  assert(res_lake == 0);
+  //if (options.mem_hierarchy.at("mem").fetch_width == 4) {
+  //  //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  //  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -s True -n " + v_name);
+  //  assert(res_lake == 0);
+  //} else {
+  //  int res_lake = cmd("python $LAKE_PATH/tests/test_pohan_wrapper.py -f " + options.dir + "lake_collateral/" + ub_ins_name + "/config.json -b LakeWrapper -w " + v_name);
+  //  assert(res_lake == 0);
+  //}
+  //cmd("mkdir -p "+options.dir+"verilog");
+  //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
 
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
-  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
+  int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
+          "/config.json -s -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv  -a -v -dp -ii 6 -oi 6 -rd 0 -d 2048 -mw 16");
   assert(res_lake == 0);
-  cmd("mkdir -p "+options.dir+"verilog");
-  cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+  //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
+  //assert(res_lake == 0);
+  //cmd("mkdir -p "+options.dir+"verilog");
+  //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
 
 void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_name, int num_inpt, int num_outpt, int width) {
@@ -2422,7 +2429,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
         // connect the inputs to existing muxes
         int bundle_idx = 0;
-        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        auto bundles = incoming_bundles(op, buffers, prg);
+        cout << "There are " << bundles.size() << " bundles" << endl;
+        for (pair<string, string> bundle : bundles) {
           string buf_name = bundle.first;
           string bundle_name = bundle.second;
           //string mux_name = op->func + "_" + buf_name + "_mux";
@@ -2443,11 +2452,17 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
           // connect to mux based on if shift register sharing exists
           if (context->hasModule("global." + linesel_name)) {
             std::cout << "connecting mux input (through sr) " << mux_name + mux_in_port << " to " << buf_name + "." + bundle_name << std::endl;
+            std::cout << "creating linesel named " << linesel_name << endl;
             def->addInstance(linesel_name, "global." + linesel_name);
 
             // create shift registers if defined
             string existing_sr = hwinfo.compute_resources[op->func].sr_name;
-            if (context->hasModule("global." + sr_name) && !context->hasModule("global." + existing_sr)) {
+            cout << "sr=" << sr_name << "(" << context->hasModule("global." + sr_name) << ")"
+                 << " existing=" << existing_sr << "(" << (existing_sr != "") << " " << ((existing_sr != "") && !context->hasModule("global." + existing_sr)) << ") " << endl;
+            //if (context->hasModule("global." + sr_name) && (existing_sr != "") && !context->hasModule("global." + existing_sr)) {
+            if (context->hasModule("global." + sr_name) &&
+                ((existing_sr != "") && !context->hasModule("global." + existing_sr))) {
+            //if (context->hasModule("global." + sr_name)) {
               cout << "found shift registers to connect" << endl;
               // create shift registers and line sel
               def->addInstance(sr_name, "global." + sr_name);
@@ -2457,8 +2472,9 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
               def->connect(sr_name + ".out", mux_name + mux_in_port);
               //if ("hw_in_global_wrapper_stencil_op_hcompute_blur0_1_stencil_ub_linesel" != linesel_name) {
             } else {
+              cout << " else statement" << endl;
               def->connect(buf_name + "." + bundle_name, linesel_name + ".in");
-              def->connect(linesel_name + ".out", mux_name + mux_in_port);
+              def->connect(linesel_name + ".out", mux_name + mux_in_port); // commented out just to generate hardware
               //} else {
               // FIXME: we need to check if these shift registers exist or not.
               //def->connect(buf_name + "." + bundle_name, mux_name + mux_in_port);

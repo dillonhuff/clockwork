@@ -155,3 +155,5 @@ prog bc_mirror();
 prog gaussian_unroll();
 prog cascaded();
 prog gpyr();
+prog gpyr5();
+prog gpyr2_4k();

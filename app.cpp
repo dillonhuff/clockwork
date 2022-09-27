@@ -980,6 +980,51 @@ isl_set* find_set(std::string& f, const vector<isl_set*>& domains) {
   return nullptr;
 }
 
+map<string, isl_val*> compute_qfactors_from_deps(uset* domain, umap* validity, int dimension) {
+  uset* padded_domain = pad_uset(domain);
+  auto padded_validity = pad_map(validity);
+
+  vector<isl_map*> deps;
+  auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);
+  cout << "Finite validity: " << str(finite_validity) << endl;
+  for (auto m : get_maps(finite_validity)) {
+    assert(m != nullptr);
+
+    // Schedule respects intra-dependencies by construction
+    if (domain_name(m) != range_name(m)) {
+      cout << tab(1) << "Dep = " << str(m) << endl;
+      deps.push_back(m);
+    }
+  }
+  cout << "Got deps" << endl;
+
+  assert(deps.size() > 0);
+
+  int schedule_dim =
+    num_in_dims(get_space(deps.at(0)));
+
+  map<string, vector<isl_aff*> > scheds;
+  cout << "Schedule dim = " << schedule_dim << endl;
+  int d = dimension;
+  
+  cout << tab(1) << "scheduling dimension " << d << endl;
+  vector<isl_map*> projected_deps;
+  for (auto dmap : deps) {
+    isl_map* projected = project_all_but(dmap, d);
+    projected_deps.push_back(projected);
+  }
+
+  vector<isl_set*> projected_domains;
+  for (auto dset : get_sets(padded_domain)) {
+    isl_set* projected = project_all_but(dset, d);
+    projected_domains.push_back(projected);
+  }
+
+  auto schedule_params = extract_schedule_params(projected_deps);
+  map<string, isl_val*> qfactors = compute_qfactors(schedule_params);
+  return qfactors;
+}
+
 map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
@@ -1280,15 +1325,15 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       //if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size() && producer == "op_hcompute_conv1_shift_stencil") {
       if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size()) {
         int delay_time = sharer_delays.at(consumer).at(dim);
-        if (delay_time != 0) {
-        isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time));
-        //isl_val* delay = isl_val_int_from_si(ct, -1 * delay_time);
+        //if (delay_time != 0) {
+        isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time)); // this works for cascaded
+        //isl_val* delay = isl_val_int_from_si(ct, -1 * delay_time); // this works for gpyr
         delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, delay);
         cout << "Adding eq with extra delay: " << consumer << " - " << producer << " >= " << str(delay) << endl; 
-        } else {
-          delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
-          cout << "Adding eq: " << consumer << " - " << producer << " >= -" << str(qp) << " * " << str(b) << endl; 
-        }
+        //} else {
+        //  delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+        //  cout << "Adding eq: " << consumer << " - " << producer << " >= -" << str(qp) << " * " << str(b) << endl; 
+        //}
 
       } else {
         delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
