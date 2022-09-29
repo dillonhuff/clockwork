@@ -2699,6 +2699,39 @@ void tighten_address_space() {
       return outpts;
     }
 
+    vector<string> get_in_bundles_update_priority() const {
+      vector<string> outpts;
+      for (auto m : port_bundles) {
+        if (is_in_pt(pick(m.second)) &&
+            !is_self_loop_in(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      } 
+      for (auto m : port_bundles) {
+        if (is_self_loop_in(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
+    vector<string> get_out_bundles_update_priority() const {
+      vector<string> outpts;
+      for (auto m : port_bundles) {
+        if (is_out_pt(pick(m.second)) &&
+            !is_self_loop_out(pick(m.second))) {
+          outpts.push_back(m.first);
+        } 
+      }
+
+      for (auto m : port_bundles) {
+        if (is_self_loop_out(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
     int num_out_ports() const {
       return get_out_ports().size();
     }
@@ -2915,7 +2948,7 @@ void tighten_address_space() {
       return in_bd && out_bd;
     }
 
-    bool is_self_loop_in(string pt_name) {
+    bool is_self_loop_in(string pt_name) const {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_set = stmt2bd.at(op_name);
@@ -2926,7 +2959,7 @@ void tighten_address_space() {
       }
     }
 
-    bool is_self_loop_out(string pt_name) {
+    bool is_self_loop_out(string pt_name) const {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_set = stmt2bd.at(op_name);
@@ -3679,6 +3712,7 @@ struct UBufferImpl {
   void bank_merging_and_rewrite(CodegenOptions & options);
   void sort_bank_port();
   void sort_bank_port_for_pond(string , UBuffer& , int);
+  void sort_bank_port_for_lake(string , UBuffer& , int);
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);
 
