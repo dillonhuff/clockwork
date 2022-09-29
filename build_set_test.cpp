@@ -15205,10 +15205,10 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 void test_compute_share(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  test_apps.push_back(cascaded()); // cascaded: two back-to-back kernels shared
+  //test_apps.push_back(cascaded()); // cascaded: two back-to-back kernels shared
   // camera pipeline with sharing?
   
-  //test_apps.push_back(gpyr());       // 2x2 convs with 3 kernels total
+  test_apps.push_back(gpyr());       // 2x2 convs with 3 kernels total
   //test_apps.push_back(gpyr5());
   //test_apps.push_back(gpyr2_4k()); // 2x2 convs with 4 kernels total (pyramid blur)
 
@@ -18936,6 +18936,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     int interleave_dim = split ? share_dim + 1 : share_dim;
     int interleave_dim_inv = num_dims-1 - interleave_dim;
     cout << "num_dims=" << num_dims << " int_dim=" << interleave_dim << " int_dim_i=" << interleave_dim_inv << endl;
+
+    // Could try using op_latency() in prog.cpp?
     
     for (auto& shared_resource : shared_resources) {
       //interleave_dim = shared_resource.interleave_dimension; // 1 for cascade, 2 for gpyr
@@ -19134,9 +19136,9 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
           //length = kernel_lens[op->name][0] * qfactor;
           cout << "  interleave dimension q=" << qfactor << " len=" << length << " for " << var << endl;
         } else if (level > interleave_dim_inv) { // these are innermost
-          qfactor = 1; // innermost loops are done in order
-          //qfactor = kernel_qs[op->name][level];
-          //qfactor = (op->name == edge_producer) ? 2 : kernel_qs[op->name][level];
+          //qfactor = 1; // innermost loops are done in order, for cascaded
+          qfactor = kernel_qs[op->name][level];
+          //qfactor = (op->name == edge_producer) ? 2 : kernel_qs[op->name][level]; // for gpyr
           //length = kernel_lens[op->name][level];
           length = kernel_loop_iis[op->name][level];
           //length = (op->name == edge_producer && level==num_dims-2) ? kernel_loop_iis[op->name][level]/2 : kernel_loop_iis[op->name][level];

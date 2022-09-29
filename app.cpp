@@ -1195,6 +1195,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   return schedule_functions;
 }
 
+// jeff setter
 map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
@@ -1321,12 +1322,20 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       //map<string, pair<int, int>> sharer_delays({{"op_hcompute_conv2_stencil_1", {62, 2}}});
       auto& sharer_delays = info.sharer_delays;
 
-      cout << "dim=" << dim << ", found=" << (sharer_delays.count(consumer) > 0) << endl;
+      //cout << "dim=" << dim << ", found=" << (sharer_delays.count(consumer) > 0) << " nqpb=" << str(neg_qpb) << endl;
+      cout << "dim=" << dim << ", found=" << (sharer_delays.count(consumer) > 0) << " nqpb=-" << str(qp) << "*" << str(b) << endl;
       //if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size() && producer == "op_hcompute_conv1_shift_stencil") {
       if (sharer_delays.count(consumer) > 0 && dim < sharer_delays[consumer].size()) {
         int delay_time = sharer_delays.at(consumer).at(dim);
         //if (delay_time != 0) {
-        isl_val* delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time)); // this works for cascaded
+        isl_val* delay;
+        bool add_delay = isl_val_get_d(qp) < isl_val_get_d(b);
+        cout << "Adding delay ad=" << add_delay << endl;
+        if (add_delay) {
+          delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time)); // this works for cascaded
+        } else {
+          delay = isl_val_int_from_si(ct, -1 * delay_time); // this works for gpyr
+        }
         //isl_val* delay = isl_val_int_from_si(ct, -1 * delay_time); // this works for gpyr
         delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, delay);
         cout << "Adding eq with extra delay: " << consumer << " - " << producer << " >= " << str(delay) << endl; 

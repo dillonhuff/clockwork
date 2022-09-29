@@ -2458,10 +2458,10 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
             // create shift registers if defined
             string existing_sr = hwinfo.compute_resources[op->func].sr_name;
             cout << "sr=" << sr_name << "(" << context->hasModule("global." + sr_name) << ")"
-                 << " existing=" << existing_sr << "(" << (existing_sr != "") << " " << ((existing_sr != "") && !context->hasModule("global." + existing_sr)) << ") " << endl;
+                 << " existing=" << existing_sr << "(" << (existing_sr != "") << " " << ((existing_sr == "") || !context->hasModule("global." + existing_sr)) << ") " << endl;
             //if (context->hasModule("global." + sr_name) && (existing_sr != "") && !context->hasModule("global." + existing_sr)) {
             if (context->hasModule("global." + sr_name) &&
-                ((existing_sr != "") && !context->hasModule("global." + existing_sr))) {
+                ((existing_sr == "") || !context->hasModule("global." + existing_sr))) {
             //if (context->hasModule("global." + sr_name)) {
               cout << "found shift registers to connect" << endl;
               // create shift registers and line sel
