@@ -18191,6 +18191,33 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void tighten_iis(schedule_info& sched, prog& prg, int fetch_width) {
+  bool tightened = true;
+  while (tightened) {
+    tightened = false;
+    for (auto loop : prg.all_loops()) {
+      cout << loop->name << endl;
+      int ii = sched.II(loop);
+      if (ii != 1) {
+        int L = sched.last_update_delay(loop);
+        int offset = 0;
+        if (L % fetch_width != 0) {
+          offset = fetch_width - L%fetch_width;
+          L += offset;
+        }
+        if (ii > L) {
+          cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          //sched.op_offset_within_parent.at(pick(loop->children)) += offset;
+          tightened = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
+
 std::set<op*> find_perfect_lp_outside_cgpl(schedule_info& sched, prog& prg) {
   vector<op*> cgpl_lps;
   std::set<op*> ret;
@@ -19123,11 +19150,11 @@ void update_coarse_grained_loop_iis(schedule_info& sched, op* cgpl) {
     cout << "Most compute intensive stage: " << most_compute_intensive_stage->name << endl;
     cout << tab(1) << "Current II        : " << sched.II(cgpl) << endl;
     sched.loop_iis[cgpl->name] =
-      max(sched.total_latency(most_compute_intensive_stage), 1);
+      max(sched.total_latency(most_compute_intensive_stage) + 10, 1);
     cout << tab(1) << "Adjusting II to   : " << sched.II(cgpl) << endl;
 }
 
-void coarse_grained_pipeline_optimization(schedule_info& sched, prog& prg) {
+void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info& sched, prog& prg) {
 
   vector<op*> cgpls;
   //Find the cgpl in post order from AST leaves to root
@@ -19135,7 +19162,8 @@ void coarse_grained_pipeline_optimization(schedule_info& sched, prog& prg) {
   for (auto cgpl: cgpls) {
     if (cgpl!= nullptr && cgpl->name != "root") {
       update_coarse_grained_loop_iis(sched, cgpl);
-      tighten_iis(sched, prg);
+      tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
+      //tighten_iis(sched, prg);
     }
   }
 }
@@ -19203,12 +19231,12 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
     //adjust_outer_delays_sequentially_cgpl(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
   } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
-    coarse_grained_pipeline_optimization(sched, prg);
+    coarse_grained_pipeline_optimization(options, sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
 
   } else if(options.fallback_schedule == ISCA_SCHEDULE) {
-    coarse_grained_pipeline_optimization(sched, prg);
+    coarse_grained_pipeline_optimization(options, sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     align_glb_load_start_cycle(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
@@ -19402,7 +19430,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //sequential_schedule(sched, root, prg);
 
     adjust_inner_iis(sched, prg);
-    tighten_iis(sched, prg);
+    tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
+    //tighten_iis(sched, prg);
 
     //only adjust coarse grained ii while optimize double buffer
     if (options.fallback_schedule == ASPLOS_SCHEDULE) {
@@ -19412,12 +19441,12 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       //adjust_outer_delays_sequentially_cgpl(sched, prg);
       adjust_outer_delays_sequentially(sched, prg);
     } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
-      coarse_grained_pipeline_optimization(sched, prg);
+      coarse_grained_pipeline_optimization(options, sched, prg);
       adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
       adjust_outer_delays_sequentially(sched, prg);
 
     } else if(options.fallback_schedule == ISCA_SCHEDULE) {
-      coarse_grained_pipeline_optimization(sched, prg);
+      coarse_grained_pipeline_optimization(options, sched, prg);
       adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
       align_glb_load_start_cycle(sched, prg);
       tighten_coarse_grained_iis(sched, prg);
@@ -19441,6 +19470,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
   assert(no_violated_buf_write_port_assignments(options, sched, prg));
+  print_partial_schedule(sched, prg);
 
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
