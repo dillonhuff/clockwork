@@ -1960,6 +1960,15 @@ void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_na
   //cmd("mv " + long_name+".v " + options.dir + "verilog");
 }
 
+bool rewrite_config_mode_for_stencil_valid(Json& config_file) {
+  for (auto it = config_file.begin(); it != config_file.end(); ++it) {
+    if (it.key() != "stencil_valid" && it.key() != "mode") {
+     return false;
+    }
+  }
+  return true;
+}
+
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
       << buf->getModuleRef()->toString() << endl;
@@ -1983,6 +1992,9 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
 
   //run the lake generation cmd
   if (config_mode == "lake") {
+
+    if (rewrite_config_mode_for_stencil_valid(config))
+      config["mode"] = "stencil_valid";
 
     emit_lake_config_collateral(options, ub_ins_name, config);
     run_lake_verilog_codegen(options, v_name, ub_ins_name);
