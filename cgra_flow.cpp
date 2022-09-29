@@ -2,7 +2,7 @@
 #include "coreir_backend.h"
 
 #ifdef CGRAFLOW
-vector<string> cgra_flow_result(prog& prg, string dir, bool use_pond=false) {
+vector<string> cgra_flow_result(prog& prg, string dir, bool use_pond) {
 
     string name = prg.name;
     //auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
