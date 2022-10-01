@@ -3231,10 +3231,11 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   CoreIR::Values modargs = {
     {"mode", CoreIR::Const::make(context, "lake")}
   };
-  if (has_stencil_valid) {
-    cout << "Generate stencil valid signal" << endl;
-    generate_stencil_valid_config(options, bank_name);
-  }
+  //TODO: this pass has been deprecated
+  //if (has_stencil_valid) {
+  //  cout << "Generate stencil valid signal" << endl;
+  //  generate_stencil_valid_config(options, bank_name);
+  //}
   cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
@@ -3579,7 +3580,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       ub_ins_name, target_buf.name,
       target_buf.num_in_ports(),
       target_buf.num_out_ports(),
-      false/*TODO: exclude stencil valid signal*/, true);
+      hw_impl.insert_shift_register/*TODO: exclude stencil valid signal*/, true);
 
   } else if (hw_impl.config_mode == "lake_dp") {
     config_file = generate_ubuf_args(options, target_buf, "mem");
@@ -4027,6 +4028,60 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
   hw_impl.insert_shift_register = true;
 }
 
+void insert_accumulation_register_with_existing_buf(
+        CodegenOptions& options,
+        CoreIR::ModuleDef* def,
+        CoreIR::Instance* buf,
+        GarnetImpl & hw_impl,
+        map<string, CoreIR::Wireable*> & pt2wire) {
+
+  if (!hw_impl.insert_shift_register)
+    return;
+
+  //Check if we get the ubuffer instance
+  UBuffer accum_reg = hw_impl.accum_reg;
+
+
+  //Generate the coreIR module
+  CoreIR::Instance* accum_reg_ins = accum_reg.generate_accum_reg_instance(options, def);
+  generate_lake_tile_verilog(options, accum_reg_ins);
+  string config_mode_ = accum_reg_ins->getMetaData()["mode"];
+
+  auto cgpl_schedule = hw_impl.restart_sched;
+  auto context = def->getContext();
+  //auto cgpl_ctrl = affine_controller_use_lake_tile(
+  //      options, def, context, ::domain(cgpl_schedule),
+  //      get_aff(cgpl_schedule), "cgpl_ctrl" + context->getUnique());
+  //generate_lake_tile_verilog(options, cgpl_ctrl);
+  auto dom = ::domain(cgpl_schedule);
+  auto aff = get_aff(cgpl_schedule);
+
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+  json config_file = buf->getMetaData()["config"];
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  buf->getMetaData()["config"] = config_file;
+
+  //Disconnect flush and reconnect to stencil valid of cgpl_ctrl
+  auto conns = accum_reg_ins->sel("flush")->getConnectedWireables();
+  for (auto conn: conns) {
+    def->disconnect(accum_reg_ins->sel("flush"), conn);
+  }
+  def->connect(accum_reg_ins->sel("flush"), buf->sel("stencil_valid"));
+
+  //Wire the PE interface with accumulation register
+  //def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  //def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  //pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(config_mode_, 1));
+  //
+  //Change to using port 1 by default
+  def->connect(accum_reg_ins->sel(memDatainPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(options, config_mode_, 0));
+}
+
+
 void insert_accumulation_register(CodegenOptions& options,  CoreIR::ModuleDef* def, GarnetImpl & hw_impl, map<string, CoreIR::Wireable*> & pt2wire) {
 
   if (!hw_impl.insert_shift_register)
@@ -4277,8 +4332,9 @@ void UBuffer::generate_coreir_refactor(CodegenOptions& options,
     auto target_buf_impl = impl.lowering_info.at(bank_id);
 
 
-    insert_accumulation_register(options, def, target_buf_impl, pt2wire);
     CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf_impl);
+    insert_accumulation_register_with_existing_buf(
+            options, def, buf, target_buf_impl, pt2wire);
 
     //Wire the stencil valid to flush of ubuffer module
     //if we can optmize for coarse grained pipeline scheduler
