@@ -2323,11 +2323,16 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
           isl_map* opt_sched = isl_map_read_from_str(ctx, "{}");
           ConfigMap config_info;
           if (op2write_map.count(op_name) > 0) {
+            isl_map* opt_access_map =
+                add_config_with_dom_dim_merge(config_info, opt_sched, op2write_map.at(op_name), sched);
+            ConfigMap addressor =
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false);
+            config_info.merge(addressor);
             // add agg2sram_opt config register
             if(agg2sram_cfg_map.count(op_name)) {
               int delay = agg2sram_cfg_map[op_name].first;
               int ctrl_number = agg2sram_cfg_map[op_name].second;
-              if (ctrl_number == 0) 
+              if (ctrl_number == 0)
                 config_info["mode"] = {2};
               else if (ctrl_number == 1)
                 config_info["mode"] = {3};
@@ -2349,11 +2354,6 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
               config_info["delay"] = {0};
               cout << "adding new agg2sram opt cfg for: " << op_name << ": mode 0, agg_read_padding " << agg2sram_read_padding << ", delay 0. " << endl;
             }
-            isl_map* opt_access_map =
-                add_config_with_dom_dim_merge(config_info, opt_sched, op2write_map.at(op_name), sched);
-            ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false);
-            config_info.merge(addressor);
           }
           if (op2read_map.count(op_name) > 0){
             isl_map* opt_access_map =
@@ -2368,12 +2368,13 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
           auto aff = get_aff(sched);
           auto dom = ::domain(sched);
           auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+          cout << "\t[debug]op_name: " << op_name << endl;
           if(op2write_map.count(op_name)) {
               // add agg2sram_opt config register
               if(agg2sram_cfg_map.count(op_name)) {
                 int delay = agg2sram_cfg_map[op_name].first;
                 int ctrl_number = agg2sram_cfg_map[op_name].second;
-                if (ctrl_number == 0) 
+                if (ctrl_number == 0)
                   config_info["mode"] = {2};
                 else if (ctrl_number == 1)
                   config_info["mode"] = {3};
@@ -9535,7 +9536,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         return ret;
       }
 
-    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt) {
+    pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt, int extra_delay/*code for adding delay for update port*/) {
         int vectorize_loop_dim = get_inner_most_related_dom_dim(acc_0, addr_dim, fetch_width);
         cout << "vec loop dim: " << vectorize_loop_dim << endl;
         auto trans =
@@ -9557,7 +9558,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         assert(fetch_ii % fetch_width == 0);
 
         //get the write schedule with check
-        auto final_sched = linear_schedule(sched_vec, {1}, fetch_ii / fetch_width * (fetch_width - 1) + 1, false);
+        auto final_sched = linear_schedule(sched_vec, {1},
+                fetch_ii / fetch_width * (fetch_width - 1) + 1 + extra_delay, false);
         bool adjust = true;
         while (adjust) {
             adjust = false;
@@ -10096,7 +10098,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
               auto sram_ir = get_vectorized_write(
                       to_map(access_map.at(in_pt_name)),
                       to_map(schedule.at(in_pt_name)),
-                      sched_record_map, fetch_width, dim_id, agg_cnt);
+                      sched_record_map, fetch_width, dim_id, agg_cnt,
+                      is_self_loop_in(in_pt_name) ? 1:0);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_agg2sram_" + str(agg_cnt));
               isl_set* dom = ::domain(vectorized_access);

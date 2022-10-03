@@ -3114,22 +3114,35 @@ RemoveFlush(): InstancePass(
             "removeflush",
             "Remove flush wiring for garnet mapping"
             ) {}
-bool runOnInstance(Instance* inst) {
-    //define the pass here
-    if (inst->getModuleRef()->isGenerated()) {
-      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber") &&
-              inst->canSel("flush")) {
-         auto def= inst->getContainer();
-         def->disconnect(inst->sel("flush"));
-         return true;
-      } else {
-        return false;
-      }
-    } else {
+    bool runOnInstance(Instance* inst) {
+      //define the pass here
+      if (inst->getModuleRef()->isGenerated()) {
+        if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber") &&
+                inst->canSel("flush")) {
+          auto def= inst->getContainer();
+          def->disconnect(inst->sel("flush"));
+          return true;
+        } else if ((inst->getModuleRef()->getGenerator()->getName() == "Pond_amber") &&
+                inst->canSel("flush")) {
+
+          auto conns = inst->sel("flush")->getConnectedWireables();
+          bool connected_to_flush = false;
+          for (auto conn: conns) {
+            if (conn->toString() == "io1in_reset.out") {
+              connected_to_flush = true;
+              break;
+            }
+          }
+
+          if (connected_to_flush) {
+            auto def = inst->getContainer();
+            def->disconnect(inst->sel("flush"));
+            return true;
+          }
+        }
+      }  
       return false;
     }
-}
-
 };
 
 class ReplaceGLBValid: public CoreIR::InstancePass {
@@ -3833,7 +3846,7 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   in2regfile_0["cycle_starting_addr"] = {0};
   in2regfile_0["cycle_stride"] = {1};
   in2regfile_0["dimensionality"] = 1;
-  in2regfile_0["extent"] = {4096};
+  in2regfile_0["extent"] = {8096};
   in2regfile_0["write_data_starting_addr"] = {0};
   in2regfile_0["write_data_stride"] = {1};
 
@@ -3841,12 +3854,12 @@ if (cnst->getModuleRef()->getName() == "Pond") {
   regfile2out_0["cycle_starting_addr"] = {1};
   regfile2out_0["cycle_stride"] = {1};
   regfile2out_0["dimensionality"] = 1;
-  regfile2out_0["extent"] = {4096};
+  regfile2out_0["extent"] = {8096};
   regfile2out_0["read_data_starting_addr"] = {0};
   regfile2out_0["read_data_stride"] = {1};
 
-  config["in2regfile"] = in2regfile_0;
-  config["regfile2out"] = regfile2out_0;
+  config["in2regfile_0"] = in2regfile_0;
+  config["regfile2out_0"] = regfile2out_0;
 
   config_file["config"] = config;
 
@@ -3888,9 +3901,6 @@ if (cnst->getModuleRef()->getName() == "Pond") {
 
   ModuleDef* mdef = topm->getDef();
 
-  if (def == mdef) {
-    def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
-  }
 
   def->removeInstance(cnst);
   inlineInstance(pt);

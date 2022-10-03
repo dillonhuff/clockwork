@@ -1263,6 +1263,182 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   return buffers;
 }
 
+map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched, schedule_info & hwinfo) {
+  int usuffix = 0;
+
+  map<string, UBuffer> buffers;
+  auto domains = prg.domains();
+  auto all_op = prg.all_ops();
+
+  //sort all ops by its name instead of ptr addres
+  //to avoid uncertainty in buffer name
+  vector<op*> all_op_vec(all_op.begin(), all_op.end());
+  std::sort(all_op_vec.begin(), all_op_vec.end(), [](op* l, op* r){return l->name > r->name;});
+
+  for (auto op : all_op_vec) {
+
+    for (auto consumed : op->produce_locs) {
+      string name = consumed.first;
+
+      if (!contains_key(name, buffers)) {
+        cout << "Creating ports for op: " << name << endl;
+        UBuffer buf;
+        buf.name = name;
+        buf.ctx = prg.ctx;
+        if (contains_key(name, prg.buffer_port_widths)) {
+          buf.port_widths = map_find(name, prg.buffer_port_widths);
+        }
+        buffers[name] = buf;
+      }
+
+      UBuffer& buf = buffers.at(name);
+
+      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      buf.port_bundles[op->name + "_write"].push_back(pt_name);
+
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        if (sec_pair.first == "") {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      cout << "cond = " << cond.c_str() << endl;
+      isl_map* consumed_here =
+        its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
+
+      assert(consumed_here != nullptr);
+
+      assert(contains_key(op, domains));
+
+      cout << "\tAdding output port: " << pt_name << endl;
+      cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      buf.add_in_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
+
+      if (op->dynamic_reads(name)) {
+        buf.dynamic_ports.insert(pt_name);
+      }
+
+      vector<string> inpt = buf.get_in_ports();
+      cout << "current out port name: " << endl;
+      for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      cout << endl;
+
+      usuffix++;
+    }
+
+    map<string, int> mem_port_cnt; 
+    for (auto consumed : op->consume_locs_pair) {
+      string name = consumed.first;
+
+      //update the port count map
+      if (mem_port_cnt.count(name)) {
+        mem_port_cnt.at(name) ++;
+      } else {
+        mem_port_cnt[name] = 0;
+      }
+
+      if (!contains_key(name, buffers)) {
+        cout << "Creating ports for op: " << name << endl;
+        UBuffer buf;
+        buf.name = name;
+        buf.ctx = prg.ctx;
+        if (contains_key(name, prg.buffer_port_widths)) {
+          buf.port_widths = map_find(name, prg.buffer_port_widths);
+        }
+        buffers[name] = buf;
+      }
+
+      UBuffer& buf = buffers.at(name);
+
+      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      buf.port_bundles[op->name + "_read"].push_back(pt_name);
+
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        if (sec_pair.first == "") {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      cout << "cond = " << cond.c_str() << endl;
+      isl_map* consumed_here =
+        its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
+
+      assert(consumed_here != nullptr);
+
+      assert(contains_key(op, domains));
+
+      cout << "\tAdding output port: " << pt_name << endl;
+      cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      cout << "Opt sched: " << str(opt_sched) << endl;
+      cout << "Dom      : " << str(domains.at(op)) << endl;
+      auto sched_dom = domain(opt_sched);
+      cout << "SDom     : " << str(sched_dom) << endl;
+
+      auto domain_its = its(sched_dom, to_uset(domains.at(op)));
+      cout << "Dom ITS  : " << str(domain_its) << endl;
+      cout << "Dom UNN  : " << str(unn(sched_dom, to_uset(domains.at(op)))) << endl;
+
+      cout << "Per group..." << endl;
+      for (auto dset : get_sets(sched_dom)) {
+        if (::name(dset) == op->name) {
+          isl_space* dspace = get_space(dset);
+          isl_space* other_dspace = get_space(domains.at(op));
+
+          isl_id* dspace_id = isl_space_get_tuple_id(dspace, isl_dim_set);
+          cout << tab(1) << "dspace_id       = " << str(dspace_id) << endl;
+          isl_id* other_dspace_id = isl_space_get_tuple_id(other_dspace, isl_dim_set);
+          cout << tab(1) << "other_dspace_id = " << str(other_dspace_id) << endl;
+
+          assert(dspace_id == other_dspace_id);
+          assert(isl_space_has_equal_params(dspace, other_dspace));
+          assert(isl_space_has_equal_tuples(dspace, other_dspace));
+          assert(isl_space_is_equal(dspace, other_dspace));
+          cout << tab(1) << "Schedule domain set: " << str(dset) << endl;
+          cout << tab(1) << "Domain set from prg: " << str(domains.at(op)) << endl;
+          cout << tab(1) << "ITS: " << str(its(dset, domains.at(op))) << endl;
+        }
+      }
+      auto op_sched_its = its(opt_sched, to_uset(domains.at(op)));
+      cout << "ITS      : " << str(op_sched_its) << endl;
+
+      assert(ctx(opt_sched) == ctx(domains.at(op)));
+
+      isl_map* origin_sched = to_map(its(opt_sched, domains.at(op)));
+
+      int slack = hwinfo.get_compute_inpt_slack(op, name, mem_port_cnt.at(name));
+      cout << "origin sched: " << str(origin_sched) << endl;;
+      isl_map* outpt_sched = linear_schedule(origin_sched, {1}, slack, false);  
+
+      buf.add_out_pt(pt_name, domains.at(op), consumed_here, to_umap(outpt_sched));
+
+      if (op->dynamic_reads(name)) {
+        buf.dynamic_ports.insert(pt_name);
+      }
+
+      vector<string> inpt = buf.get_out_ports();
+      cout << "current out port name: " << endl;
+      for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      cout << endl;
+
+      usuffix++;
+    }
+  }
+
+  return buffers;
+}
+
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched) {
   CodegenOptions options;
