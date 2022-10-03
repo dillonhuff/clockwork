@@ -105,6 +105,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg);
 
 map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
+map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched, schedule_info& hw_info);
 
 map<string, UBuffer> build_buffers(prog& prg);
 
