@@ -3442,11 +3442,11 @@ class SubstructGLBLatency: public CoreIR::InstanceGraphPass {
 };
 
 class RemoveFlush: public CoreIR::InstancePass {
-  public:
-    RemoveFlush(): InstancePass(
-                "removeflush",
-                "Remove flush wiring for garnet mapping"
-                ) {}
+    public:
+RemoveFlush(): InstancePass(
+            "removeflush",
+            "Remove flush wiring for garnet mapping"
+            ) {}
     bool runOnInstance(Instance* inst) {
       //define the pass here
       if (inst->getModuleRef()->isGenerated()) {
@@ -3476,7 +3476,6 @@ class RemoveFlush: public CoreIR::InstancePass {
       }
       return false;
     }
-
 };
 
 class ReplaceGLBValid: public CoreIR::InstancePass {
@@ -4235,9 +4234,6 @@ if (cnst->getModuleRef()->getName() == "Pond") {
 
   ModuleDef* mdef = topm->getDef();
 
-  //if (def == mdef) {
-  //  def->connect(buf->sel("flush"), mdef->sel("io1in_reset.out"));
-  //}
 
   def->removeInstance(cnst);
   inlineInstance(pt);

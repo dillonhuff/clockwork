@@ -1824,6 +1824,8 @@ struct schedule_info {
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
+  //This data structure save the port loading slack with respect to the largest latency
+  map<string, map<string, int>> port_latencies;
   map<string, string> op_compute_unit_names;
   //map<string, int> op_compute_unit_latencies;
 
@@ -1841,6 +1843,26 @@ struct schedule_info {
 
   int compute_latency(const std::string& op_name);
   int compute_latency(op* op);
+
+  int get_compute_inpt_slack(op* op, string buf_name, int pt_cnt) {
+
+    if (op->func == "") {
+      return 0;
+    }
+    if (port_latencies.count(op->func)) {
+      auto port_slack = port_latencies.at(op->func);
+      for (auto it: port_slack) {
+        string pt_name = it.first;
+        string key = buf_name + "_" + str(pt_cnt);
+        if (contains(pt_name, key)) {
+          return it.second;
+        }
+      }
+      return 0;
+    } else {
+      return 0;
+    }
+  }
 
   int store_latency(const std::string& buf) {
     assert(contains_key(buf, buffer_store_latencies));

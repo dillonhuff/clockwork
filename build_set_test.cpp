@@ -15267,7 +15267,6 @@ void test_pond(string dir, bool run_verilator=true) {
 
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(complex_mem_pond());
-
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
   //test_apps.push_back(fft8_unroll8_split());
 
@@ -15478,9 +15477,8 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //Dense Linear algebra
   test_apps.push_back(glb_channel_reduction());
   test_apps.push_back(matmul());
-
   //Simplified multi-tile DNN application
-  test_apps.push_back(resnet_init_unroll_tile());
+  //test_apps.push_back(resnet_init_unroll_tile());
 
   //Too large which will go beyound the 64k counter ub
   //test_apps.push_back(resnet5_1_full());
@@ -15505,10 +15503,9 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_1_unroll_cyclic());
   test_apps.push_back(resnet5_glb_unroll());
   test_apps.push_back(resnet_multi_channel());
-
   //two different resnet5x tests
-  test_apps.push_back(resnet5_x_unroll());
-  test_apps.push_back(resnet5_x_unroll_mic());
+  //test_apps.push_back(resnet5_x_unroll());
+  //test_apps.push_back(resnet5_x_unroll_mic());
 
   //Test with non double buffer, not tested with db
   //test_apps.push_back(resnet_output_stationary_small());
@@ -15553,29 +15550,25 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fp_arith());
   //test_apps.push_back(camera_pipeline_2x2_unroll());
 
-  //Not work yet
-  //test_apps.push_back(stereo_unroll());
-  //
-  //CGRA tests
-  test_apps.push_back(nlmeans_simple_trunc());
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(counter());
-  test_apps.push_back(rom());
-  test_apps.push_back(camera_pipeline_new());
-  test_apps.push_back(unsharp_new());
-  test_apps.push_back(unsharp_large());
-  test_apps.push_back(unsharp());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(down_sample());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(laplacian_pyramid());
-  test_apps.push_back(laplacian_pyramid_docker());
+ //CGRA tests
+  //test_apps.push_back(nlmeans_simple_trunc());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(counter());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(unsharp_new());
+  //test_apps.push_back(unsharp_large());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(laplacian_pyramid_docker());
 
-  //DNN apps
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet_size_test());
@@ -15590,8 +15583,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(mobilenet_unrolled());
   test_apps.push_back(resnet88());
   test_apps.push_back(resnet88_chain());
-
-  //test_apps.push_back(resnet_coarse_pipeline_loop());
+ //test_apps.push_back(resnet_coarse_pipeline_loop());
   //New scheduler take too long time, revisit when refactor the scheduler
   //test_apps.push_back(resnet_one_input());
 
@@ -20041,15 +20033,25 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
         sched.compute_unit_latencies[op->func] = 0;
       } else {
-        sched.compute_unit_latencies[op->func] = kernel_latencies[op->func];
-        cout << "KERNEL LATENCY " <<  op->func << " : " << kernel_latencies[op->func] << endl;
+        int max_latency = 0;
+        for (auto input_latencies : kernel_latencies[op->func]) {
+          cout << "Compute Kernel latency " <<  input_latencies[0] << " : " << input_latencies[1] << endl;
+          max_latency = std::max(max_latency, (int)input_latencies[1]);
+        }
+
+        map<string, int> port_slacks;
+        for (auto input_latencies : kernel_latencies[op->func]) {
+          port_slacks[(string)input_latencies[0]] = max_latency - (int)(input_latencies[1]); 
+        }
+        sched.compute_unit_latencies[op->func] = max_latency;
+        sched.port_latencies[op->func] = port_slacks;
       }
 
 
-    for (auto b: op->buffers_written()) {
-      //assign a write
-      sched.assign_memory_write_resource(options, op, b);
-    }
+      for (auto b: op->buffers_written()) {
+        //assign a write
+        sched.assign_memory_write_resource(options, op, b);
+      }
 
 
       for (auto b : op->buffers_referenced()) {
@@ -20060,6 +20062,11 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
           sched.buffer_load_latencies[b] = 0;
           sched.buffer_store_latencies[b] = 0;
         }
+        auto pmap = prg.producer_map(b);
+        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
 
         if (options.rtl_options.use_prebuilt_memory) {
           auto pmap = prg.producer_map(b);
@@ -20077,52 +20084,40 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         }
       }
     }
-    cout << sched.compute_unit_latencies << endl;
   } else {
 
-  for (auto op : prg.all_ops()) {
-    if (op->func != "") {
-      sched.resource_requirements[op] = op->func;
-    }
-
-    if (op->func != "") {
-      sched.compute_unit_latencies[op->func] = op->latency;
-      //sched.op_compute_unit_latencies[op->name] = 0;
-    } else {
-      //sched.op_compute_unit_latencies[op->name] = 0;
-    }
-
-    for (auto b: op->buffers_written()) {
-      //assign a write
-      sched.assign_memory_write_resource(options, op, b);
-    }
-
-    for (auto b : op->buffers_referenced()) {
-      if (!prg.is_boundary(b) ) {
-        sched.buffer_load_latencies[b] = buffer_load_latency(options);
-        sched.buffer_store_latencies[b] = buffer_store_latency(options);
-      } else {
-        sched.buffer_load_latencies[b] = 0;
-        sched.buffer_store_latencies[b] = 0;
+    for (auto op : prg.all_ops()) {
+      if (op->func != "") {
+        sched.resource_requirements[op] = op->func;
       }
 
-      if (options.rtl_options.use_prebuilt_memory) {
+      if (op->func != "") {
+        sched.compute_unit_latencies[op->func] = op->latency;
+        //sched.op_compute_unit_latencies[op->name] = 0;
+      } else {
+        //sched.op_compute_unit_latencies[op->name] = 0;
+      }
+
+      for (auto b: op->buffers_written()) {
+        //assign a write
+        sched.assign_memory_write_resource(options, op, b);
+      }
+
+      for (auto b : op->buffers_referenced()) {
+        if (!prg.is_boundary(b)) {
+          sched.buffer_load_latencies[b] = buffer_load_latency(options);
+          sched.buffer_store_latencies[b] = buffer_store_latency(options);
+        } else {
+          sched.buffer_load_latencies[b] = 0;
+          sched.buffer_store_latencies[b] = 0;
+        }
         auto pmap = prg.producer_map(b);
         cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
             << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
             "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
         sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
-          //This is a hacky rewrite
-          if (!contains(b, "glb")) {
-            if (sched.buf2level[b] == "glb") {
-               sched.buf2level[b] = "mem";
-            }
-          }
-          cout << "buf2level: " << sched.buf2level[b] << endl;
-
       }
     }
-  }
   }
   cout << sched.compute_unit_latencies << endl;
 
@@ -20794,7 +20789,7 @@ void compile_for_garnet_single_port_mem(prog& prg,
   auto hw_sched = its(sched_map,
           prg.whole_iteration_domain());
   cout << "result schedule: " << str(hw_sched) << endl;
-  auto buffers_opt = build_buffers(prg, hw_sched);
+  auto buffers_opt = build_buffers(prg, hw_sched, sched);
   auto sched_max = lexmaxpt(range(hw_sched));
   cout << "Latency of application is: " << str((sched_max)) << endl;
 

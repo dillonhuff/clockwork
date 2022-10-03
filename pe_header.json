@@ -3,12 +3,11 @@
     "modules":{
       "PE":{
         "type":["Record",[
-          ["inst",["Array",31,"BitIn"]],
+          ["inst",["Array",32,"BitIn"]],
           ["inputs0",["Array",16,"BitIn"]],
           ["inputs1",["Array",16,"BitIn"]],
           ["inputs2",["Array",16,"BitIn"]],
           ["inputs3",["Array",16,"BitIn"]],
-          ["inputs4",["Array",16,"BitIn"]],
           ["clk_en","BitIn"],
           ["O0",["Array",16,"Bit"]],
           ["O1","Bit"],
