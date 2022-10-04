@@ -10354,7 +10354,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
               //cout << "TB  : " << tb << endl;
               ////Add one more step to pad reacess dimension
-              tb.pad_reaccess_dimension(fetch_width);
+              //tb.pad_reaccess_dimension(fetch_width);
 
               //////Check capacity of tb
               //auto capacity = tb.capacity();
