@@ -2970,6 +2970,8 @@ void tighten_address_space() {
         return cap;
     }
 
+    int get_capacity(int fetch_width);
+
     void remove_redundant_dim() {
         for (auto pt: get_all_ports()) {
             auto am = to_map(access_map.at(pt));
@@ -3028,6 +3030,7 @@ void tighten_address_space() {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+    isl_union_set* compute_capacity(const string& inpt, const string& outpt);
     int compute_capacity_hw_schedule(const string& inpt, const string& outpt);
     isl_union_set* compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt);
 
@@ -3141,6 +3144,7 @@ void tighten_address_space() {
 
     int get_vectorized_dim(int fetch_width);
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
+    maybe<int> capacity_eval(const string& inpt, const string& outpt);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
     maybe<int> dependence_distance_min(const string& inpt, const string& outpt);
 
