@@ -2974,6 +2974,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
         auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
         config_tb2out.merge(addressor_tb2out);
       }
+      config_tb2out["tb_share"] = {0};
       add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
 
       //generate sram2tb controller
