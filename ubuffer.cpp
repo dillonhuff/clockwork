@@ -2195,6 +2195,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     cout << "agg2sram_opt debug start " << endl;
     map<string, std::pair<int, int>> agg2sram_cfg_map;
     map<string, std::pair<int, int>> agg2sram_extent_stride_map;
+    bool tb_share = false;
 
     for (auto it: rewrite_buffer) {
       //check it is sram
@@ -2246,8 +2247,15 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
       }
     }
 
+    int tb_cnt = 0;
     for (auto it: rewrite_buffer) {
         auto ubuf = it.second;
+        if (contains(ubuf.name, "tb")) {
+          if (ubuf.get_capacity(mem.fetch_width) > 2) {
+            tb_share = true;
+          }
+          //tb_cnt += 1;
+        }
         auto hardware_schedule = ubuf.global_schedule();
         for (auto m : get_maps(hardware_schedule)) {
             string op_name = domain_name(m);
@@ -2407,6 +2415,10 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
                       generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/);
                   config_info.merge(addressor);
               }
+          }
+          if (contains(op_name, "tb2out")) {
+            //config_info["tb_share"] = {tb_cnt <= 1};
+            config_info["tb_share"] = {tb_share};
           }
           add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name);
         }
@@ -10341,10 +10353,10 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
               //cout << "TB  : " << tb << endl;
               ////Add one more step to pad reacess dimension
-              ////tb.pad_reaccess_dimension(fetch_width);
+              tb.pad_reaccess_dimension(fetch_width);
 
               //////Check capacity of tb
-              ////auto capacity = tb.capacity();
+              //auto capacity = tb.capacity();
               //cout << "TB size: " << capacity << endl;
               //auto mem = options.mem_hierarchy.at("mem");
               //assert(capacity <= mem.capacity.at("tb") / mem.in_port_width.at("tb"));
@@ -10352,8 +10364,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
               tb.set_dim_id();
               ret.insert({tb.name, tb});
               cout << "TB  : " << tb << endl;
-
               cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
+              cout << "TB capacity: " << tb.get_capacity(fetch_width) << endl;
               tb_cnt ++;
             }
           }
@@ -10362,6 +10374,32 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
           ret.insert({sram.name, sram});
           return make_pair(ret, remove_deps);
+        }
+
+        int UBuffer::get_capacity(int fetch_width) {
+          //TODO: add a copy constructor 
+          UBuffer tmp;
+          tmp.name = name;
+          tmp.ctx= ctx;
+          for (auto it: port_bundles) {
+            tmp.port_bundles.insert(it);
+            for (auto pt: it.second) {
+              tmp.domain[pt] = domain.at(pt);
+              tmp.access_map[pt] = access_map.at(pt);
+              tmp.schedule[pt] = schedule.at(pt);
+              tmp.isIn[pt] = isIn.at(pt);
+            }
+          }
+
+          tmp.pad_reaccess_dimension(fetch_width);
+          int capacity = 0;
+          for (auto inpt: tmp.get_in_ports())
+            for (auto outpt: tmp.get_out_ports()) {
+              int dd = tmp.capacity_eval(inpt, outpt).get_value();
+              cout << "inpt : " << inpt << ", outpt:" << outpt <<  " ,DD: " << dd << endl;
+              capacity = std::max(dd, capacity);
+          }
+          return capacity;
         }
 
         void UBuffer::pad_reaccess_dimension(int fetch_width) {
@@ -11018,6 +11056,30 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         return dds;
       }
 
+      isl_union_set* UBuffer::compute_capacity(const string& inpt, const string& outpt) {
+        auto writes = access_map.at(inpt);
+        auto reads = access_map.at(outpt);
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        umap* sched = global_schedule();
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto dds = isl_union_map_deltas(pc_times);
+        return dds;
+      }
+
       int UBuffer::compute_capacity_hw_schedule(const string& inpt, const string& outpt) {
         auto writes = access_map.at(inpt);
         auto reads = access_map.at(outpt);
@@ -11088,6 +11150,26 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         } else {
           return {};
         }
+      }
+
+      maybe<int> UBuffer::capacity_eval(const string& inpt, const string& outpt) {
+
+        auto dds = compute_capacity(inpt, outpt);
+        cout << "DDs          : " << str(dds) << endl;
+        if (!empty(dds)) {
+          auto ddc = to_set(dds);
+          auto sched = to_map(schedule.at(inpt));
+          int inner_ii = stride_in_dim(sched, num_in_dims(sched)-1);
+
+          int dd = (to_int(lexmaxval(ddc))  + inner_ii - 1)/ inner_ii;
+          //int dd = (to_int(lexmaxval(ddc)))/ inner_ii + 1;
+          cout << "inner II     : " << inner_ii << endl;
+          cout << "DD           : " << dd << endl;
+          return {dd};
+        } else {
+          return {};
+        }
+
       }
 
       maybe<int> UBuffer::dependence_distance_min(const string& inpt, const string& outpt) {
