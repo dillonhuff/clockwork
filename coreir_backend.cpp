@@ -2297,7 +2297,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 #ifndef CGRAFLOW
   string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
 #else
-  string compute_file = "./" + prg.name + "_compute.json";
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  //string compute_file = "./" + prg.name + "_compute.json";
 #endif
   if (hwinfo.use_dse_compute) {
     compute_file = "./dse_compute/" + prg.name + "_mapped.json";
@@ -2412,6 +2413,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     //cout << "op uses func " << op->func << endl;
     auto num_users = hwinfo.compute_resources[op->func].num_users;
     cout << "op uses func " << op->func << " with " << num_users << " users" << endl;
+
+    for (auto buf : op->consume_locs_pair) {
+      cout << buf.first << endl;
+    }
+    
     //if (num_users > 1) {
     //if (op->name != "op_" + op->func) {
     // jeff setter compute sharing compute_sharing

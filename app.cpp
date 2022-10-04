@@ -1329,7 +1329,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
         int delay_time = sharer_delays.at(consumer).at(dim);
         //if (delay_time != 0) {
         isl_val* delay;
-        bool add_delay = isl_val_get_d(qp) < isl_val_get_d(b);
+        bool add_delay = isl_val_get_d(qp) <= isl_val_get_d(b);
         cout << "Adding delay ad=" << add_delay << endl;
         if (add_delay) {
           delay = add(neg_qpb, isl_val_int_from_si(ct, -1 * delay_time)); // this works for cascaded

@@ -15205,12 +15205,17 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 void test_compute_share(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  //test_apps.push_back(cascaded()); // cascaded: two back-to-back kernels shared
+  //test_apps.push_back(cascaded());     // cascaded: two back-to-back kernels shared
+  //test_apps.push_back(cascade2());     // cascade2: two back-to-back kernels shared, 2x2 kernel size
+  //test_apps.push_back(cascade2k_t1()); // cascade2k_t1: two back-to-back kernels shared, then kernel not shared
+  //test_apps.push_back(cascade1_2_1()); // cascade1_2_1: kernel, two back-to-back kernels shared, then kernel not shared
   // camera pipeline with sharing?
   
-  test_apps.push_back(gpyr());       // 2x2 convs with 3 kernels total
+  //test_apps.push_back(gpyr());       // 2x2 convs with 3 kernels total
   //test_apps.push_back(gpyr5());
   //test_apps.push_back(gpyr2_4k()); // 2x2 convs with 4 kernels total (pyramid blur)
+
+  test_apps.push_back(laplacian_composite()); // gaussian pyramid, then laplacian (difference of levels); final output is sum of laplacian
 
   // laplacian pyramid: blur pyramid shared, flatten and upsample shared
   // exposure fusion: blur pyramid shared, flatten and upsample shared
@@ -18846,7 +18851,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
 
     auto orig_valid = prg.validity_deps();
     auto orig_dom = prg.whole_iteration_domain();
-    int share_dim = shared_resources[0].interleave_dimension;
+    bool uses_shared = shared_resources.size() > 0;
+    int share_dim = uses_shared ? shared_resources[0].interleave_dimension : 0;
     
     // Split the specified interleaving loops for the shared compute
     map<string, isl_val*> qfactors = compute_qfactors_from_deps(orig_dom, cpy(orig_valid), share_dim);
@@ -18864,12 +18870,24 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     for (auto out : prg.outs) {
       cout << " " << out << endl;
     }
-    string output_compute = "op_hcompute_" + pick(prg.outs);
-    map<string, isl_set*> kernel_doms = get_sets_in_map(orig_dom);
-    int outer_looplen = get_dim_extent(kernel_doms[output_compute], share_dim);
-    cout << output_compute << " is using split of " << outer_looplen << endl;
+    if (uses_shared) {
+      cout << "compute ops: " << endl;
+      for (auto out : shared_resources[0].op_names) {
+        cout << " " << out << endl;
+      }
+      //cout << "compute out " << shared_resources[0].output_name << endl;
+    }
+
+
     
-    if (split) { // only needed for downsample apps
+    if (uses_shared && split) { // only needed for downsample apps
+      int output_index = shared_resources[0].op_names.size() - 1;
+      //string output_compute = "op_hcompute_" + pick(prg.outs);
+      string output_compute = shared_resources[0].op_names[output_index];
+      map<string, isl_set*> kernel_doms = get_sets_in_map(orig_dom);
+      int outer_looplen = get_dim_extent(kernel_doms[output_compute], share_dim);
+      cout << output_compute << " is using split of " << outer_looplen << endl;
+      
       for (auto op : prg.root->children) {
         split_loop(op, share_dim, outer_looplen, prg); // split loops such that the outer loop is length 8
         std::cout << "split loop: " << op->name << std::endl;
@@ -19132,7 +19150,6 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
           qfactor = 1;
           //qfactor = kernel_qs[op->name][level];
           //length = kernel_lens[op->name][level];
-          //length = kernel_lens[op->name][0] * qfactor;
           //length = kernel_lens[op->name][0] * qfactor;
           cout << "  interleave dimension q=" << qfactor << " len=" << length << " for " << var << endl;
         } else if (level > interleave_dim_inv) { // these are innermost
