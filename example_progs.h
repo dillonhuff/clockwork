@@ -162,3 +162,4 @@ prog gpyr5();
 prog gpyr2_4k();
 
 prog laplacian_composite();
+prog up_sample_pyramid();
