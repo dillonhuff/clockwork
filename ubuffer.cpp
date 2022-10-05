@@ -10383,7 +10383,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         }
 
         int UBuffer::get_capacity(int fetch_width) {
-          //TODO: add a copy constructor 
+          //TODO: add a copy constructor
           UBuffer tmp;
           tmp.name = name;
           tmp.ctx= ctx;
@@ -11173,7 +11173,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           cout << "DD           : " << dd << endl;
           return {dd};
         } else {
-          return {};
+          return {0};
         }
 
       }
