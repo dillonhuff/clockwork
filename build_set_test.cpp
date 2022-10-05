@@ -15181,7 +15181,7 @@ void test_pond(string dir, bool run_verilator=true) {
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
 
-  //test_apps.push_back(nlmeans_simple_blur());
+  test_apps.push_back(nlmeans_simple_blur());
   test_apps.push_back(nlmeans_simple());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
@@ -19427,7 +19427,6 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
      * old method for ISCA deadline*/
     asap_inner_loops_schedule(sched, root, prg,
             options.mem_hierarchy.at("mem").fetch_width);
-    //sequential_schedule(sched, root, prg);
 
     adjust_inner_iis(sched, prg);
     tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
@@ -19464,18 +19463,20 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //change to the fallback schedule
     options.fallback_schedule =  DNNScheduleAlgorithm(options.fallback_schedule + 1);
     cout << " Fall back schedule No. "  << options.fallback_schedule << endl;
-  } while (!no_violated_buf_write_port_assignments(options, sched, prg));
+  } while (!no_violated_buf_write_port_assignments(options, sched, prg)
+      ||  !no_violated_cycle_accurate_dependencies(sched, prg));
+  
   //dump_DNN_delays(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
   assert(no_violated_buf_write_port_assignments(options, sched, prg));
-  print_partial_schedule(sched, prg);
-
+  //print_partial_schedule(sched, prg);
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
   return;
 }
+
 void pad_to_single_depth(schedule_info& sched, op* root, prog& prg) {
   bool single_depth = all_loop_nests_same_depth(prg);
   int max_depth = max_loop_depth(prg);

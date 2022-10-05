@@ -868,11 +868,19 @@ std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
   for (auto other_kernel : get_kernels(root)) {
     if (other_kernel != next_kernel) {
       std::set<string> buffers_written;
-      for (auto op : prg.find_non_op(other_kernel)->descendant_ops()) {
-        for (auto buff : op -> buffers_written()) {
-          buffers_written.insert(buff);
+
+      //It's possible that a kernel is just a op
+     // if (prg.find_op(other_kernel)->is_op()) {
+     //   for (auto buff : prg.find_op(other_kernel) -> buffers_written()) {
+     //     buffers_written.insert(buff);
+     //   }
+     // } else {
+        for (auto op : prg.find_non_op(other_kernel)->descendant_ops()) {
+          for (auto buff : op -> buffers_written()) {
+            buffers_written.insert(buff);
+          }
         }
-      }
+      //}
 
 
       if (intersection(buffers_written, buffers_read).size() > 0) {
