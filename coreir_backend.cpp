@@ -1993,8 +1993,8 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   //run the lake generation cmd
   if (config_mode == "lake") {
 
-    if (rewrite_config_mode_for_stencil_valid(config))
-      config["mode"] = "stencil_valid";
+    //if (rewrite_config_mode_for_stencil_valid(config))
+    //  config["mode"] = "stencil_valid";
 
     emit_lake_config_collateral(options, ub_ins_name, config);
     run_lake_verilog_codegen(options, v_name, ub_ins_name);
