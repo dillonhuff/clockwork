@@ -2371,6 +2371,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             config_info.merge(addressor);
           }
 
+          if (contains(op_name, "tb2out")) {
+            //config_info["tb_share"] = {tb_cnt <= 1};
+            config_info["tb_share"] = {tb_share};
+          }
+
           add_lake_config(ret, config_info, num_in_dims(opt_sched), ctrl_name);
         } else {
           auto aff = get_aff(sched);
