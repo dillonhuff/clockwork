@@ -1,7 +1,7 @@
 apt update
-apt install autoconf
-apt install flex
-apt install bison
+apt install -y autoconf
+apt install -y flex
+apt install -y bison
 git clone https://github.com/verilator/verilator
 cd verilator/
 unset VERILATOR_ROOT

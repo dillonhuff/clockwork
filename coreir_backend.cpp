@@ -2228,6 +2228,15 @@ void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_na
   //cmd("mv " + long_name+".v " + options.dir + "verilog");
 }
 
+bool rewrite_config_mode_for_stencil_valid(Json& config_file) {
+  for (auto it = config_file.begin(); it != config_file.end(); ++it) {
+    if (it.key() != "stencil_valid" && it.key() != "mode") {
+     return false;
+    }
+  }
+  return true;
+}
+
 void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
   cout << "Generating Verilog Testing Collateral for: " << buf->toString() << endl
       << buf->getModuleRef()->toString() << endl;
@@ -2251,6 +2260,9 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
 
   //run the lake generation cmd
   if (config_mode == "lake") {
+
+    //if (rewrite_config_mode_for_stencil_valid(config))
+    //  config["mode"] = "stencil_valid";
 
     emit_lake_config_collateral(options, ub_ins_name, config);
     run_lake_verilog_codegen(options, v_name, ub_ins_name);
@@ -3435,8 +3447,10 @@ RemoveFlush(): InstancePass(
 bool runOnInstance(Instance* inst) {
     //define the pass here
     if (inst->getModuleRef()->isGenerated()) {
-      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" ||
-           inst->getModuleRef()->getGenerator()->getName() == "Pond_amber") &&
+      //FIXME: maybe this has issue, remove flush only for memory
+      //if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber" ||
+      //     inst->getModuleRef()->getGenerator()->getName() == "Pond_amber") &&
+      if ((inst->getModuleRef()->getGenerator()->getName() == "Mem_amber") &&
               inst->canSel("flush")) {
          auto def= inst->getContainer();
          def->disconnect(inst->sel("flush"));
@@ -4046,11 +4060,18 @@ bool MemtileReplaceMetaMapper(Instance* cnst) {
       {"init", CoreIR::Const::make(c, init)},
       {"mode", CoreIR::Const::make(c, "lake")}
   };
+
+  json metadata;
+
+  metadata["config"] = config_file;
+  metadata["init"] = init;
+  metadata["mode"] = "lake";
+
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
 
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Mem", genargs, modargs);
-  buf->setMetaData(config_file);
+  buf->setMetaData(metadata);
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   auto buf_sel = buf->getSelects();
@@ -4256,10 +4277,15 @@ bool RegfileReplaceMetaMapper(Instance* cnst) {
       {"config", CoreIR::Const::make(c, config_file)},
       {"mode", CoreIR::Const::make(c, "pond")}
   };
+
+  json metadata;
+  metadata["config"] = config_file;
+  metadata["mode"] = "pond";
+
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Pond", genargs, modargs);
-  buf->setMetaData(config_file);
+  buf->setMetaData(metadata);
   def->removeInstance(cnst);
 
   auto buf_sel = buf->getSelects();
@@ -4332,16 +4358,19 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   //auto config_file = cnst->getMetaData()["config"];
   auto realgenargs = cnst->getModuleRef()->getGenArgs();
 
-  json config_file;
-
+  json config_file = json({});
   int depth = realgenargs.at("depth")->get<int>();
   int width = realgenargs.at("width")->get<int>();
 
-  config_file["mode"] = "sram";
-  config_file["is_rom"] = true;
-  config_file["width"] = width;
-  config_file["depth"] = depth;
-  config_file["init"] = cnst->getModArgs().at("init")->get<Json>();
+  json metadata;
+
+  metadata["mode"] = "sram";
+  metadata["is_rom"] = true;
+  metadata["width"] = width;
+  metadata["depth"] = depth;
+  metadata["init"] = cnst->getModArgs().at("init")->get<Json>();
+  //Add config file for metadata
+  metadata["config"] = config_file;
 
   auto init = cnst->getModArgs().at("init")->get<Json>();
   CoreIR::Values modargs = {
@@ -4352,7 +4381,7 @@ bool RomReplaceMetaMapper(Instance* cnst) {
   auto pt = addPassthrough(cnst, cnst->getInstname()+"_tmp");
   Instance* buf = def->addInstance(cnst->getInstname()+"_garnet",
           "cgralib.Mem", genargs, modargs);
-  buf->setMetaData(config_file);
+  buf->setMetaData(metadata);
   def->removeInstance(cnst);
   //def->connect(pt->sel("in"), buf);
   auto buf_sel = buf->getSelects();
