@@ -159,6 +159,7 @@ prog resnet1_docker();
 prog resnet4_x();
 prog resnet3_x_tiny();
 prog resnet5_x();
+prog resnet5_x_docker();
 prog resnet5_1();
 prog resnet5_1_new();
 prog resnet5_1_unroll();
