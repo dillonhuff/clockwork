@@ -3307,17 +3307,17 @@
           "_U159":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0984"]}
+            "modargs":{"value":[["BitVector",16],"16'h0930"]}
           },
           "_U162":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h032c"]}
+            "modargs":{"value":[["BitVector",16],"16'h0310"]}
           },
           "_U165":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h001d"]}
+            "modargs":{"value":[["BitVector",16],"16'h001c"]}
           },
           "_U168":{
             "genref":"coreir.const",
@@ -3438,17 +3438,17 @@
           "_U216":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0984"]}
+            "modargs":{"value":[["BitVector",16],"16'h0930"]}
           },
           "_U219":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h032c"]}
+            "modargs":{"value":[["BitVector",16],"16'h0310"]}
           },
           "_U222":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h001d"]}
+            "modargs":{"value":[["BitVector",16],"16'h001c"]}
           },
           "_U225":{
             "genref":"coreir.const",
@@ -3569,17 +3569,17 @@
           "_U273":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0984"]}
+            "modargs":{"value":[["BitVector",16],"16'h0930"]}
           },
           "_U276":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h032c"]}
+            "modargs":{"value":[["BitVector",16],"16'h0310"]}
           },
           "_U279":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h001d"]}
+            "modargs":{"value":[["BitVector",16],"16'h001c"]}
           },
           "_U282":{
             "genref":"coreir.const",

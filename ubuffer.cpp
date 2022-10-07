@@ -1490,9 +1490,9 @@ void UBufferImpl::sort_bank_port_for_lake(string config_mode, UBuffer& buf, int 
         sort(outpt2readers.begin(), outpt2readers.end(),
                 [&buf](std::set<string>& l, std::set<string>& r)
                 { if (buf.is_self_loop(pick(l)))
-                    return false;
-                  else if (buf.is_self_loop(pick(r)))
                     return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
                   else
                     return pick(l) > pick(r);
                 });
@@ -2328,7 +2328,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
 
         //Check if we have loop iteration larger than hardware limit,
         //root will be removed so we add 1
-        if (num_in_dims(sched) > mem.iteration_level+1) {
+        int ctrl_level = 4;
+        if (ctrl_name == "tb2out" || ctrl_name == "sram2tb") {
+          ctrl_level = mem.iteration_level + 1;
+        }
+        if (num_in_dims(sched) > ctrl_level) {
 
         //{
           isl_map* opt_sched = isl_map_read_from_str(ctx, "{}");
@@ -11231,11 +11235,16 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           auto sched = to_map(schedule.at(inpt));
           int inner_ii = stride_in_dim(sched, num_in_dims(sched)-1);
 
-          int dd = (to_int(lexmaxval(ddc))  + inner_ii - 1)/ inner_ii;
-          //int dd = (to_int(lexmaxval(ddc)))/ inner_ii + 1;
+          auto max_val = lexmaxval(ddc);
           cout << "inner II     : " << inner_ii << endl;
-          cout << "DD           : " << dd << endl;
-          return {dd};
+          if (inner_ii) {
+            int dd = (to_int(max_val)  + inner_ii - 1)/ inner_ii;
+            //int dd = (to_int(lexmaxval(ddc)))/ inner_ii + 1;
+            cout << "DD           : " << dd << endl;
+            return {dd};
+          } else {
+            return {1};
+          }
         } else {
           return {0};
         }

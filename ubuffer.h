@@ -2710,7 +2710,7 @@ void tighten_address_space() {
             !is_self_loop_in(pick(m.second))) {
           outpts.push_back(m.first);
         }
-      } 
+      }
       for (auto m : port_bundles) {
         if (is_self_loop_in(pick(m.second))) {
           outpts.push_back(m.first);
@@ -2722,14 +2722,14 @@ void tighten_address_space() {
     vector<string> get_out_bundles_update_priority() const {
       vector<string> outpts;
       for (auto m : port_bundles) {
-        if (is_out_pt(pick(m.second)) &&
-            !is_self_loop_out(pick(m.second))) {
+        if (is_self_loop_out(pick(m.second))) {
           outpts.push_back(m.first);
-        } 
+        }
       }
 
       for (auto m : port_bundles) {
-        if (is_self_loop_out(pick(m.second))) {
+        if (is_out_pt(pick(m.second)) &&
+                !is_self_loop_out(pick(m.second))) {
           outpts.push_back(m.first);
         }
       }

@@ -15,7 +15,7 @@
         "instances":{
           "ub_conv_stencil_clkwrk_dsa0_BANK_0":{
             "genref":"cgralib.Pond_amber",
-            "genargs":{"ID":["String","_U1"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            "genargs":{"ID":["String","_U1"], "has_stencil_valid":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "width":["Int",16]},
             "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[1024],"cycle_stride":[1],"dimensionality":1,"extent":[1024],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[1040],"cycle_stride":[1],"dimensionality":1,"extent":[1024],"read_data_starting_addr":[0],"read_data_stride":[1]}},"mode":"pond"}
           },
           "ub_conv_stencil_clkwrk_dsa0_BANK_0_clk_en_const":{
@@ -45,7 +45,7 @@
         "instances":{
           "ub_conv_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
-            "genargs":{"ID":["String","_U0"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            "genargs":{"ID":["String","_U0"], "has_stencil_valid":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "width":["Int",16]},
             "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[1040],"cycle_stride":[1],"dimensionality":1,"extent":[1024],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[1056],"cycle_stride":[1],"dimensionality":1,"extent":[1024],"read_data_starting_addr":[0],"read_data_stride":[1]}},"mode":"pond"}
           },
           "ub_conv_stencil_BANK_0_clk_en_const":{
@@ -237,7 +237,7 @@
         "instances":{
           "ub_hw_input_stencil_BANK_0":{
             "genref":"cgralib.Pond_amber",
-            "genargs":{"ID":["String","_U2"], "num_inputs":["Int",1], "num_outputs":["Int",1], "width":["Int",16]},
+            "genargs":{"ID":["String","_U2"], "has_stencil_valid":["Bool",false], "num_inputs":["Int",2], "num_outputs":["Int",2], "width":["Int",16]},
             "metadata":{"config":{"in2regfile_0":{"cycle_starting_addr":[1024],"cycle_stride":[1],"dimensionality":1,"extent":[1024],"write_data_starting_addr":[0],"write_data_stride":[1]},"regfile2out_0":{"cycle_starting_addr":[1040],"cycle_stride":[1],"dimensionality":1,"extent":[1024],"read_data_starting_addr":[0],"read_data_stride":[1]}},"mode":"pond"}
           },
           "ub_hw_input_stencil_BANK_0_clk_en_const":{
