@@ -2322,14 +2322,15 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     for (auto it: op2sched) {
         string op_name = it.first;
         auto sched = op2sched.at(op_name);
+        string ctrl_name = get_ctrl_name(op_name);
         cout << "\top name: " << op_name << endl;
         cout << "\tSched: " << str(sched) << endl << endl;
-        string ctrl_name = get_ctrl_name(op_name);
+        cout << "\tctrl name: " << ctrl_name << endl;
 
         //Check if we have loop iteration larger than hardware limit,
         //root will be removed so we add 1
         int ctrl_level = 4;
-        if (ctrl_name == "tb2out" || ctrl_name == "sram2tb") {
+        if (contains(ctrl_name, "tb2out") || contains(ctrl_name, "sram2tb")) {
           ctrl_level = mem.iteration_level + 1;
         }
         if (num_in_dims(sched) > ctrl_level) {
