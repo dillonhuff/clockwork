@@ -1480,6 +1480,69 @@ void UBufferImpl::sort_bank_port() {
     }
 }
 
+//sort for pond with a different strategy
+void UBufferImpl::sort_bank_port_for_lake(string config_mode, UBuffer& buf, int bank_id) {
+    if (config_mode != "lake")
+        return;
+    {
+        //The logic below here is self loop (update operation) port is always the smallest, using port 0, and the other port follows the alphabet sequence
+        vector<std::set<string>>& outpt2readers = bank_outpt2readers.at(bank_id);
+        sort(outpt2readers.begin(), outpt2readers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
+                  else
+                    return pick(l) > pick(r);
+                });
+    }
+
+    {
+        vector<std::set<string>>& in2writers = bank_inpt2writers.at(bank_id);
+        sort(in2writers.begin(), in2writers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return false;
+                  else if (buf.is_self_loop(pick(r)))
+                    return true;
+                  else
+                    return pick(l) > pick(r);
+                });
+    }
+}
+
+void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int bank_id) {
+    if (config_mode != "pond")
+      return;
+    {
+        //The logic below here is self loop (update operation) port is always the smallest, using port 0, and the other port follows the alphabet sequence
+        vector<std::set<string>>& outpt2readers = bank_outpt2readers.at(bank_id);
+        sort(outpt2readers.begin(), outpt2readers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
+                  else
+                    return pick(l) > pick(r);
+                });
+    }
+
+    {
+        vector<std::set<string>>& in2writers = bank_inpt2writers.at(bank_id);
+        sort(in2writers.begin(), in2writers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
+                  else
+                    return pick(l) > pick(r);
+                });
+    }
+}
+
 #ifdef COREIR
 
 //helper function to get schedule for port
@@ -1658,10 +1721,10 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
 
 //void UBuffer::generate_bank_select()
 
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
-  UBufferImpl impl;
-  generate_coreir(options, impl, def, info, true);
-}
+//void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, schedule_info & info) {
+//  UBufferImpl impl;
+//  generate_coreir(options, impl, def, info, true);
+//}
 
 void UBuffer::generate_coreir_without_ctrl(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info & info) {
   generate_coreir_refactor(options, impl, def, info, false);
@@ -2135,6 +2198,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     cout << "agg2sram_opt debug start " << endl;
     map<string, std::pair<int, int>> agg2sram_cfg_map;
     map<string, std::pair<int, int>> agg2sram_extent_stride_map;
+    bool tb_share = false;
 
     for (auto it: rewrite_buffer) {
       //check it is sram
@@ -2186,8 +2250,15 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
       }
     }
 
+    int tb_cnt = 0;
     for (auto it: rewrite_buffer) {
         auto ubuf = it.second;
+        if (contains(ubuf.name, "tb")) {
+          if (ubuf.get_capacity(mem.fetch_width) > 2) {
+            tb_share = true;
+          }
+          //tb_cnt += 1;
+        }
         auto hardware_schedule = ubuf.global_schedule();
         for (auto m : get_maps(hardware_schedule)) {
             string op_name = domain_name(m);
@@ -2251,14 +2322,20 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     for (auto it: op2sched) {
         string op_name = it.first;
         auto sched = op2sched.at(op_name);
+        string ctrl_name = get_ctrl_name(op_name);
         cout << "\top name: " << op_name << endl;
         cout << "\tSched: " << str(sched) << endl << endl;
-        string ctrl_name = get_ctrl_name(op_name);
+        cout << "\tctrl name: " << ctrl_name << endl;
 
         //Check if we have loop iteration larger than hardware limit,
         //root will be removed so we add 1
-        if (num_in_dims(sched) > mem.iteration_level+1) {
+        int ctrl_level = 4;
+        if (contains(ctrl_name, "tb2out") || contains(ctrl_name, "sram2tb")) {
+          ctrl_level = mem.iteration_level + 1;
+        }
+        if (num_in_dims(sched) > ctrl_level) {
 
+        //{
           isl_map* opt_sched = isl_map_read_from_str(ctx, "{}");
           ConfigMap config_info;
           if (op2write_map.count(op_name) > 0) {
@@ -2300,6 +2377,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             ConfigMap addressor =
               generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, true);
             config_info.merge(addressor);
+          }
+
+          if (contains(op_name, "tb2out")) {
+            //config_info["tb_share"] = {tb_cnt <= 1};
+            config_info["tb_share"] = {tb_share};
           }
 
           add_lake_config(ret, config_info, num_in_dims(opt_sched), ctrl_name);
@@ -2348,6 +2430,10 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
                   config_info.merge(addressor);
               }
           }
+          if (contains(op_name, "tb2out")) {
+            //config_info["tb_share"] = {tb_cnt <= 1};
+            config_info["tb_share"] = {tb_share};
+          }
           add_lake_config(ret, config_info, num_in_dims(aff), ctrl_name);
         }
     }
@@ -2368,8 +2454,105 @@ pair<isl_map*, isl_map*> pad_domain( isl_map* sched, isl_map* acc) {
     return {sched, acc};
 }
 
+//New refactored config gen pass for memory
+Json UBuffer::generate_ubuf_args(CodegenOptions& options,
+    UBuffer& ubuf, string mem_name) {
+ Json ret;
+
+ //Metadata
+ auto mem = options.mem_hierarchy.at(mem_name);
+ int word_width = mem.word_width.at(mem_name);
+ int capacity = mem.capacity.at(mem_name);
+ int in_cnt = 0, out_cnt = 0;
+ string ctrl_name = pick(mem.controller_name);
+
+ //TODO: change into a method that sort input by update first, then by name
+ for (auto inpt: ubuf.get_in_ports_update_priority()) {
+   auto acc_map = to_map(ubuf.access_map.at(inpt));
+   acc_map = remove_irrelevant_in_dim(acc_map);
+   auto sched = to_map(ubuf.schedule.at(inpt));
+   sched = remove_irrelevant_in_dim(sched);
+   auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+   auto linear_acc_map = dot(acc_map, reduce_map);
+   cout << tab(1) << "Before Merge: " << endl;
+   cout << tab(2) << "acc map: " << str(acc_map) << endl;
+   cout << tab(2) << "sched: " << str(sched) << endl;
+   cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+   cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
+
+   //add a simplify optimization pass,
+   //reutrn:    pair(schedulem access_map)
+   //FIXME: add a handle for running this pass
+   auto pad_pair = pad_domain(sched, (linear_acc_map));
+   auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   auto new_sched = m_pair.first;
+   cout << tab(1) << "After Merge: " << endl;
+   cout << tab(2) << "schedule: " << str(new_sched) << endl;
+   cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+
+   //Add accessor info
+   auto aff = get_aff(new_sched);
+   auto dom = ::domain(new_sched);
+   auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+
+   //Add addressor info
+   int port_width = mem.in_port_width.at(mem_name);
+   auto addressor = generate_addressor_config_from_aff_expr(
+       get_aff(m_pair.second),
+       false, false, word_width, capacity, port_width);
+   config_info.merge(addressor);
+   cout << "\tWrite map: " << str(acc_map) << endl;
+
+   //Add configuration
+   add_lake_config(ret, config_info, num_in_dims(aff),
+           "in2"+ctrl_name+"_" + str(in_cnt));
+   in_cnt ++;
+ }
+
+ for (auto inpt: ubuf.get_out_ports_update_priority()) {
+   auto acc_map = to_map(ubuf.access_map.at(inpt));
+   acc_map = remove_irrelevant_in_dim(acc_map);
+   auto sched = to_map(ubuf.schedule.at(inpt));
+   sched = remove_irrelevant_in_dim(sched);
+   auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+   auto linear_acc_map = dot(acc_map, reduce_map);
+   cout << tab(1) << "Before Merge: " << endl;
+   cout << tab(2) << "acc map: " << str(acc_map) << endl;
+   cout << tab(2) << "sched: " << str(sched) << endl;
+   cout << tab(2) << "reduce_map: " << str(reduce_map) << endl;
+   cout << tab(2) << "1d acc map: " << str(linear_acc_map) << endl;
+
+   //add a simplify optimization pass,
+   //reutrn:    pair(schedulem access_map)
+   auto pad_pair = pad_domain(sched, (linear_acc_map));
+   auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   auto new_sched = m_pair.first;
+   cout << tab(1) << "After Merge: " << endl;
+   cout << tab(2) << "schedule: " << str(new_sched) << endl;
+   cout << tab(2) << "access map: " << str(m_pair.second) << endl;
+   //Add accessor info
+   auto aff = get_aff(new_sched);
+   auto dom = ::domain(new_sched);
+   auto config_info = generate_accessor_config_from_aff_expr(dom, aff);
+
+   //Add addressor info
+   int port_width = mem.out_port_width.at(mem_name);
+   auto addressor = generate_addressor_config_from_aff_expr(
+       get_aff(m_pair.second),
+       true, false, word_width, capacity, port_width);
+   config_info.merge(addressor);
+   cout << "\tWrite map: " << str(acc_map) << endl;
+
+   //Add configuration
+   add_lake_config(ret, config_info, num_in_dims(aff),
+           ctrl_name + "2out" + "_" + str(out_cnt));
+   out_cnt ++;
+ }
+ return ret;
+}
+
 //Simplify the single fetch width memory codegen
-Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string mem_name) {
+Json UBuffer::generate_ubuf_args_old(CodegenOptions& options, UBuffer& ubuf, string mem_name) {
 
     Json ret;
 
@@ -2385,6 +2568,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
     for (auto m : get_maps(hardware_schedule)) {
         string op_name = domain_name(m);
         m = remove_irrelevant_in_dim(m);
+        cout << "op name: " << op_name << endl;
+        cout << "Schedule: " << str(m) << endl;
         op2sched[op_name] = m;
         auto out_acc_umap = ubuf.producer_map();
         for (auto out_acc_map: get_maps(out_acc_umap)) {
@@ -2403,7 +2588,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, UBuffer& ubuf, string 
     }
 
     //Go through all the ops and produce the read and write
-    vector<string> ops = ubuf.get_ops_sorted_by_bundle();
+    vector<string> ops = ubuf.get_ops_sorted(mem_name);
     cout << "Sorted ops: " << ops << endl;
     auto mem = options.mem_hierarchy.at(mem_name);
     int word_width = mem.word_width.at(mem_name);
@@ -2703,18 +2888,25 @@ CoreIR::Instance* generate_pond_instance(
         string rst_name,
         string config_mode,
         json config_file,
+        bool has_stencil_valid,
         size_t input_num, size_t output_num) {
 
   auto context = def->getContext();
   CoreIR::Instance* buf;
+  assert(options.rtl_options.max_inpt == 2);
+  assert(options.rtl_options.max_outpt == 2);
   CoreIR::Values genargs = {
     {"width", CoreIR::Const::make(context, 16)},
-    {"num_inputs", CoreIR::Const::make(context, input_num)},
-    {"num_outputs", CoreIR::Const::make(context, output_num)},
-    {"ID", CoreIR::Const::make(context, context->getUnique())},
+    //FIXME: always generate 2 port pond since that's the hardware config
+    {"num_inputs", CoreIR::Const::make(context, options.rtl_options.max_inpt)},
+    {"num_outputs", CoreIR::Const::make(context, options.rtl_options.max_outpt)},
+    {"has_stencil_valid", CoreIR::Const::make(context, has_stencil_valid)},
+    {"ID", CoreIR::Const::make(context, context->getUnique())}
   };
   cout << "Add pond node with input_num = " << input_num
-      << ", output_num = " << output_num << endl;
+      << ", output_num = " << output_num << endl
+      << "max in pt: " << options.rtl_options.max_inpt << endl
+      << "max out pt: " << options.rtl_options.max_outpt << endl;
   auto* g = context->getGenerator("cgralib.Pond_amber");
   //auto* generatedModule = g->getModule(genargs);
   //g->getMetaData()["verilog_name"] =
@@ -2821,6 +3013,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
         auto addressor_tb2out = generate_addressor_config_from_aff_expr(get_aff(index_addr), true, false, word_width, capacity, port_width);
         config_tb2out.merge(addressor_tb2out);
       }
+      config_tb2out["tb_share"] = {0};
       add_lake_config(config_file, config_tb2out, num_dims(dom), "tb2out_0");
 
       //generate sram2tb controller
@@ -2918,8 +3111,9 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       //TODO: this is a temporary fix for lake counter, need to move to the root level
       //buf->getMetaData()["init"] = v;
       config_file["init"] = v;
+      bool has_stencil_valid = false;
       auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
-              "rst_n", "lake_dp", config_file, 1, 1);
+              "rst_n", "lake_dp", config_file, has_stencil_valid,  1, 1);
 
       //Wire the output data
       def->connect(dp_buf_for_counter->sel("data_out_pond_0"), def->sel("self")->sel("d")->sel(dim));
@@ -2995,6 +3189,7 @@ CoreIR::Instance* affine_controller_use_lake_tile(
       {"width", CoreIR::Const::make(context, 16)},
       {"num_inputs", CoreIR::Const::make(context, 1)},
       {"num_outputs", CoreIR::Const::make(context, 1)},
+      {"has_stencil_valid", CoreIR::Const::make(context, true)},
       {"ID", CoreIR::Const::make(context, context->getUnique())},
     };
     auto* g = context->getGenerator("cgralib.Pond_amber");
@@ -3028,14 +3223,15 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
         CodegenOptions options,
         string ub_ins_name,
         string config_mode,
+        bool has_stencil_valid,
         size_t input_num, size_t output_num) {
 
   auto context = def->getContext();
   CoreIR::Instance* buf;
   CoreIR::Values genargs = {
     {"width", CoreIR::Const::make(context, port_widths)},
-    {"num_inputs", CoreIR::Const::make(context, input_num)},
-    {"num_outputs", CoreIR::Const::make(context, output_num)},
+    {"num_inputs", CoreIR::Const::make(context, options.rtl_options.max_inpt)},
+    {"num_outputs", CoreIR::Const::make(context, options.rtl_options.max_outpt)},
     {"ID", CoreIR::Const::make(context, context->getUnique())},
   };
   cout << "Add pond node with input_num = " << input_num
@@ -3087,10 +3283,11 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
   CoreIR::Values modargs = {
     {"mode", CoreIR::Const::make(context, "lake")}
   };
-  if (has_stencil_valid) {
-    cout << "Generate stencil valid signal" << endl;
-    generate_stencil_valid_config(options, bank_name);
-  }
+  //TODO: this pass has been deprecated
+  //if (has_stencil_valid) {
+  //  cout << "Generate stencil valid signal" << endl;
+  //  generate_stencil_valid_config(options, bank_name);
+  //}
   cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
@@ -3144,10 +3341,13 @@ void UBuffer::generate_stencil_valid_config(CodegenOptions& options, string bank
   add_lake_config(config_file, stencil_valid, num_in_dims(sched), "stencil_valid");
 }
 
-string memDatainPort(string mode, int pt_cnt) {
+string memDatainPort(CodegenOptions& options, string mode, int pt_cnt) {
     if (mode == "lake"  || mode == "glb")
         return "data_in_" + to_string(pt_cnt);
-    else if (mode == "pond" || mode == "lake_dp") {
+    else if ( mode == "lake_dp") {
+        return "data_in_pond_" + to_string(pt_cnt);
+    } else if (mode == "pond") {
+        int inpt_cnt = options.rtl_options.max_inpt;
         return "data_in_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -3155,10 +3355,13 @@ string memDatainPort(string mode, int pt_cnt) {
     }
 }
 
-string memDataoutPort(string mode, int pt_cnt) {
+string memDataoutPort(CodegenOptions& options, string mode, int pt_cnt) {
     if (mode == "lake" || mode == "glb")
         return "data_out_" + to_string(pt_cnt);
-    else if (mode == "pond" || mode == "lake_dp") {
+    else if (mode == "lake_dp") {
+        return "data_out_pond_" + to_string(pt_cnt);
+    } else if (mode == "pond") {
+        int outpt_cnt = options.rtl_options.max_outpt;
         return "data_out_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -3194,7 +3397,8 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
     assert(inpt_broadcast_set.size() == 1);
     for (auto inpt: inpt_broadcast_set) {
       if (isIn.at(inpt)){
-        def->connect(buf->sel(memDatainPort(config_mode, inpt_cnt)), pt2wire.at(inpt));
+        //cout << "BUF Wire inpt: " << memDatainPort(options, config_mode, inpt_cnt) << " with " << pt2wire.at(inpt)->toString() << endl;
+        def->connect(buf->sel(memDatainPort(options, config_mode, inpt_cnt)), pt2wire.at(inpt));
 
         //There is no control signal
         if (with_ctrl) {
@@ -3215,11 +3419,11 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
       //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
       //auto outpt = *(outpt_it);
       //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
-      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
+      CoreIR::Wireable* tmp = buf->sel(memDataoutPort(options, config_mode, outpt_cnt));
       //CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
       if (impl.outpt_to_bank.at(outpt).size() == 1) {
         //no chaining
-        def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+        def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), pt2wire.at(outpt));
       } else {
 
         chain_en = true;
@@ -3228,19 +3432,20 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
           //lake chaining wiring method
           if(conns.size() == 0) {
             //First chaining wiring, wire to the output
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), pt2wire.at(outpt));
           } else {
             assert(conns.size() == 1);
             cout << "pt count: " << outpt_cnt << endl;
             CoreIR::Wireable* last_dangling_chain_data_in =
               findChainDataIn(pick(conns), outpt_cnt);
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), last_dangling_chain_data_in);
           }
 
         } else if (config_mode == "pond" || config_mode == "lake_dp") {
           if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
             //last port directly connec to the wire
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)),  pt2wire.at(outpt));
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)),  pt2wire.at(outpt));
+            //cout << "BUF Wire outpt: " << memDataoutPort(options, config_mode, outpt_cnt) << " with " << pt2wire.at(outpt)->toString() << endl;
           } else {
             Instance* dataout_pth = addPassthrough(
                     pt2wire.at(outpt), "dataout_pt_" + context->getUnique());
@@ -3259,7 +3464,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
                     "coreir.mux",
                     {{"width", CoreIR::Const::make(context, this->port_widths)}});
             def->connect(dataout_pth->sel("out"), next_val->sel("out"));
-            def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), next_val->sel("in1"));
+            def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), next_val->sel("in1"));
             def->connect(op_control_wires(mux_ctrl), next_val->sel("sel"));
             inlineInstance(dataout_pth);
             pt2wire.at(outpt) = next_val->sel("in0");
@@ -3427,15 +3632,17 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       ub_ins_name, target_buf.name,
       target_buf.num_in_ports(),
       target_buf.num_out_ports(),
-      false/*TODO: exclude stencil valid signal*/, true);
+      hw_impl.insert_shift_register/*TODO: exclude stencil valid signal*/, true);
 
   } else if (hw_impl.config_mode == "lake_dp") {
     config_file = generate_ubuf_args(options, target_buf, "mem");
-    buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp",
+    bool has_stencil_valid = has_stencil_valid;
+    buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp", has_stencil_valid,
             target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (hw_impl.config_mode == "pond") {
     config_file = generate_ubuf_args(options, target_buf, "regfile");
-    buf = generate_pond_instance(def, options, ub_ins_name, "pond",
+    bool has_stencil_valid = false;
+    buf = generate_pond_instance(def, options, ub_ins_name, "pond", has_stencil_valid,
             target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (hw_impl.config_mode == "glb") {
 
@@ -3494,6 +3701,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   return buf;
 }
 
+/*
 CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::ModuleDef* def, UBuffer& target_buf, string config_mode) {
 
   map<string, UBuffer> vectorized_buf;
@@ -3516,7 +3724,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     buf = generate_lake_tile_instance(def, options,
       ub_ins_name, target_buf.name,
       target_buf.num_in_ports(), target_buf.num_out_ports(),
-      false/*TODO: exclude stencil valid signal*/, true);
+      false, true);
 
   } else if (config_mode == "lake_dp") {
     config_file = generate_ubuf_args(options, target_buf, "mem");
@@ -3579,7 +3787,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     def->connect(buf->sel("rst_n"), def->sel("self.reset"));
   }
   return buf;
-}
+}*/
 
 bool sanity_check_controller_bitwidth(CodegenOptions& options, isl_map* sched) {
     int sched_max = to_int(lexmaxval(range(sched)));
@@ -3747,7 +3955,8 @@ CoreIR::Instance* UBuffer::generate_accum_reg_instance(CodegenOptions& options, 
     config_file = generate_ubuf_args(options, *this, "regfile");
 
     //TODO: check we define pond
-    auto buf_ins = generate_pond_instance(def, options, "ub_"+name, "pond",
+    bool has_stencil_valid = false;
+    auto buf_ins = generate_pond_instance(def, options, "ub_"+name, "pond", has_stencil_valid,
             num_in_ports(), num_out_ports());
     return buf_ins;
 }
@@ -3784,8 +3993,11 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
   if (mask_until == reaccess_dims.size() - 1)
     return ;
   isl_map* mask_map = get_domain_mask(am, mask_until);
+  isl_map* mask_map_rev = get_domain_mask_reverse(am, mask_until);
   auto am_mask = dot(mask_map, am);
+  auto am_mask_rev = dot(mask_map_rev, am);
   auto sched_mask = dot(mask_map, sched);
+  auto sched_mask_am = dot(mask_map_rev, sched);
   cout << "\tupdate op access map: " << str(am_mask) << endl
       << "\tupdate op schedule: " << str(sched_mask) << endl;
 
@@ -3800,7 +4012,10 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
 
   //TODO double check this value make sense
   auto in_sched_reg = linear_schedule(sched_mask, {1}, -1, false);
+  auto restart_sched= linear_schedule(sched_mask, {1}, -2, false);
+  //auto in_sched = linear_schedule(sched_mask_am, {1}, -1, false);
   auto out_sched_reg = linear_schedule(sched_mask, {1}, accum_time - 1, false);
+  auto out_sched = set_schedule_delay(sched_mask_am, 1);
 
   //Create the pond reg
   UBuffer accum_reg;
@@ -3813,15 +4028,22 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
   for(string inpt: buf.get_in_ports()) {
     if (::name(buf.domain.at(inpt)) == op_name) {
       inpts.push_back(inpt);
-      string pt_name = inpt + "_accum_in_0";
-      auto reg_in_am = add_domain_suffix(am_mask, "_write");
-      auto reg_in_sched= add_domain_suffix(in_sched_reg, "_write");
+      string pt_name = inpt + "_accum_in_1";
+      auto reg_in_am = add_domain_suffix(am_mask_rev, "_write_pe");
+      auto reg_in_sched= add_domain_suffix(out_sched, "_write_pe");
       accum_reg.port_bundles[op_name + "_write_0"].push_back(pt_name);
       accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
 
-      pt_name = inpt + "_accum_in_1";
-      reg_in_am = add_domain_suffix(am, "_write_pe");
-      reg_in_sched= add_domain_suffix(sched, "_write_pe");
+      pt_name = inpt + "_accum_in_0";
+      int addr_dim = num_out_dims(am);
+      vector<int> range_idx(addr_dim, 0);
+      string init_am_str= "{" + domain_name(am) + "[i=0, 0]->" +
+          range_name(am) + sep_list(range_idx, "[", "]", ",") +"}";
+      auto init = isl_map_read_from_str(buf.ctx, init_am_str.c_str());
+      reg_in_am = add_domain_suffix((init), "_write");
+      string init_sched_str = "{"+domain_name(am) + "[i=0, 0]->[0]}";
+      auto init_sched = isl_map_read_from_str(buf.ctx, init_sched_str.c_str());
+      reg_in_sched= add_domain_suffix((init_sched), "_write");
       accum_reg.port_bundles[op_name + "_write_1"].push_back(pt_name);
       accum_reg.add_in_pt(pt_name, ::domain(reg_in_am), reg_in_am, reg_in_sched);
     }
@@ -3836,9 +4058,9 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
       //accum_reg.port_bundles[op_name + "_read_0"].push_back(pt_name);
       //accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
 
-      auto pt_name = outpt + "_accum_out_1";
-      auto reg_out_am = add_domain_suffix(am, "_read_pe");
-      auto reg_out_sched= add_domain_suffix(sched, "_read_pe");
+      auto pt_name = outpt + "_accum_out_0";
+      auto reg_out_am = add_domain_suffix(am_mask_rev, "_read_pe");
+      auto reg_out_sched= add_domain_suffix(out_sched, "_read_pe");
       accum_reg.port_bundles[op_name + "_read_1"].push_back(pt_name);
       accum_reg.add_out_pt(pt_name, ::domain(reg_out_am), reg_out_am, reg_out_sched);
     }
@@ -3853,9 +4075,64 @@ void create_accumulation_register_and_rewrite_buf(CodegenOptions & options, UBuf
   //save the impl information
   hw_impl.reduce_PE_inpt = pick(inpts);
   hw_impl.reduce_PE_outpt = pick(outpts);
+  hw_impl.restart_sched = restart_sched;
   hw_impl.accum_reg = accum_reg;
   hw_impl.insert_shift_register = true;
 }
+
+void insert_accumulation_register_with_existing_buf(
+        CodegenOptions& options,
+        CoreIR::ModuleDef* def,
+        CoreIR::Instance* buf,
+        GarnetImpl & hw_impl,
+        map<string, CoreIR::Wireable*> & pt2wire) {
+
+  if (!hw_impl.insert_shift_register)
+    return;
+
+  //Check if we get the ubuffer instance
+  UBuffer accum_reg = hw_impl.accum_reg;
+
+
+  //Generate the coreIR module
+  CoreIR::Instance* accum_reg_ins = accum_reg.generate_accum_reg_instance(options, def);
+  generate_lake_tile_verilog(options, accum_reg_ins);
+  string config_mode_ = accum_reg_ins->getMetaData()["mode"];
+
+  auto cgpl_schedule = hw_impl.restart_sched;
+  auto context = def->getContext();
+  //auto cgpl_ctrl = affine_controller_use_lake_tile(
+  //      options, def, context, ::domain(cgpl_schedule),
+  //      get_aff(cgpl_schedule), "cgpl_ctrl" + context->getUnique());
+  //generate_lake_tile_verilog(options, cgpl_ctrl);
+  auto dom = ::domain(cgpl_schedule);
+  auto aff = get_aff(cgpl_schedule);
+
+  auto stencil_valid = generate_accessor_config_from_aff_expr(dom, aff);
+  json config_file = buf->getMetaData()["config"];
+  add_lake_config(config_file, stencil_valid, num_in_dims(aff), "stencil_valid");
+  buf->getMetaData()["config"] = config_file;
+
+  //Disconnect flush and reconnect to stencil valid of cgpl_ctrl
+  auto conns = accum_reg_ins->sel("flush")->getConnectedWireables();
+  for (auto conn: conns) {
+    def->disconnect(accum_reg_ins->sel("flush"), conn);
+  }
+  def->connect(accum_reg_ins->sel("flush"), buf->sel("stencil_valid"));
+
+  //Wire the PE interface with accumulation register
+  //def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  //def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  //pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(config_mode_, 1));
+  //
+  //Change to using port 1 by default
+  def->connect(accum_reg_ins->sel(memDatainPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(options, config_mode_, 0));
+}
+
 
 void insert_accumulation_register(CodegenOptions& options,  CoreIR::ModuleDef* def, GarnetImpl & hw_impl, map<string, CoreIR::Wireable*> & pt2wire) {
 
@@ -3871,11 +4148,31 @@ void insert_accumulation_register(CodegenOptions& options,  CoreIR::ModuleDef* d
   generate_lake_tile_verilog(options, accum_reg_ins);
   string config_mode_ = accum_reg_ins->getMetaData()["mode"];
 
+  auto cgpl_schedule = hw_impl.restart_sched;
+  auto context = def->getContext();
+  auto cgpl_ctrl = affine_controller_use_lake_tile(
+        options, def, context, ::domain(cgpl_schedule),
+        get_aff(cgpl_schedule), "cgpl_ctrl" + context->getUnique());
+  generate_lake_tile_verilog(options, cgpl_ctrl);
+
+  //Disconnect flush and reconnect to stencil valid of cgpl_ctrl
+  auto conns = accum_reg_ins->sel("flush")->getConnectedWireables();
+  for (auto conn: conns) {
+    def->disconnect(accum_reg_ins->sel("flush"), conn);
+  }
+  def->connect(accum_reg_ins->sel("flush"), cgpl_ctrl->sel("stencil_valid"));
+
   //Wire the PE interface with accumulation register
-  def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_inpt));
   //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
-  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_outpt));
-  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(config_mode_, 0));
+  //def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  //pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(config_mode_, 1));
+  //
+  //Change to using port 1 by default
+  def->connect(accum_reg_ins->sel(memDatainPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_inpt));
+  //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(options, config_mode_, 1)), pt2wire.at(hw_impl.reduce_PE_outpt));
+  pt2wire.at(hw_impl.reduce_PE_outpt) = accum_reg_ins->sel(memDatainPort(options, config_mode_, 0));
 }
 
 
@@ -3982,10 +4279,10 @@ void insert_accumulation_register(CodegenOptions & options, CoreIR::ModuleDef* d
   string config_mode_ = accum_reg_ins->getMetaData()["mode"];
 
   //Wire the PE interface with accumulation register
-  def->connect(accum_reg_ins->sel(memDatainPort(config_mode_, 1)), pt2wire.at(pick(inpts)));
+  def->connect(accum_reg_ins->sel(memDatainPort(options, config_mode_, 1)), pt2wire.at(pick(inpts)));
   //pt2wire.at(pick(inpts)) = accum_reg_ins->sel(memDataoutPort(config_mode, 0));
-  def->connect(accum_reg_ins->sel(memDataoutPort(config_mode_, 0)), pt2wire.at(pick(outpts)));
-  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(config_mode_, 0));
+  def->connect(accum_reg_ins->sel(memDataoutPort(options, config_mode_, 1)), pt2wire.at(pick(outpts)));
+  pt2wire.at(pick(outpts)) = accum_reg_ins->sel(memDatainPort(options, config_mode_, 0));
 
   cout << "buffer after accumu reg insert: " << buf << endl;
 
@@ -4087,8 +4384,9 @@ void UBuffer::generate_coreir_refactor(CodegenOptions& options,
     auto target_buf_impl = impl.lowering_info.at(bank_id);
 
 
-    insert_accumulation_register(options, def, target_buf_impl, pt2wire);
     CoreIR::Instance* buf = map_ubuffer_to_cgra(options, def, target_buf_impl);
+    insert_accumulation_register_with_existing_buf(
+            options, def, buf, target_buf_impl, pt2wire);
 
     //Wire the stencil valid to flush of ubuffer module
     //if we can optmize for coarse grained pipeline scheduler
@@ -4111,6 +4409,8 @@ void UBuffer::generate_coreir_refactor(CodegenOptions& options,
 
 }
 
+/*
+TODO: this is deprecated , currently use the refactor pass
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options,
         UBufferImpl& impl,
@@ -4197,7 +4497,7 @@ void UBuffer::generate_coreir(CodegenOptions& options,
   //Generate the shift register connection
   generate_sreg_and_wire(options, impl, def, pt2wire);
 
-}
+}*/
 
 
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
@@ -9788,8 +10088,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           sram.hardware.in_port_width = fetch_width;
           sram.hardware.out_port_width = fetch_width;
           sram.hardware.vectorization_dim = maybe<int>(dim_id);
-          vector<string> in_bundle = get_in_bundles();
-          vector<string> out_bundle = get_out_bundles();
+          vector<string> in_bundle = get_in_bundles_update_priority();
+          vector<string> out_bundle = get_out_bundles_update_priority();
 
           cout << "in bundle  = " << in_bundle.size() << endl;
           cout << "out bundle = " << out_bundle.size() << endl;
@@ -10126,10 +10426,10 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
               //cout << "TB  : " << tb << endl;
               ////Add one more step to pad reacess dimension
-              ////tb.pad_reaccess_dimension(fetch_width);
+              //tb.pad_reaccess_dimension(fetch_width);
 
               //////Check capacity of tb
-              ////auto capacity = tb.capacity();
+              //auto capacity = tb.capacity();
               //cout << "TB size: " << capacity << endl;
               //auto mem = options.mem_hierarchy.at("mem");
               //assert(capacity <= mem.capacity.at("tb") / mem.in_port_width.at("tb"));
@@ -10137,8 +10437,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
               tb.set_dim_id();
               ret.insert({tb.name, tb});
               cout << "TB  : " << tb << endl;
-
               cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
+              cout << "TB capacity: " << tb.get_capacity(fetch_width) << endl;
               tb_cnt ++;
             }
           }
@@ -10147,6 +10447,32 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
           ret.insert({sram.name, sram});
           return make_pair(ret, remove_deps);
+        }
+
+        int UBuffer::get_capacity(int fetch_width) {
+          //TODO: add a copy constructor
+          UBuffer tmp;
+          tmp.name = name;
+          tmp.ctx= ctx;
+          for (auto it: port_bundles) {
+            tmp.port_bundles.insert(it);
+            for (auto pt: it.second) {
+              tmp.domain[pt] = domain.at(pt);
+              tmp.access_map[pt] = access_map.at(pt);
+              tmp.schedule[pt] = schedule.at(pt);
+              tmp.isIn[pt] = isIn.at(pt);
+            }
+          }
+
+          tmp.pad_reaccess_dimension(fetch_width);
+          int capacity = 0;
+          for (auto inpt: tmp.get_in_ports())
+            for (auto outpt: tmp.get_out_ports()) {
+              int dd = tmp.capacity_eval(inpt, outpt).get_value();
+              cout << "inpt : " << inpt << ", outpt:" << outpt <<  " ,DD: " << dd << endl;
+              capacity = std::max(dd, capacity);
+          }
+          return capacity;
         }
 
         void UBuffer::pad_reaccess_dimension(int fetch_width) {
@@ -10805,6 +11131,30 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         return dds;
       }
 
+      isl_union_set* UBuffer::compute_capacity(const string& inpt, const string& outpt) {
+        auto writes = access_map.at(inpt);
+        auto reads = access_map.at(outpt);
+        cout << "writes: " << str(writes) << endl;
+        cout << "reads : " << str(reads) << endl;
+        cout << "Schedule..." << endl;
+        umap* sched = global_schedule();
+        for (auto m : get_maps(sched)) {
+          cout << tab(1) << str(m) << endl;
+          release(m);
+        }
+
+        auto time_to_write = dot(inv(sched), (writes));
+        auto time_to_read = dot(inv(sched), (reads));
+
+        cout << "Time to write: " << str(time_to_write) << endl;
+        cout << "Time to read : " << str(time_to_read) << endl;
+
+        auto pc_times = dot(time_to_write, inv(time_to_read));
+        cout << "PC times     : " << str(pc_times) << endl;
+        auto dds = isl_union_map_deltas(pc_times);
+        return dds;
+      }
+
       int UBuffer::compute_capacity_hw_schedule(const string& inpt, const string& outpt) {
         auto writes = access_map.at(inpt);
         auto reads = access_map.at(outpt);
@@ -10875,6 +11225,31 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         } else {
           return {};
         }
+      }
+
+      maybe<int> UBuffer::capacity_eval(const string& inpt, const string& outpt) {
+
+        auto dds = compute_capacity(inpt, outpt);
+        cout << "DDs          : " << str(dds) << endl;
+        if (!empty(dds)) {
+          auto ddc = to_set(dds);
+          auto sched = to_map(schedule.at(inpt));
+          int inner_ii = stride_in_dim(sched, num_in_dims(sched)-1);
+
+          auto max_val = lexmaxval(ddc);
+          cout << "inner II     : " << inner_ii << endl;
+          if (inner_ii) {
+            int dd = (to_int(max_val)  + inner_ii - 1)/ inner_ii;
+            //int dd = (to_int(lexmaxval(ddc)))/ inner_ii + 1;
+            cout << "DD           : " << dd << endl;
+            return {dd};
+          } else {
+            return {1};
+          }
+        } else {
+          return {0};
+        }
+
       }
 
       maybe<int> UBuffer::dependence_distance_min(const string& inpt, const string& outpt) {
@@ -11782,6 +12157,10 @@ void lower_to_garnet_implementation(CodegenOptions& options,
       }
     }
     CGRAImpl.target_buf = target_buf;
+
+    //TODO: change this into a mutation pass
+    impl.sort_bank_port_for_pond(CGRAImpl.config_mode, target_buf, bank_id);
+    impl.sort_bank_port_for_lake(CGRAImpl.config_mode, target_buf, bank_id);
 
     //Save the lower information into ubuffer impl
     impl.lowering_info[bank_id] = CGRAImpl;

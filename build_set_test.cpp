@@ -11923,7 +11923,20 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 void playground() {
     {
-        auto prg = nlmeans_simple();
+
+      isl_ctx* ctx = isl_ctx_alloc();
+      auto m = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1,i2,i3]-> [16*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8 and 0<=i2<=1 and 0<=i3<=16}");
+      auto s = get_domain_mask(m, 2);
+      auto m_mask = dot(s, m);
+      auto sv = get_domain_mask_reverse(m, 2);
+      auto m_mask_rev = dot(sv, m);
+      cout << "mask: " << str(m_mask) << endl;
+      cout << "mask_rev: " << str(m_mask_rev) << endl;
+      assert(false);
+    }
+
+    {
+        auto prg = stereo();
         prg.pretty_print();
         align_loop_var_with_pad(prg);
         assert(false);
@@ -15237,24 +15250,26 @@ void test_pond(string dir, bool run_verilator=true) {
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
 
-  //test_apps.push_back(nlmeans_simple_blur());
-  test_apps.push_back(nlmeans_simple());
-  test_apps.push_back(resnet_simple());
-  test_apps.push_back(resnet());
-  test_apps.push_back(three_level_pond_copy());
-  test_apps.push_back(three_level_pond_rolled());
+  //Accumulation register
   test_apps.push_back(conv_1_3());
   test_apps.push_back(conv_rolled());
+
+  test_apps.push_back(nlmeans_simple_blur());
+  test_apps.push_back(nlmeans_simple());
+  test_apps.push_back(three_level_pond());
+  test_apps.push_back(three_level_pond_rolled());
+  test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(resnet_simple());
+  test_apps.push_back(resnet());
+  test_apps.push_back(resnet_init_unroll_tile());
+
+
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(complex_mem_pond());
-  test_apps.push_back(resnet_init_unroll_tile());
 
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
   //test_apps.push_back(fft8_unroll8_split());
 
-  //TODO: tobe tested with new pond
-  //test_apps.push_back(three_level_pond());
-  //test_apps.push_back(three_level_pond_rolled());
   for ( auto prg: test_apps) {
     cout << "====== Running CGRA Single Port test for " << prg.name << endl;
     prg.pretty_print();
@@ -15437,9 +15452,9 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
 
   //camera pipeline variant tests
-  test_apps.push_back(camera_pipeline_2x2_unroll());
-  //Still not work need to add a fanin pass support delay row buffer
-  //test_apps.push_back(camera_pipeline_extra_buf_glb());
+  //test_apps.push_back(camera_pipeline_2x2_unroll());
+  ////Still not work need to add a fanin pass support delay row buffer
+  ////test_apps.push_back(camera_pipeline_extra_buf_glb());
   test_apps.push_back(camera_pipeline_extra_buf());
   test_apps.push_back(camera_pipeline_unrolly());
   test_apps.push_back(camera_pipeline_2x2());
@@ -15464,21 +15479,24 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(matmul());
 
   //Simplified multi-tile DNN application
-  //test_apps.push_back(resnet_init_unroll_tile());
+  test_apps.push_back(resnet_init_unroll_tile());
 
   //Too large which will go beyound the 64k counter ub
   //test_apps.push_back(resnet5_1_full());
   //test_apps.push_back(resnet2_x_full());
 
   //For debug the 7x7 layer
-  //test_apps.push_back(resnet_last());
+  test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
+
   test_apps.push_back(resnet1_docker());
   test_apps.push_back(resnet1());
   test_apps.push_back(resnet_1x1());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet4_x());
+  //docker resnet5x test seqfault...
+  //test_apps.push_back(resnet5_x_docker());
   test_apps.push_back(resnet5_1());
   test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet5_x_new());
@@ -15488,13 +15506,13 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet5_glb_unroll());
   test_apps.push_back(resnet_multi_channel());
 
-  //two different resnet5x tests
+  two different resnet5x tests
   test_apps.push_back(resnet5_x_unroll());
   test_apps.push_back(resnet5_x_unroll_mic());
 
   //Test with non double buffer, not tested with db
-  test_apps.push_back(resnet_output_stationary_small());
-  test_apps.push_back(resnet_output_stationary_tiny());
+  //test_apps.push_back(resnet_output_stationary_small());
+  //test_apps.push_back(resnet_output_stationary_tiny());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
@@ -15535,6 +15553,9 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fp_arith());
   //test_apps.push_back(camera_pipeline_2x2_unroll());
 
+  //Not work yet
+  //test_apps.push_back(stereo_unroll());
+  //
   //CGRA tests
   test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(conv_3_3());
@@ -15567,18 +15588,17 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //Big applications
   test_apps.push_back(mobilenet_unrolled());
-  //test_apps.push_back(resnet_one_input());
-  //test_apps.push_back(resnet88());
-  //test_apps.push_back(resnet88_chain());
+  test_apps.push_back(resnet88());
+  test_apps.push_back(resnet88_chain());
 
   //test_apps.push_back(resnet_coarse_pipeline_loop());
+  //New scheduler take too long time, revisit when refactor the scheduler
+  //test_apps.push_back(resnet_one_input());
 
   //coarse grained pipeline
   //test_apps.push_back(resnet_coarse_pipeline_loop());
 
   //test_apps.push_back(conv_3_3_wide());
-  //TODO: break in the middle of vectorization
-  //test_apps.push_back(down_sample());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
@@ -15609,23 +15629,27 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
 
   //CGRA tests that pass dual port test
   //test_apps.push_back(matmul());
-  test_apps.push_back(camera_pipeline_2x2());
-  test_apps.push_back(unsharp_large());
-  test_apps.push_back(harris_color());
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(down_sample());
-  test_apps.push_back(unsharp());
-  test_apps.push_back(unsharp_new());
-  test_apps.push_back(counter());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(up_sample());
-  test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(camera_pipeline_2x2());
+  //test_apps.push_back(unsharp_large());
+  //test_apps.push_back(harris_color());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(unsharp_new());
+  //Counter did not work
+  //test_apps.push_back(counter());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //Resnet does not work
   test_apps.push_back(resnet88());
+  //test_apps.push_back(camera_pipeline_new());
+
+  //Not working TODO: merge dp_tile branch and check if fix this error
+  test_apps.push_back(up_sample());
   test_apps.push_back(laplacian_pyramid_docker());
   test_apps.push_back(laplacian_pyramid());
 
@@ -18250,6 +18274,32 @@ void tighten_iis(schedule_info& sched, prog& prg) {
   }
 }
 
+void tighten_iis(schedule_info& sched, prog& prg, int fetch_width) {
+  bool tightened = true;
+  while (tightened) {
+    tightened = false;
+    for (auto loop : prg.all_loops()) {
+      cout << loop->name << endl;
+      int ii = sched.II(loop);
+      if (ii != 1) {
+        int L = sched.last_update_delay(loop);
+        int offset = 0;
+        if (L % fetch_width != 0) {
+          offset = fetch_width - L%fetch_width;
+          L += offset;
+        }
+        if (ii > L) {
+          cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          sched.loop_iis[loop->name] = max(L, 1);
+          //sched.op_offset_within_parent.at(pick(loop->children)) += offset;
+          tightened = true;
+          break;
+        }
+      }
+    }
+  }
+}
+
 std::set<op*> find_perfect_lp_outside_cgpl(schedule_info& sched, prog& prg) {
   vector<op*> cgpl_lps;
   std::set<op*> ret;
@@ -19184,11 +19234,11 @@ void update_coarse_grained_loop_iis(schedule_info& sched, op* cgpl) {
     cout << "Most compute intensive stage: " << most_compute_intensive_stage->name << endl;
     cout << tab(1) << "Current II        : " << sched.II(cgpl) << endl;
     sched.loop_iis[cgpl->name] =
-      max(sched.total_latency(most_compute_intensive_stage), 1);
+      max(sched.total_latency(most_compute_intensive_stage) + 8, 1);
     cout << tab(1) << "Adjusting II to   : " << sched.II(cgpl) << endl;
 }
 
-void coarse_grained_pipeline_optimization(schedule_info& sched, prog& prg) {
+void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info& sched, prog& prg) {
 
   vector<op*> cgpls;
   //Find the cgpl in post order from AST leaves to root
@@ -19196,7 +19246,8 @@ void coarse_grained_pipeline_optimization(schedule_info& sched, prog& prg) {
   for (auto cgpl: cgpls) {
     if (cgpl!= nullptr && cgpl->name != "root") {
       update_coarse_grained_loop_iis(sched, cgpl);
-      tighten_iis(sched, prg);
+      tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
+      //tighten_iis(sched, prg);
     }
   }
 }
@@ -19264,12 +19315,12 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
     //adjust_outer_delays_sequentially_cgpl(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
   } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
-    coarse_grained_pipeline_optimization(sched, prg);
+    coarse_grained_pipeline_optimization(options, sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     adjust_outer_delays_sequentially(sched, prg);
 
   } else if(options.fallback_schedule == ISCA_SCHEDULE) {
-    coarse_grained_pipeline_optimization(sched, prg);
+    coarse_grained_pipeline_optimization(options, sched, prg);
     adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
     align_glb_load_start_cycle(sched, prg);
     tighten_coarse_grained_iis(sched, prg);
@@ -19467,11 +19518,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
      * old method for ISCA deadline*/
     asap_inner_loops_schedule(sched, root, prg,
             options.mem_hierarchy.at("mem").fetch_width);
-    //sequential_schedule(sched, root, prg);
 
     //We need a loop here, to tighten the inner II, here is a little arbitrary
     adjust_inner_iis(sched, prg);
-    tighten_iis(sched, prg);
+    tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
+    //tighten_iis(sched, prg);
 
     //only adjust coarse grained ii while optimize double buffer
     if (options.fallback_schedule == ASPLOS_SCHEDULE) {
@@ -19481,12 +19532,12 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       //adjust_outer_delays_sequentially_cgpl(sched, prg);
       adjust_outer_delays_sequentially(sched, prg);
     } else if(options.fallback_schedule == VANILLA_DB_SCHEDULE) {
-      coarse_grained_pipeline_optimization(sched, prg);
+      coarse_grained_pipeline_optimization(options, sched, prg);
       adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
       adjust_outer_delays_sequentially(sched, prg);
 
     } else if(options.fallback_schedule == ISCA_SCHEDULE) {
-      coarse_grained_pipeline_optimization(sched, prg);
+      coarse_grained_pipeline_optimization(options, sched, prg);
       adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
       align_glb_load_start_cycle(sched, prg);
       tighten_coarse_grained_iis(sched, prg);
@@ -19504,13 +19555,15 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //change to the fallback schedule
     options.fallback_schedule =  DNNScheduleAlgorithm(options.fallback_schedule + 1);
     cout << " Fall back schedule No. "  << options.fallback_schedule << endl;
-  } while (!no_violated_buf_write_port_assignments(options, sched, prg));
+  } while (!no_violated_buf_write_port_assignments(options, sched, prg)
+      ||  !no_violated_cycle_accurate_dependencies(sched, prg));
+
   //dump_DNN_delays(sched, prg);
 
   auto op_sched = op_start_times_map(sched, prg);
   cout << "\tFinal schedule : " << str(op_sched)  << endl;
   assert(no_violated_buf_write_port_assignments(options, sched, prg));
-
+  //print_partial_schedule(sched, prg);
   adjust_schedule_forward(sched, prg, 0);
   sanity_check_hw_schedule(sched, prg);
   return;

@@ -4154,21 +4154,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U862 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U862_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U865 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U865_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U868 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U868_out)
 );
@@ -4302,21 +4302,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U805 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U805_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U808 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U808_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U811 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U811_out)
 );
@@ -4552,21 +4552,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U748 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U748_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U751 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U751_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U754 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U754_out)
 );
@@ -4700,21 +4700,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U691 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U691_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U694 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U694_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U697 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U697_out)
 );
@@ -4848,21 +4848,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U634 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U634_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U637 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U637_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U640 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U640_out)
 );
@@ -4996,21 +4996,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U577 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U577_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U580 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U580_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U583 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U583_out)
 );
@@ -5246,21 +5246,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U520 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U520_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U523 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U523_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U526 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U526_out)
 );
@@ -5394,21 +5394,21 @@ mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U463 (
-    .in(16'h0984),
+    .in(16'h0930),
     .clk(clk),
     .out(coeff_U463_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U466 (
-    .in(16'h032c),
+    .in(16'h0310),
     .clk(clk),
     .out(coeff_U466_out)
 );
 mantle_reg__has_clrFalse__has_enFalse__has_rstFalse__width16 #(
     .init(16'h0000)
 ) coeff_U469 (
-    .in(16'h001d),
+    .in(16'h001c),
     .clk(clk),
     .out(coeff_U469_out)
 );

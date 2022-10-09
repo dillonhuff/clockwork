@@ -2479,6 +2479,29 @@ void tighten_address_space() {
     }
 
     //Use for Garnet Codegen
+    vector<string> get_ops_sorted(string mem_name) const {
+      if (mem_name == "regfile") {
+        vector<string> ret;
+        for (auto b : port_bundles) {
+          auto op = get_bundle_op(b.first);
+          if (is_update_op(op)) {
+            if (!elem(op, ret))
+              ret.push_back(op);
+          }
+        }
+        for (auto b : port_bundles) {
+          auto op = get_bundle_op(b.first);
+          if (!is_update_op(op)) {
+            if (!elem(op, ret))
+              ret.push_back(op);
+          }
+        }
+        return ret;
+      } else {
+        return get_ops_sorted_by_bundle();
+      }
+    }
+
     vector<string> get_ops_sorted_by_bundle() const {
         vector<string> ret;
         for (auto b : port_bundles) {
@@ -2680,6 +2703,39 @@ void tighten_address_space() {
       return outpts;
     }
 
+    vector<string> get_in_bundles_update_priority() const {
+      vector<string> outpts;
+      for (auto m : port_bundles) {
+        if (is_in_pt(pick(m.second)) &&
+            !is_self_loop_in(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      for (auto m : port_bundles) {
+        if (is_self_loop_in(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
+    vector<string> get_out_bundles_update_priority() const {
+      vector<string> outpts;
+      for (auto m : port_bundles) {
+        if (is_self_loop_out(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+
+      for (auto m : port_bundles) {
+        if (is_out_pt(pick(m.second)) &&
+                !is_self_loop_out(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
     int num_out_ports() const {
       return get_out_ports().size();
     }
@@ -2704,10 +2760,42 @@ void tighten_address_space() {
       return outpts;
     }
 
+    //Special function that for pond optimization
+    vector<string> get_in_ports_update_priority() const {
+      vector<string> outpts;
+      for (auto m: isIn) {
+        if (m.second && is_self_loop(m.first)) {
+          outpts.push_back(m.first);
+        }
+      }
+      for (auto m : isIn) {
+        if (m.second && !is_self_loop(m.first)) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
     vector<string> get_out_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {
         if (!m.second) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
+    //Special function that for pond optimization
+    vector<string> get_out_ports_update_priority() const {
+      vector<string> outpts;
+      for (auto m: isIn) {
+        if (!m.second && is_self_loop(m.first)) {
+          outpts.push_back(m.first);
+        }
+      }
+      for (auto m : isIn) {
+        if (!m.second && !is_self_loop(m.first)) {
           outpts.push_back(m.first);
         }
       }
@@ -2850,7 +2938,7 @@ void tighten_address_space() {
       return in_bd && out_bd;
     }
 
-    bool is_self_loop(string pt_name) {
+    bool is_self_loop(string pt_name) const {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_vec = stmt2bd.at(op_name);
@@ -2864,7 +2952,7 @@ void tighten_address_space() {
       return in_bd && out_bd;
     }
 
-    bool is_self_loop_in(string pt_name) {
+    bool is_self_loop_in(string pt_name) const {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_set = stmt2bd.at(op_name);
@@ -2875,7 +2963,7 @@ void tighten_address_space() {
       }
     }
 
-    bool is_self_loop_out(string pt_name) {
+    bool is_self_loop_out(string pt_name) const {
       auto stmt2bd = get_stmt2bd();
       auto op_name = domain_name(access_map.at(pt_name));
       auto bd_set = stmt2bd.at(op_name);
@@ -2914,6 +3002,8 @@ void tighten_address_space() {
         }
         return cap;
     }
+
+    int get_capacity(int fetch_width);
 
     void remove_redundant_dim() {
         for (auto pt: get_all_ports()) {
@@ -2973,6 +3063,7 @@ void tighten_address_space() {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     isl_union_set* compute_dd_hw_schedule(const string& inpt, const string& outpt);
+    isl_union_set* compute_capacity(const string& inpt, const string& outpt);
     int compute_capacity_hw_schedule(const string& inpt, const string& outpt);
     isl_union_set* compute_dd_hw_schedule_decouple(const string& inpt, const string& outpt);
 
@@ -3011,7 +3102,7 @@ void tighten_address_space() {
     //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
-    void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
+    //void generate_coreir(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
     void generate_coreir_refactor(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, schedule_info& info, bool with_ctrl=true);
 
     //helper function for sreg generation
@@ -3038,6 +3129,7 @@ void tighten_address_space() {
     Json generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &rewrite_buffer);
     Json generate_ubuf_args_old(CodegenOptions& options, map<string, UBuffer> & rewrite_buffer);
     Json generate_ubuf_args(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
+    Json generate_ubuf_args_old(CodegenOptions& options, UBuffer& rewrite_buffer, string mem_name);
 
     void generate_stencil_valid_config(CodegenOptions& options, string bk_name);
     CoreIR::Instance* generate_lake_tile_instance(
@@ -3051,7 +3143,7 @@ void tighten_address_space() {
         CoreIR::ModuleDef* def,
         CodegenOptions options,
         string ub_ins_name,
-        string config_mode,
+        string config_mode, bool has_stencil_valid,
         size_t input_num, size_t output_num);
 
     void emit_lake_config_collateral(CodegenOptions options, string dir);
@@ -3085,6 +3177,7 @@ void tighten_address_space() {
 
     int get_vectorized_dim(int fetch_width);
     maybe<int> dependence_distance_singleton(const string& inpt, const string& outpt, bool decouple=false);
+    maybe<int> capacity_eval(const string& inpt, const string& outpt);
     maybe<int> dependence_distance_max(const string& inpt, const string& outpt);
     maybe<int> dependence_distance_min(const string& inpt, const string& outpt);
 
@@ -3474,6 +3567,7 @@ struct GarnetImpl {
   bool insert_shift_register = false;
   UBuffer accum_reg;
   string reduce_PE_inpt, reduce_PE_outpt;
+  isl_map* restart_sched;
 
   bool substract_glb_latency;
   bool decouple_ctrl;
@@ -3634,6 +3728,8 @@ struct UBufferImpl {
   void bank_merging(CodegenOptions & options);
   void bank_merging_and_rewrite(CodegenOptions & options);
   void sort_bank_port();
+  void sort_bank_port_for_pond(string , UBuffer& , int);
+  void sort_bank_port_for_lake(string , UBuffer& , int);
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);
 

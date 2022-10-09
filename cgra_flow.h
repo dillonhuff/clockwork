@@ -25,7 +25,7 @@ void preprocess_prog(prog& prg) {
     dsa_writers(prg);
 }
 
-vector<string> cgra_flow_result(prog& prg, string dir, bool enable_pond=true); 
+vector<string> cgra_flow_result(prog& prg, string dir, bool use_pond=false);
 vector<string> aha_flow_result(prog& prg, string dir);
 
 void sanity_check(prog& prg, vector<string>& cpu, vector<string> & verilator_res) {
