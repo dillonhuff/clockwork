@@ -11089,14 +11089,15 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         cout << "writes: " << str(writes) << endl;
         cout << "reads : " << str(reads) << endl;
         cout << "Schedule..." << endl;
-        umap* sched = global_schedule();
-        for (auto m : get_maps(sched)) {
-          cout << tab(1) << str(m) << endl;
-          release(m);
-        }
+        //umap* sched = global_schedule();
+        //for (auto m : get_maps(sched)) {
+        //  cout << tab(1) << str(m) << endl;
+        //  release(m);
+        //}
+        //Rewrite schedule to it's own port]
 
-        auto time_to_write = dot(inv(sched), (writes));
-        auto time_to_read = dot(inv(sched), (reads));
+        auto time_to_write = dot(inv(schedule.at(inpt)), (writes));
+        auto time_to_read = dot(inv(schedule.at(outpt)), (reads));
 
         cout << "Time to write: " << str(time_to_write) << endl;
         cout << "Time to read : " << str(time_to_read) << endl;
@@ -11113,14 +11114,14 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         cout << "writes: " << str(writes) << endl;
         cout << "reads : " << str(reads) << endl;
         cout << "Schedule..." << endl;
-        umap* sched = global_schedule();
-        for (auto m : get_maps(sched)) {
-          cout << tab(1) << str(m) << endl;
-          release(m);
-        }
+        //umap* sched = global_schedule();
+        //for (auto m : get_maps(sched)) {
+        //  cout << tab(1) << str(m) << endl;
+        //  release(m);
+        //}
 
-        auto time_to_write = dot(inv(sched), (writes));
-        auto time_to_read = dot(inv(sched), (reads));
+        auto time_to_write = dot(inv(schedule.at(inpt)), (writes));
+        auto time_to_read = dot(inv(schedule.at(outpt)), (reads));
 
         cout << "Time to write: " << str(time_to_write) << endl;
         cout << "Time to read : " << str(time_to_read) << endl;
@@ -11137,14 +11138,14 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         cout << "writes: " << str(writes) << endl;
         cout << "reads : " << str(reads) << endl;
         cout << "Schedule..." << endl;
-        umap* sched = global_schedule();
-        for (auto m : get_maps(sched)) {
-          cout << tab(1) << str(m) << endl;
-          release(m);
-        }
+        //umap* sched = global_schedule();
+        //for (auto m : get_maps(sched)) {
+        //  cout << tab(1) << str(m) << endl;
+        //  release(m);
+        //}
 
-        auto time_to_write = dot(inv(sched), (writes));
-        auto time_to_read = dot(inv(sched), (reads));
+        auto time_to_write = dot(inv(schedule.at(inpt)), (writes));
+        auto time_to_read = dot(inv(schedule.at(outpt)), (reads));
 
         cout << "Time to write: " << str(time_to_write) << endl;
         cout << "Time to read : " << str(time_to_read) << endl;
@@ -11161,14 +11162,14 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         cout << "writes: " << str(writes) << endl;
         cout << "reads : " << str(reads) << endl;
         cout << "Schedule..." << endl;
-        umap* sched = global_schedule();
-        for (auto m : get_maps(sched)) {
-          cout << tab(1) << str(m) << endl;
-          release(m);
-        }
+        //umap* sched = global_schedule();
+        //for (auto m : get_maps(sched)) {
+        //  cout << tab(1) << str(m) << endl;
+        //  release(m);
+        //}
 
-        auto time_to_write = dot(inv(sched), (writes));
-        auto time_to_read = dot(inv(sched), (reads));
+        auto time_to_write = dot(inv(schedule.at(inpt)), (writes));
+        auto time_to_read = dot(inv(schedule.at(outpt)), (reads));
 
         cout << "Time to write: " << str(time_to_write) << endl;
         cout << "Time to read : " << str(time_to_read) << endl;
