@@ -20040,10 +20040,11 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
             max_latency = std::max(max_latency, (int)port_latency.value()["latency"]);
           }
         }
-
+        cout << "\tmax compute Kernel latency " << max_latency << endl;
         map<string, int> port_slacks;
         for (auto input_latencies : kernel_latencies[op->func].items()) {
           for (auto port_latency : input_latencies.value().items()) {
+            cout << "\tport compute Kernel latency " <<  (string)input_latencies.key() + "_" + port_latency.key() << " : " << max_latency - (int)(port_latency.value()["latency"]) << endl;
             port_slacks[(string)input_latencies.key() + "_" + port_latency.key()] = max_latency - (int)(port_latency.value()["latency"]); 
           }
         }
