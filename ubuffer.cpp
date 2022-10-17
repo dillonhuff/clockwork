@@ -11335,9 +11335,11 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           cout << tab(1) << str(m) << endl;
           release(m);
         }
+        auto in_sched = buf.schedule.at(inpt);
+        auto out_sched = buf.schedule.at(outpt);
 
-        auto time_to_write = dot(inv(sched), (writes));
-        auto time_to_read = dot(inv(sched), (reads));
+        auto time_to_write = dot(inv(in_sched), (writes));
+        auto time_to_read = dot(inv(out_sched), (reads));
 
         cout << "Time to write: " << str(time_to_write) << endl;
         cout << "Time to read : " << str(time_to_read) << endl;
@@ -11367,7 +11369,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         return {};
       }
 
-      maybe<int> dependence_distance_singleton(umap* writes, umap* reads, umap* sched) {
+      /*maybe<int> dependence_distance_singleton(umap* writes, umap* reads, umap* sched) {
 
         //auto writes = buf.access_map.at(inpt);
         //auto reads = buf.access_map.at(outpt);
@@ -11408,7 +11410,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
           return {};
         }
         return {};
-      }
+      }*/
 
       int total_capacity(UBuffer& buf) {
         bank bank = buf.compute_bank_info();
