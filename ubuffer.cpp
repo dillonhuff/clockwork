@@ -1512,9 +1512,8 @@ void UBufferImpl::sort_bank_port_for_lake(string config_mode, UBuffer& buf, int 
     }
 }
 
-void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int bank_id) {
-    if (config_mode != "pond")
-      return;
+void UBufferImpl::sort_bank_port(string config_mode, UBuffer& buf, int bank_id) {
+    if (config_mode == "pond" || config_mode == "lake_dp")
     {
         //The logic below here is self loop (update operation) port is always the smallest, using port 0, and the other port follows the alphabet sequence
         vector<std::set<string>>& outpt2readers = bank_outpt2readers.at(bank_id);
@@ -1527,9 +1526,7 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                   else
                     return pick(l) > pick(r);
                 });
-    }
 
-    {
         vector<std::set<string>>& in2writers = bank_inpt2writers.at(bank_id);
         sort(in2writers.begin(), in2writers.end(),
                 [&buf](std::set<string>& l, std::set<string>& r)
@@ -1540,7 +1537,31 @@ void UBufferImpl::sort_bank_port_for_pond(string config_mode, UBuffer& buf, int 
                   else
                     return pick(l) > pick(r);
                 });
+    } else {
+        //The logic below here is self loop (update operation) port is always the smallest, using port 0, and the other port follows the alphabet sequence
+        vector<std::set<string>>& outpt2readers = bank_outpt2readers.at(bank_id);
+        sort(outpt2readers.begin(), outpt2readers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return true;
+                  else if (buf.is_self_loop(pick(r)))
+                    return false;
+                  else
+                    return pick(l) > pick(r);
+                });
+
+        vector<std::set<string>>& in2writers = bank_inpt2writers.at(bank_id);
+        sort(in2writers.begin(), in2writers.end(),
+                [&buf](std::set<string>& l, std::set<string>& r)
+                { if (buf.is_self_loop(pick(l)))
+                    return false;
+                  else if (buf.is_self_loop(pick(r)))
+                    return true;
+                  else
+                    return pick(l) > pick(r);
+                });
     }
+
 }
 
 #ifdef COREIR
@@ -2483,8 +2504,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    //add a simplify optimization pass,
    //reutrn:    pair(schedulem access_map)
    //FIXME: add a handle for running this pass
-   auto pad_pair = pad_domain(sched, (linear_acc_map));
-   auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   auto m_pair = make_pair(sched, linear_acc_map);
+   if (num_in_dims(sched) < mem.iteration_level + 1) {
+     auto pad_pair = pad_domain(sched, (linear_acc_map));
+     m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   }
    auto new_sched = m_pair.first;
    cout << tab(1) << "After Merge: " << endl;
    cout << tab(2) << "schedule: " << str(new_sched) << endl;
@@ -2524,8 +2548,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
 
    //add a simplify optimization pass,
    //reutrn:    pair(schedulem access_map)
-   auto pad_pair = pad_domain(sched, (linear_acc_map));
-   auto m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   auto m_pair = make_pair(sched, linear_acc_map);
+   if (num_in_dims(sched) < mem.iteration_level + 1) {
+     auto pad_pair = pad_domain(sched, (linear_acc_map));
+     m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   }
    auto new_sched = m_pair.first;
    cout << tab(1) << "After Merge: " << endl;
    cout << tab(2) << "schedule: " << str(new_sched) << endl;
@@ -12162,8 +12189,8 @@ void lower_to_garnet_implementation(CodegenOptions& options,
     CGRAImpl.target_buf = target_buf;
 
     //TODO: change this into a mutation pass
-    impl.sort_bank_port_for_pond(CGRAImpl.config_mode, target_buf, bank_id);
-    impl.sort_bank_port_for_lake(CGRAImpl.config_mode, target_buf, bank_id);
+    impl.sort_bank_port(CGRAImpl.config_mode, target_buf, bank_id);
+    //impl.sort_bank_port_for_lake(CGRAImpl.config_mode, target_buf, bank_id);
 
     //Save the lower information into ubuffer impl
     impl.lowering_info[bank_id] = CGRAImpl;

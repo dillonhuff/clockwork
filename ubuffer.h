@@ -3728,7 +3728,7 @@ struct UBufferImpl {
   void bank_merging(CodegenOptions & options);
   void bank_merging_and_rewrite(CodegenOptions & options);
   void sort_bank_port();
-  void sort_bank_port_for_pond(string , UBuffer& , int);
+  void sort_bank_port(string , UBuffer& , int);
   void sort_bank_port_for_lake(string , UBuffer& , int);
 
   void sanity_check_memory_hierarchy(CodegenOptions& options, const vector<int> & banks);

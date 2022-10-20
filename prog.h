@@ -1117,8 +1117,8 @@ struct prog {
         return v;
       }
     }
-    cout << "Error: No op named " << target_op << " in" << endl;
     pretty_print();
+    cout << "Error: No op named " << target_op << " in" << endl;
     assert(false);
   }
 
@@ -1652,6 +1652,10 @@ std::set<string> buffers_read(op* p);
 
 std::set<string> buffers_written(prog& prg);
 std::set<string> buffers_read(prog& prg);
+
+std::set<string> buffers_read_by_kernel(op* loop);
+std::set<string> buffers_written_by_kernel(op* loop);
+std::set<string> kernel_func(op* loop);
 
 bool writes(const std::string& target_buf, op* p);
 
