@@ -1242,6 +1242,39 @@ void prog::sanity_check() {
   //}
 }
 
+std::set<string> buffers_read_by_kernel(op* loop) {
+
+  std::set<string> buffers_read;
+  for (auto op : loop->descendant_ops()) {
+    for (auto buff : op->buffers_read()){
+      buffers_read.insert(buff);
+    }
+  }
+  return buffers_read;
+}
+
+std::set<string> buffers_written_by_kernel(op* loop) {
+
+  std::set<string> buffers_written;
+  for (auto op : loop->descendant_ops()) {
+    for (auto buff : op->buffers_written()){
+      buffers_written.insert(buff);
+    }
+  }
+  return buffers_written;
+}
+
+std::set<string> kernel_func(op* loop) {
+
+  std::set<string> funcs;
+  for (auto op : loop->descendant_ops()) {
+    assert(op->func != "");
+    funcs.insert(op->func);
+  }
+  //Kernel allow only one op per loop nest
+  return funcs;
+}
+
 //Get producer in coarse grained loop nest sub ast
 std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
 
@@ -3937,7 +3970,9 @@ bool no_violated_resource_assignments(schedule_info& sched, prog& prg) {
   return true;
 }
 
-bool share_buf_write_port(const std::string& op0, const std::string& op1, schedule_info& sched, prog& prg) {
+bool share_buf_write_port(CodegenOptions& options,
+        schedule_info& sched, prog& prg,
+        const std::string& op0, const std::string& op1) {
   string buf0, buf1;
   for (auto r : sched.buf_write_assignment) {
     if (r.first->name == op0) {
@@ -3953,10 +3988,20 @@ bool share_buf_write_port(const std::string& op0, const std::string& op1, schedu
     //Check if those two op can partition
     umap* pmap0 = producer_umap(prg.find_op(op0), prg);
     umap* pmap1 = producer_umap(prg.find_op(op1), prg);
-    cout << "buf " << buf0 << endl;
-    bool is_pond =
-      sched.buf2level.at(buf0) == "regfile";
-    return is_pond && !empty(its(range(pmap0), range(pmap1)));
+    if (empty(its(range(pmap0), range(pmap1)))) {
+      return false;
+    }
+    cout << "\tBuf " << buf0 << "is written by two different op." << endl;
+    string mem_level = sched.buf2level.at(buf0);
+    if (options.mem_hierarchy.count(mem_level)) {
+      int parallel_op =
+        options.mem_hierarchy.at(mem_level).interconnect_in_num;
+      cout << "\tParallel in port: " << parallel_op << endl;
+      return parallel_op < 2;
+    } else {
+      cout << "\tMemory hierarchy: " << mem_level << " level not found! " << endl;
+      assert(false);
+    }
   } else {
     return false;
   }
@@ -3970,15 +4015,15 @@ bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_in
     for (auto op1 : get_maps(sched_exprs)) {
       string name0 = domain_name(op0);
       string name1 = domain_name(op1);
-        cout << "name0: " << name0 << endl;
-        cout << "name1: " << name1 << endl;
 
-      if (name0 != name1 && share_buf_write_port(name0, name1, sched, prg)) {
+      if (name0 != name1 && share_buf_write_port(options, sched, prg, name0, name1)) {
         auto times = range(op0);
         auto times1 = range(op1);
         auto overlap = its(times, times1);
         cout << "name0: " << name0 << endl;
         cout << "name1: " << name1 << endl;
+        cout << "sched0: " << str(op0) << endl;
+        cout << "sched1: " << str(op1) << endl;
         cout << "overlap: " << str(overlap) << endl;
         if (!empty(overlap)) {
           cout << tab(1) << name0 << " and " << name1 << " use the same resource" << endl;

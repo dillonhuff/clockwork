@@ -10,6 +10,7 @@
 #include "lake_target.h"
 #include "simple_example_progs.h"
 #include "prog.h"
+#include "resource.h"
 #include "ubuffer.h"
 
 #include <chrono>
@@ -15628,8 +15629,8 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
-  //test_apps.push_back(matmul());
-  test_apps.push_back(conv_3_3());
+  test_apps.push_back(resnet_init_unroll_tile_dp());
+  //test_apps.push_back(conv_3_3());
   //test_apps.push_back(camera_pipeline_2x2());
   //test_apps.push_back(unsharp_large());
   //test_apps.push_back(harris_color());
@@ -15645,13 +15646,13 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   //test_apps.push_back(conv_1_2());
   //test_apps.push_back(demosaic_unrolled());
   //Resnet does not work
-  test_apps.push_back(resnet88());
+  //test_apps.push_back(resnet88());
   //test_apps.push_back(camera_pipeline_new());
 
   //Not working TODO: merge dp_tile branch and check if fix this error
-  test_apps.push_back(up_sample());
-  test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(laplacian_pyramid_docker());
+  //test_apps.push_back(laplacian_pyramid());
 
   //////DNN apps
   ////Not working
@@ -15693,6 +15694,7 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
       verilog_files.push_back("PondTop_flat.v");
       verilog_files.push_back("pondtop_new.sv");
       verilog_files.push_back("pond_module_wrappers.v");
+      verilog_files.push_back("lake_module_wrappers.v");
       add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
       verilator_regression_test(prg, verilog_files, "dual_port_buffer");
     }
@@ -19238,6 +19240,60 @@ void update_coarse_grained_loop_iis(schedule_info& sched, op* cgpl) {
     cout << tab(1) << "Adjusting II to   : " << sched.II(cgpl) << endl;
 }
 
+
+
+void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl, prog& prg) {
+    int target_II = RRT.getMinimumII();
+    bool finished = false;
+    vector<string> sorted_kernels = topologically_sort_kernels(cgpl, prg);
+    while (!finished) {
+      RRT.initModuloTable(target_II);
+      for (auto k: sorted_kernels) {
+          cout << "Kernel: " << k << endl;
+        auto producers = get_producers(k, cgpl, prg);
+        int t = 0;
+        for (string p : producers) {
+            t = std::max(t, RRT.getTimeStamp(p)+1);
+        }
+        int offset = 0;
+        while(offset < target_II) {
+          bool can_schedule = RRT.scheduleKernel(prg.find_non_op(k), (t + offset)  % target_II);
+          cout << "\tTarget II: " << target_II << endl;
+          cout << "\tTry to schedule kernel at " << (t+offset)% target_II << endl;
+          if (can_schedule) {
+              cout << "\tSchedule K at time = " << t+offset << endl;
+              RRT.setTimeStamp(k, (t + offset));
+              break;
+          } else {
+              offset ++;
+          }
+        }
+        if (offset == target_II ) {
+          target_II ++;
+          RRT.clearSchedule();
+          if (target_II > sorted_kernels.size()) {
+              cout << "Target II should not larger than number of kernel, at least sequential schedule should work in that case. " << endl;
+            assert(false);
+          }
+          break;
+        }
+        if (k == sorted_kernels.back()) {
+            finished = true;
+        }
+      }
+    }
+    RRT.print();
+
+    int cycle_accurate_II = RRT.getCycleAccurateII(sched, prg, target_II);
+    cout << endl << "II optimization finished ..." << endl;
+    cout << tab(1) << "Target II : " << target_II <<endl;
+    cout << tab(1) << "Cycle Accurate II: " << cycle_accurate_II << endl;
+
+    cout << tab(2) << "Current II        : " << sched.II(cgpl) << endl;
+    sched.loop_iis[cgpl->name] = cycle_accurate_II + 8;
+    cout << tab(2) << "Adjusting II to   : " << sched.II(cgpl) << endl << endl;
+}
+
 void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info& sched, prog& prg) {
 
   vector<op*> cgpls;
@@ -19245,7 +19301,12 @@ void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info
   find_coarse_grained_pipeline_loops(prg.root, cgpls, prg);
   for (auto cgpl: cgpls) {
     if (cgpl!= nullptr && cgpl->name != "root") {
-      update_coarse_grained_loop_iis(sched, cgpl);
+      RTable RRT =
+          build_modulo_resource_reservation_table(options, sched, cgpl, prg);
+      update_coarse_grained_loop_iis(sched, RRT, cgpl, prg);
+
+
+      //update_coarse_grained_loop_iis(sched, cgpl);
       tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
       //tighten_iis(sched, prg);
     }
@@ -19985,12 +20046,18 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
           sched.buffer_load_latencies[b] = 0;
           sched.buffer_store_latencies[b] = 0;
         }
-      auto pmap = prg.producer_map(b);
-      cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-          << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-          "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
-      sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
 
+        auto pmap = prg.producer_map(b);
+        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+        //This is a hacky rewrite
+        if (!contains(b, "glb")) {
+          if (sched.buf2level[b] == "glb") {
+             sched.buf2level[b] = "mem";
+          }
+        }
       }
     }
     cout << sched.compute_unit_latencies << endl;
@@ -20026,6 +20093,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
           << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
           "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
       sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+        //This is a hacky rewrite
+        if (!contains(b, "glb")) {
+          if (sched.buf2level[b] == "glb") {
+             sched.buf2level[b] = "mem";
+          }
+        }
+        cout << "buf2level: " << sched.buf2level[b] << endl;
     }
   }
   }
