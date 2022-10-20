@@ -262,14 +262,16 @@ struct RTable {
                 for(string k: memWriteTable.at(mem).getKernels(coarse_t)) {
                     op* lp = prg.find_non_op(k);
                     int latency = sched.total_latency(lp);
-                    int dc = calculate_duty_cycle(lp->origin_lp);
-                    max_step_latency = std::max(latency/dc, max_step_latency);
+                    //int dc = calculate_duty_cycle(lp->origin_lp);
+                    //max_step_latency = std::max(latency/dc, max_step_latency);
+                    max_step_latency = std::max(latency, max_step_latency);
                 }
                 for(string k: memReadTable.at(mem).getKernels(coarse_t)) {
                     op* lp = prg.find_non_op(k);
                     int latency = sched.total_latency(lp);
-                    int dc = calculate_duty_cycle(lp->origin_lp);
-                    max_step_latency = std::max(latency/dc, max_step_latency);
+                    //int dc = calculate_duty_cycle(lp->origin_lp);
+                    //max_step_latency = std::max(latency/dc, max_step_latency);
+                    max_step_latency = std::max(latency, max_step_latency);
                 }
             }
             //cout << tab(2) << "coarse t = " << coarse_t << endl;

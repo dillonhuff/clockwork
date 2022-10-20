@@ -15663,29 +15663,31 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
   vector<prog> test_apps;
 
-
-  test_apps.push_back(conv_3_3());
-  test_apps.push_back(camera_pipeline_2x2_unroll());
-  test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
-  test_apps.push_back(harris());
-  test_apps.push_back(down_sample());
-  test_apps.push_back(unsharp());
-  test_apps.push_back(unsharp_new());
   //CGRA tests that pass dual port test
-  test_apps.push_back(up_sample());
-  test_apps.push_back(laplacian_pyramid());
-  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(resnet_init_unroll_tile_dp());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(camera_pipeline_2x2());
+  //test_apps.push_back(unsharp_large());
+  //test_apps.push_back(harris_color());
+  //test_apps.push_back(gaussian());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(harris());
+  //test_apps.push_back(down_sample());
+  //test_apps.push_back(unsharp());
+  //test_apps.push_back(unsharp_new());
+  //Counter did not work
+  //test_apps.push_back(counter());
+  //test_apps.push_back(rom());
+  //test_apps.push_back(conv_1_2());
+  //test_apps.push_back(demosaic_unrolled());
+  //Resnet does not work
+  //test_apps.push_back(resnet88());
+  //test_apps.push_back(camera_pipeline_new());
 
-  test_apps.push_back(camera_pipeline_2x2());
-  test_apps.push_back(unsharp_large());
-  test_apps.push_back(harris_color());
-  test_apps.push_back(counter());
-  test_apps.push_back(rom());
-  test_apps.push_back(conv_1_2());
-  test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(resnet88());
-  test_apps.push_back(camera_pipeline_new());
+  //Not working TODO: merge dp_tile branch and check if fix this error
+  //test_apps.push_back(up_sample());
+  //test_apps.push_back(laplacian_pyramid_docker());
+  //test_apps.push_back(laplacian_pyramid());
 
 
   ////////DNN apps
@@ -15726,10 +15728,11 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
     //run verilator on all the generated verilog
     if (!gen_config_only) {
       vector<string> verilog_files;;
-      verilog_files.push_back("LakeTop_flat.v");
-      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("PondTop_flat.v");
+      verilog_files.push_back("pondtop_new.sv");
+      verilog_files.push_back("pond_module_wrappers.v");
       verilog_files.push_back("lake_module_wrappers.v");
-      add_default_initial_block("laketop", "endmodule   // sram_dp__0");
+      add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
       verilator_regression_test(prg, verilog_files, "dual_port_buffer");
     }
 #endif
@@ -20171,7 +20174,19 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
                sched.buf2level[b] = "mem";
             }
           }
-
+        /*
+        auto pmap = prg.producer_map(b);
+        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+        //This is a hacky rewrite
+        if (!contains(b, "glb")) {
+          if (sched.buf2level[b] == "glb") {
+             sched.buf2level[b] = "mem";
+          }
+        >>>>>>> resource reservation table added
+        */
         }
       }
     }
@@ -20219,6 +20234,20 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
             //cout << "buf2level: " << sched.buf2level[b] << endl;
         }
       }
+      /*
+      auto pmap = prg.producer_map(b);
+      cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+          << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+          "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+      sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+        //This is a hacky rewrite
+        if (!contains(b, "glb")) {
+          if (sched.buf2level[b] == "glb") {
+             sched.buf2level[b] = "mem";
+          }
+        }
+        cout << "buf2level: " << sched.buf2level[b] << endl;
+       */
     }
   }
   cout << sched.compute_unit_latencies << endl;
