@@ -14,19 +14,81 @@
       "hcompute_binput_gpyr_gpyr_1_stencil":{
         "type":["Record",[
           ["out_binput_gpyr_gpyr_1_stencil",["Array",16,"Bit"]],
-          ["in0_binput_gpyr_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_binput_gpyr_gpyr_0_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_binput_gpyr_gpyr_0_stencil_1_1147_1148":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_binput_gpyr_gpyr_0_stencil_2_1146_1147":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_binput_gpyr_gpyr_0_stencil_3_binput_gpyr_gpyr_0_stencil_4_1146":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1149":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1148_1149_1150":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_binput_gpyr_gpyr_1_stencil","self.in0_binput_gpyr_gpyr_0_stencil.0"]
+          ["self.in0_binput_gpyr_gpyr_0_stencil.0","add_binput_gpyr_gpyr_0_stencil_1_1147_1148.in0"],
+          ["add_binput_gpyr_gpyr_0_stencil_2_1146_1147.out","add_binput_gpyr_gpyr_0_stencil_1_1147_1148.in1"],
+          ["lshr_1148_1149_1150.in0","add_binput_gpyr_gpyr_0_stencil_1_1147_1148.out"],
+          ["self.in0_binput_gpyr_gpyr_0_stencil.1","add_binput_gpyr_gpyr_0_stencil_2_1146_1147.in0"],
+          ["add_binput_gpyr_gpyr_0_stencil_3_binput_gpyr_gpyr_0_stencil_4_1146.out","add_binput_gpyr_gpyr_0_stencil_2_1146_1147.in1"],
+          ["self.in0_binput_gpyr_gpyr_0_stencil.2","add_binput_gpyr_gpyr_0_stencil_3_binput_gpyr_gpyr_0_stencil_4_1146.in0"],
+          ["self.in0_binput_gpyr_gpyr_0_stencil.3","add_binput_gpyr_gpyr_0_stencil_3_binput_gpyr_gpyr_0_stencil_4_1146.in1"],
+          ["lshr_1148_1149_1150.in1","const_p2__1149.out"],
+          ["self.out_binput_gpyr_gpyr_1_stencil","lshr_1148_1149_1150.out"]
         ]
       },
       "hcompute_binput_gpyr_gpyr_2_stencil":{
         "type":["Record",[
           ["out_binput_gpyr_gpyr_2_stencil",["Array",16,"Bit"]],
-          ["in0_binput_gpyr_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_binput_gpyr_gpyr_1_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_binput_gpyr_gpyr_1_stencil_1_1170_1171":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_binput_gpyr_gpyr_1_stencil_2_1169_1170":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_1_stencil_4_1169":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1172":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1171_1172_1173":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_binput_gpyr_gpyr_2_stencil","self.in0_binput_gpyr_gpyr_1_stencil.0"]
+          ["self.in0_binput_gpyr_gpyr_1_stencil.0","add_binput_gpyr_gpyr_1_stencil_1_1170_1171.in0"],
+          ["add_binput_gpyr_gpyr_1_stencil_2_1169_1170.out","add_binput_gpyr_gpyr_1_stencil_1_1170_1171.in1"],
+          ["lshr_1171_1172_1173.in0","add_binput_gpyr_gpyr_1_stencil_1_1170_1171.out"],
+          ["self.in0_binput_gpyr_gpyr_1_stencil.1","add_binput_gpyr_gpyr_1_stencil_2_1169_1170.in0"],
+          ["add_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_1_stencil_4_1169.out","add_binput_gpyr_gpyr_1_stencil_2_1169_1170.in1"],
+          ["self.in0_binput_gpyr_gpyr_1_stencil.2","add_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_1_stencil_4_1169.in0"],
+          ["self.in0_binput_gpyr_gpyr_1_stencil.3","add_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_1_stencil_4_1169.in1"],
+          ["lshr_1171_1172_1173.in1","const_p2__1172.out"],
+          ["self.out_binput_gpyr_gpyr_2_stencil","lshr_1171_1172_1173.out"]
         ]
       },
       "hcompute_binput_lpyr_0_stencil":{
@@ -36,15 +98,15 @@
           ["in1_binput_gpyr_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "sub_binput_gpyr_gpyr_0_stencil_2_binput_gpyr_gpyr_1_stencil_1_1145":{
+          "sub_binput_gpyr_gpyr_0_stencil_5_binput_gpyr_gpyr_1_stencil_6_1439":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["sub_binput_gpyr_gpyr_0_stencil_2_binput_gpyr_gpyr_1_stencil_1_1145.in0","self.in0_binput_gpyr_gpyr_0_stencil.0"],
-          ["sub_binput_gpyr_gpyr_0_stencil_2_binput_gpyr_gpyr_1_stencil_1_1145.in1","self.in1_binput_gpyr_gpyr_1_stencil.0"],
-          ["sub_binput_gpyr_gpyr_0_stencil_2_binput_gpyr_gpyr_1_stencil_1_1145.out","self.out_binput_lpyr_0_stencil"]
+          ["sub_binput_gpyr_gpyr_0_stencil_5_binput_gpyr_gpyr_1_stencil_6_1439.in0","self.in0_binput_gpyr_gpyr_0_stencil.0"],
+          ["sub_binput_gpyr_gpyr_0_stencil_5_binput_gpyr_gpyr_1_stencil_6_1439.in1","self.in1_binput_gpyr_gpyr_1_stencil.0"],
+          ["sub_binput_gpyr_gpyr_0_stencil_5_binput_gpyr_gpyr_1_stencil_6_1439.out","self.out_binput_lpyr_0_stencil"]
         ]
       },
       "hcompute_binput_lpyr_1_stencil":{
@@ -54,15 +116,15 @@
           ["in1_binput_gpyr_gpyr_2_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "sub_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_2_stencil_1_1206":{
+          "sub_binput_gpyr_gpyr_1_stencil_5_binput_gpyr_gpyr_2_stencil_2_1400":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["sub_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_2_stencil_1_1206.in0","self.in0_binput_gpyr_gpyr_1_stencil.0"],
-          ["sub_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_2_stencil_1_1206.in1","self.in1_binput_gpyr_gpyr_2_stencil.0"],
-          ["sub_binput_gpyr_gpyr_1_stencil_3_binput_gpyr_gpyr_2_stencil_1_1206.out","self.out_binput_lpyr_1_stencil"]
+          ["sub_binput_gpyr_gpyr_1_stencil_5_binput_gpyr_gpyr_2_stencil_2_1400.in0","self.in0_binput_gpyr_gpyr_1_stencil.0"],
+          ["sub_binput_gpyr_gpyr_1_stencil_5_binput_gpyr_gpyr_2_stencil_2_1400.in1","self.in1_binput_gpyr_gpyr_2_stencil.0"],
+          ["sub_binput_gpyr_gpyr_1_stencil_5_binput_gpyr_gpyr_2_stencil_2_1400.out","self.out_binput_lpyr_1_stencil"]
         ]
       },
       "hcompute_binput_lpyr_2_stencil":{
@@ -81,44 +143,129 @@
           ["in1_weight_sum_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "const_p256__1172":{
+          "const_p0__1206":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "const_p0__1206$1":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "const_p256__1208":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0100"]}
           },
-          "mul_hw_input_bright_global_wrapper_stencil_3_1172_1173":{
+          "eq_weight_sum_stencil_1_1206_1207":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_bright_global_wrapper_stencil_3_1208_1209":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "udiv_1173_weight_sum_stencil_1_1174":{
+          "mux_1207_1206_1210":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "udiv_1209_weight_sum_stencil_1_1210":{
             "genref":"coreir.udiv",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_hw_input_bright_global_wrapper_stencil_3_1172_1173.in1","const_p256__1172.out"],
-          ["self.in0_hw_input_bright_global_wrapper_stencil.0","mul_hw_input_bright_global_wrapper_stencil_3_1172_1173.in0"],
-          ["udiv_1173_weight_sum_stencil_1_1174.in0","mul_hw_input_bright_global_wrapper_stencil_3_1172_1173.out"],
-          ["udiv_1173_weight_sum_stencil_1_1174.in1","self.in1_weight_sum_stencil.0"],
-          ["udiv_1173_weight_sum_stencil_1_1174.out","self.out_bweight_gpyr_0_stencil"]
+          ["mux_1207_1206_1210.in1","const_p0__1206$1.out"],
+          ["eq_weight_sum_stencil_1_1206_1207.in1","const_p0__1206.out"],
+          ["mul_hw_input_bright_global_wrapper_stencil_3_1208_1209.in1","const_p256__1208.out"],
+          ["self.in1_weight_sum_stencil.0","eq_weight_sum_stencil_1_1206_1207.in0"],
+          ["mux_1207_1206_1210.sel","eq_weight_sum_stencil_1_1206_1207.out"],
+          ["self.in0_hw_input_bright_global_wrapper_stencil.0","mul_hw_input_bright_global_wrapper_stencil_3_1208_1209.in0"],
+          ["udiv_1209_weight_sum_stencil_1_1210.in0","mul_hw_input_bright_global_wrapper_stencil_3_1208_1209.out"],
+          ["udiv_1209_weight_sum_stencil_1_1210.out","mux_1207_1206_1210.in0"],
+          ["self.out_bweight_gpyr_0_stencil","mux_1207_1206_1210.out"],
+          ["udiv_1209_weight_sum_stencil_1_1210.in1","self.in1_weight_sum_stencil.0"]
         ]
       },
       "hcompute_bweight_gpyr_1_stencil":{
         "type":["Record",[
           ["out_bweight_gpyr_1_stencil",["Array",16,"Bit"]],
-          ["in0_bweight_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_bweight_gpyr_0_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_bweight_gpyr_0_stencil_1_1226_1227":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_bweight_gpyr_0_stencil_2_1225_1226":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_bweight_gpyr_0_stencil_3_bweight_gpyr_0_stencil_4_1225":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1228":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1227_1228_1229":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_bweight_gpyr_1_stencil","self.in0_bweight_gpyr_0_stencil.0"]
+          ["self.in0_bweight_gpyr_0_stencil.0","add_bweight_gpyr_0_stencil_1_1226_1227.in0"],
+          ["add_bweight_gpyr_0_stencil_2_1225_1226.out","add_bweight_gpyr_0_stencil_1_1226_1227.in1"],
+          ["lshr_1227_1228_1229.in0","add_bweight_gpyr_0_stencil_1_1226_1227.out"],
+          ["self.in0_bweight_gpyr_0_stencil.1","add_bweight_gpyr_0_stencil_2_1225_1226.in0"],
+          ["add_bweight_gpyr_0_stencil_3_bweight_gpyr_0_stencil_4_1225.out","add_bweight_gpyr_0_stencil_2_1225_1226.in1"],
+          ["self.in0_bweight_gpyr_0_stencil.2","add_bweight_gpyr_0_stencil_3_bweight_gpyr_0_stencil_4_1225.in0"],
+          ["self.in0_bweight_gpyr_0_stencil.3","add_bweight_gpyr_0_stencil_3_bweight_gpyr_0_stencil_4_1225.in1"],
+          ["lshr_1227_1228_1229.in1","const_p2__1228.out"],
+          ["self.out_bweight_gpyr_1_stencil","lshr_1227_1228_1229.out"]
         ]
       },
       "hcompute_bweight_gpyr_2_stencil":{
         "type":["Record",[
           ["out_bweight_gpyr_2_stencil",["Array",16,"Bit"]],
-          ["in0_bweight_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_bweight_gpyr_1_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_bweight_gpyr_1_stencil_1_1249_1250":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_bweight_gpyr_1_stencil_2_1248_1249":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_bweight_gpyr_1_stencil_3_bweight_gpyr_1_stencil_4_1248":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1251":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1250_1251_1252":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_bweight_gpyr_2_stencil","self.in0_bweight_gpyr_1_stencil.0"]
+          ["self.in0_bweight_gpyr_1_stencil.0","add_bweight_gpyr_1_stencil_1_1249_1250.in0"],
+          ["add_bweight_gpyr_1_stencil_2_1248_1249.out","add_bweight_gpyr_1_stencil_1_1249_1250.in1"],
+          ["lshr_1250_1251_1252.in0","add_bweight_gpyr_1_stencil_1_1249_1250.out"],
+          ["self.in0_bweight_gpyr_1_stencil.1","add_bweight_gpyr_1_stencil_2_1248_1249.in0"],
+          ["add_bweight_gpyr_1_stencil_3_bweight_gpyr_1_stencil_4_1248.out","add_bweight_gpyr_1_stencil_2_1248_1249.in1"],
+          ["self.in0_bweight_gpyr_1_stencil.2","add_bweight_gpyr_1_stencil_3_bweight_gpyr_1_stencil_4_1248.in0"],
+          ["self.in0_bweight_gpyr_1_stencil.3","add_bweight_gpyr_1_stencil_3_bweight_gpyr_1_stencil_4_1248.in1"],
+          ["lshr_1250_1251_1252.in1","const_p2__1251.out"],
+          ["self.out_bweight_gpyr_2_stencil","lshr_1250_1251_1252.out"]
         ]
       },
       "hcompute_dinput_gpyr_gpyr_0_stencil":{
@@ -133,19 +280,81 @@
       "hcompute_dinput_gpyr_gpyr_1_stencil":{
         "type":["Record",[
           ["out_dinput_gpyr_gpyr_1_stencil",["Array",16,"Bit"]],
-          ["in0_dinput_gpyr_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_dinput_gpyr_gpyr_0_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_dinput_gpyr_gpyr_0_stencil_1_1273_1274":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dinput_gpyr_gpyr_0_stencil_2_1272_1273":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dinput_gpyr_gpyr_0_stencil_3_dinput_gpyr_gpyr_0_stencil_4_1272":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1275$1":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1274_1275_1276":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_dinput_gpyr_gpyr_1_stencil","self.in0_dinput_gpyr_gpyr_0_stencil.0"]
+          ["self.in0_dinput_gpyr_gpyr_0_stencil.0","add_dinput_gpyr_gpyr_0_stencil_1_1273_1274.in0"],
+          ["add_dinput_gpyr_gpyr_0_stencil_2_1272_1273.out","add_dinput_gpyr_gpyr_0_stencil_1_1273_1274.in1"],
+          ["lshr_1274_1275_1276.in0","add_dinput_gpyr_gpyr_0_stencil_1_1273_1274.out"],
+          ["self.in0_dinput_gpyr_gpyr_0_stencil.1","add_dinput_gpyr_gpyr_0_stencil_2_1272_1273.in0"],
+          ["add_dinput_gpyr_gpyr_0_stencil_3_dinput_gpyr_gpyr_0_stencil_4_1272.out","add_dinput_gpyr_gpyr_0_stencil_2_1272_1273.in1"],
+          ["self.in0_dinput_gpyr_gpyr_0_stencil.2","add_dinput_gpyr_gpyr_0_stencil_3_dinput_gpyr_gpyr_0_stencil_4_1272.in0"],
+          ["self.in0_dinput_gpyr_gpyr_0_stencil.3","add_dinput_gpyr_gpyr_0_stencil_3_dinput_gpyr_gpyr_0_stencil_4_1272.in1"],
+          ["lshr_1274_1275_1276.in1","const_p2__1275$1.out"],
+          ["self.out_dinput_gpyr_gpyr_1_stencil","lshr_1274_1275_1276.out"]
         ]
       },
       "hcompute_dinput_gpyr_gpyr_2_stencil":{
         "type":["Record",[
           ["out_dinput_gpyr_gpyr_2_stencil",["Array",16,"Bit"]],
-          ["in0_dinput_gpyr_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_dinput_gpyr_gpyr_1_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_dinput_gpyr_gpyr_1_stencil_1_1296_1297":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dinput_gpyr_gpyr_1_stencil_2_1295_1296":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_1_stencil_4_1295":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1298":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1297_1298_1299":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_dinput_gpyr_gpyr_2_stencil","self.in0_dinput_gpyr_gpyr_1_stencil.0"]
+          ["self.in0_dinput_gpyr_gpyr_1_stencil.0","add_dinput_gpyr_gpyr_1_stencil_1_1296_1297.in0"],
+          ["add_dinput_gpyr_gpyr_1_stencil_2_1295_1296.out","add_dinput_gpyr_gpyr_1_stencil_1_1296_1297.in1"],
+          ["lshr_1297_1298_1299.in0","add_dinput_gpyr_gpyr_1_stencil_1_1296_1297.out"],
+          ["self.in0_dinput_gpyr_gpyr_1_stencil.1","add_dinput_gpyr_gpyr_1_stencil_2_1295_1296.in0"],
+          ["add_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_1_stencil_4_1295.out","add_dinput_gpyr_gpyr_1_stencil_2_1295_1296.in1"],
+          ["self.in0_dinput_gpyr_gpyr_1_stencil.2","add_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_1_stencil_4_1295.in0"],
+          ["self.in0_dinput_gpyr_gpyr_1_stencil.3","add_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_1_stencil_4_1295.in1"],
+          ["lshr_1297_1298_1299.in1","const_p2__1298.out"],
+          ["self.out_dinput_gpyr_gpyr_2_stencil","lshr_1297_1298_1299.out"]
         ]
       },
       "hcompute_dinput_lpyr_0_stencil":{
@@ -155,15 +364,15 @@
           ["in1_dinput_gpyr_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "sub_dinput_gpyr_gpyr_0_stencil_2_dinput_gpyr_gpyr_1_stencil_1_1185":{
+          "sub_dinput_gpyr_gpyr_0_stencil_5_dinput_gpyr_gpyr_1_stencil_6_1446":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["sub_dinput_gpyr_gpyr_0_stencil_2_dinput_gpyr_gpyr_1_stencil_1_1185.in0","self.in0_dinput_gpyr_gpyr_0_stencil.0"],
-          ["sub_dinput_gpyr_gpyr_0_stencil_2_dinput_gpyr_gpyr_1_stencil_1_1185.in1","self.in1_dinput_gpyr_gpyr_1_stencil.0"],
-          ["sub_dinput_gpyr_gpyr_0_stencil_2_dinput_gpyr_gpyr_1_stencil_1_1185.out","self.out_dinput_lpyr_0_stencil"]
+          ["sub_dinput_gpyr_gpyr_0_stencil_5_dinput_gpyr_gpyr_1_stencil_6_1446.in0","self.in0_dinput_gpyr_gpyr_0_stencil.0"],
+          ["sub_dinput_gpyr_gpyr_0_stencil_5_dinput_gpyr_gpyr_1_stencil_6_1446.in1","self.in1_dinput_gpyr_gpyr_1_stencil.0"],
+          ["sub_dinput_gpyr_gpyr_0_stencil_5_dinput_gpyr_gpyr_1_stencil_6_1446.out","self.out_dinput_lpyr_0_stencil"]
         ]
       },
       "hcompute_dinput_lpyr_1_stencil":{
@@ -173,15 +382,15 @@
           ["in1_dinput_gpyr_gpyr_2_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "sub_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_2_stencil_1_1219":{
+          "sub_dinput_gpyr_gpyr_1_stencil_5_dinput_gpyr_gpyr_2_stencil_2_1407":{
             "genref":"coreir.sub",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["sub_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_2_stencil_1_1219.in0","self.in0_dinput_gpyr_gpyr_1_stencil.0"],
-          ["sub_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_2_stencil_1_1219.in1","self.in1_dinput_gpyr_gpyr_2_stencil.0"],
-          ["sub_dinput_gpyr_gpyr_1_stencil_3_dinput_gpyr_gpyr_2_stencil_1_1219.out","self.out_dinput_lpyr_1_stencil"]
+          ["sub_dinput_gpyr_gpyr_1_stencil_5_dinput_gpyr_gpyr_2_stencil_2_1407.in0","self.in0_dinput_gpyr_gpyr_1_stencil.0"],
+          ["sub_dinput_gpyr_gpyr_1_stencil_5_dinput_gpyr_gpyr_2_stencil_2_1407.in1","self.in1_dinput_gpyr_gpyr_2_stencil.0"],
+          ["sub_dinput_gpyr_gpyr_1_stencil_5_dinput_gpyr_gpyr_2_stencil_2_1407.out","self.out_dinput_lpyr_1_stencil"]
         ]
       },
       "hcompute_dinput_lpyr_2_stencil":{
@@ -200,44 +409,229 @@
           ["in1_weight_sum_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "const_p256__1194":{
+          "const_p0__1320":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "const_p0__1320$1":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0000"]}
+          },
+          "const_p256__1322":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0100"]}
           },
-          "mul_hw_input_dark_global_wrapper_stencil_3_1194_1195":{
+          "eq_weight_sum_stencil_2_1320_1321":{
+            "genref":"coreir.eq",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_hw_input_dark_global_wrapper_stencil_3_1322_1323":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "udiv_1195_weight_sum_stencil_2_1196":{
+          "mux_1321_1320_1324":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
+          },
+          "udiv_1323_weight_sum_stencil_2_1324":{
             "genref":"coreir.udiv",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_hw_input_dark_global_wrapper_stencil_3_1194_1195.in1","const_p256__1194.out"],
-          ["self.in0_hw_input_dark_global_wrapper_stencil.0","mul_hw_input_dark_global_wrapper_stencil_3_1194_1195.in0"],
-          ["udiv_1195_weight_sum_stencil_2_1196.in0","mul_hw_input_dark_global_wrapper_stencil_3_1194_1195.out"],
-          ["udiv_1195_weight_sum_stencil_2_1196.in1","self.in1_weight_sum_stencil.0"],
-          ["udiv_1195_weight_sum_stencil_2_1196.out","self.out_dweight_gpyr_0_stencil"]
+          ["mux_1321_1320_1324.in1","const_p0__1320$1.out"],
+          ["eq_weight_sum_stencil_2_1320_1321.in1","const_p0__1320.out"],
+          ["mul_hw_input_dark_global_wrapper_stencil_3_1322_1323.in1","const_p256__1322.out"],
+          ["self.in1_weight_sum_stencil.0","eq_weight_sum_stencil_2_1320_1321.in0"],
+          ["mux_1321_1320_1324.sel","eq_weight_sum_stencil_2_1320_1321.out"],
+          ["self.in0_hw_input_dark_global_wrapper_stencil.0","mul_hw_input_dark_global_wrapper_stencil_3_1322_1323.in0"],
+          ["udiv_1323_weight_sum_stencil_2_1324.in0","mul_hw_input_dark_global_wrapper_stencil_3_1322_1323.out"],
+          ["udiv_1323_weight_sum_stencil_2_1324.out","mux_1321_1320_1324.in0"],
+          ["self.out_dweight_gpyr_0_stencil","mux_1321_1320_1324.out"],
+          ["udiv_1323_weight_sum_stencil_2_1324.in1","self.in1_weight_sum_stencil.0"]
         ]
       },
       "hcompute_dweight_gpyr_1_stencil":{
         "type":["Record",[
           ["out_dweight_gpyr_1_stencil",["Array",16,"Bit"]],
-          ["in0_dweight_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_dweight_gpyr_0_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_dweight_gpyr_0_stencil_1_1340_1341":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dweight_gpyr_0_stencil_2_1339_1340":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dweight_gpyr_0_stencil_3_dweight_gpyr_0_stencil_4_1339":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1342":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1341_1342_1343":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_dweight_gpyr_1_stencil","self.in0_dweight_gpyr_0_stencil.0"]
+          ["self.in0_dweight_gpyr_0_stencil.0","add_dweight_gpyr_0_stencil_1_1340_1341.in0"],
+          ["add_dweight_gpyr_0_stencil_2_1339_1340.out","add_dweight_gpyr_0_stencil_1_1340_1341.in1"],
+          ["lshr_1341_1342_1343.in0","add_dweight_gpyr_0_stencil_1_1340_1341.out"],
+          ["self.in0_dweight_gpyr_0_stencil.1","add_dweight_gpyr_0_stencil_2_1339_1340.in0"],
+          ["add_dweight_gpyr_0_stencil_3_dweight_gpyr_0_stencil_4_1339.out","add_dweight_gpyr_0_stencil_2_1339_1340.in1"],
+          ["self.in0_dweight_gpyr_0_stencil.2","add_dweight_gpyr_0_stencil_3_dweight_gpyr_0_stencil_4_1339.in0"],
+          ["self.in0_dweight_gpyr_0_stencil.3","add_dweight_gpyr_0_stencil_3_dweight_gpyr_0_stencil_4_1339.in1"],
+          ["lshr_1341_1342_1343.in1","const_p2__1342.out"],
+          ["self.out_dweight_gpyr_1_stencil","lshr_1341_1342_1343.out"]
         ]
       },
       "hcompute_dweight_gpyr_2_stencil":{
         "type":["Record",[
           ["out_dweight_gpyr_2_stencil",["Array",16,"Bit"]],
-          ["in0_dweight_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_dweight_gpyr_1_stencil",["Array",4,["Array",16,"BitIn"]]]
         ]],
+        "instances":{
+          "add_dweight_gpyr_1_stencil_1_1363_1364":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dweight_gpyr_1_stencil_2_1362_1363":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_dweight_gpyr_1_stencil_3_dweight_gpyr_1_stencil_4_1362":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p2__1365":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0002"]}
+          },
+          "lshr_1364_1365_1366":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          }
+        },
         "connections":[
-          ["self.out_dweight_gpyr_2_stencil","self.in0_dweight_gpyr_1_stencil.0"]
+          ["self.in0_dweight_gpyr_1_stencil.0","add_dweight_gpyr_1_stencil_1_1363_1364.in0"],
+          ["add_dweight_gpyr_1_stencil_2_1362_1363.out","add_dweight_gpyr_1_stencil_1_1363_1364.in1"],
+          ["lshr_1364_1365_1366.in0","add_dweight_gpyr_1_stencil_1_1363_1364.out"],
+          ["self.in0_dweight_gpyr_1_stencil.1","add_dweight_gpyr_1_stencil_2_1362_1363.in0"],
+          ["add_dweight_gpyr_1_stencil_3_dweight_gpyr_1_stencil_4_1362.out","add_dweight_gpyr_1_stencil_2_1362_1363.in1"],
+          ["self.in0_dweight_gpyr_1_stencil.2","add_dweight_gpyr_1_stencil_3_dweight_gpyr_1_stencil_4_1362.in0"],
+          ["self.in0_dweight_gpyr_1_stencil.3","add_dweight_gpyr_1_stencil_3_dweight_gpyr_1_stencil_4_1362.in1"],
+          ["lshr_1364_1365_1366.in1","const_p2__1365.out"],
+          ["self.out_dweight_gpyr_2_stencil","lshr_1364_1365_1366.out"]
+        ]
+      },
+      "hcompute_flattened_0_stencil":{
+        "type":["Record",[
+          ["out_flattened_0_stencil",["Array",16,"Bit"]],
+          ["in0_binput_lpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_bweight_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in2_dinput_lpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in3_dweight_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in4_flattened_1_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_1458_1459_1460":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_flattened_1_stencil_1_1462_1463":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p7__1461":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0007"]}
+          },
+          "lshr_1460_1461_1462":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_bweight_gpyr_0_stencil_5_binput_lpyr_0_stencil_1_1459":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_dweight_gpyr_0_stencil_5_dinput_lpyr_0_stencil_1_1458":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_dweight_gpyr_0_stencil_5_dinput_lpyr_0_stencil_1_1458.out","add_1458_1459_1460.in0"],
+          ["mul_bweight_gpyr_0_stencil_5_binput_lpyr_0_stencil_1_1459.out","add_1458_1459_1460.in1"],
+          ["lshr_1460_1461_1462.in0","add_1458_1459_1460.out"],
+          ["self.in4_flattened_1_stencil.0","add_flattened_1_stencil_1_1462_1463.in0"],
+          ["lshr_1460_1461_1462.out","add_flattened_1_stencil_1_1462_1463.in1"],
+          ["self.out_flattened_0_stencil","add_flattened_1_stencil_1_1462_1463.out"],
+          ["lshr_1460_1461_1462.in1","const_p7__1461.out"],
+          ["self.in1_bweight_gpyr_0_stencil.0","mul_bweight_gpyr_0_stencil_5_binput_lpyr_0_stencil_1_1459.in0"],
+          ["self.in0_binput_lpyr_0_stencil.0","mul_bweight_gpyr_0_stencil_5_binput_lpyr_0_stencil_1_1459.in1"],
+          ["self.in3_dweight_gpyr_0_stencil.0","mul_dweight_gpyr_0_stencil_5_dinput_lpyr_0_stencil_1_1458.in0"],
+          ["self.in2_dinput_lpyr_0_stencil.0","mul_dweight_gpyr_0_stencil_5_dinput_lpyr_0_stencil_1_1458.in1"]
+        ]
+      },
+      "hcompute_flattened_1_stencil":{
+        "type":["Record",[
+          ["out_flattened_1_stencil",["Array",16,"Bit"]],
+          ["in0_binput_lpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in1_bweight_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in2_dinput_lpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in3_dweight_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
+          ["in4_merge_pyr_2_stencil",["Array",1,["Array",16,"BitIn"]]]
+        ]],
+        "instances":{
+          "add_1419_1420_1421":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "add_merge_pyr_2_stencil_1_1423_1424":{
+            "genref":"coreir.add",
+            "genargs":{"width":["Int",16]}
+          },
+          "const_p7__1422":{
+            "genref":"coreir.const",
+            "genargs":{"width":["Int",16]},
+            "modargs":{"value":[["BitVector",16],"16'h0007"]}
+          },
+          "lshr_1421_1422_1423":{
+            "genref":"coreir.lshr",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_bweight_gpyr_1_stencil_5_binput_lpyr_1_stencil_1_1420":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          },
+          "mul_dweight_gpyr_1_stencil_5_dinput_lpyr_1_stencil_1_1419":{
+            "genref":"coreir.mul",
+            "genargs":{"width":["Int",16]}
+          }
+        },
+        "connections":[
+          ["mul_dweight_gpyr_1_stencil_5_dinput_lpyr_1_stencil_1_1419.out","add_1419_1420_1421.in0"],
+          ["mul_bweight_gpyr_1_stencil_5_binput_lpyr_1_stencil_1_1420.out","add_1419_1420_1421.in1"],
+          ["lshr_1421_1422_1423.in0","add_1419_1420_1421.out"],
+          ["self.in4_merge_pyr_2_stencil.0","add_merge_pyr_2_stencil_1_1423_1424.in0"],
+          ["lshr_1421_1422_1423.out","add_merge_pyr_2_stencil_1_1423_1424.in1"],
+          ["self.out_flattened_1_stencil","add_merge_pyr_2_stencil_1_1423_1424.out"],
+          ["lshr_1421_1422_1423.in1","const_p7__1422.out"],
+          ["self.in1_bweight_gpyr_1_stencil.0","mul_bweight_gpyr_1_stencil_5_binput_lpyr_1_stencil_1_1420.in0"],
+          ["self.in0_binput_lpyr_1_stencil.0","mul_bweight_gpyr_1_stencil_5_binput_lpyr_1_stencil_1_1420.in1"],
+          ["self.in3_dweight_gpyr_1_stencil.0","mul_dweight_gpyr_1_stencil_5_dinput_lpyr_1_stencil_1_1419.in0"],
+          ["self.in2_dinput_lpyr_1_stencil.0","mul_dweight_gpyr_1_stencil_5_dinput_lpyr_1_stencil_1_1419.in1"]
         ]
       },
       "hcompute_hw_input_bright_global_wrapper_stencil":{
@@ -261,132 +655,10 @@
       "hcompute_hw_output_stencil":{
         "type":["Record",[
           ["out_hw_output_stencil",["Array",16,"Bit"]],
-          ["in0_merge_pyr_0_stencil",["Array",1,["Array",16,"BitIn"]]]
+          ["in0_flattened_0_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "connections":[
-          ["self.out_hw_output_stencil","self.in0_merge_pyr_0_stencil.0"]
-        ]
-      },
-      "hcompute_merge_pyr_0_stencil":{
-        "type":["Record",[
-          ["out_merge_pyr_0_stencil",["Array",16,"Bit"]],
-          ["in0_binput_lpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_bweight_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in2_dinput_lpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in3_dweight_gpyr_0_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "instances":{
-          "add_1286_1287_1288":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "const_p7__1289":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0007"]}
-          },
-          "lshr_1288_1289_1290":{
-            "genref":"coreir.lshr",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_bweight_gpyr_0_stencil_2_binput_lpyr_0_stencil_1_1287":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_dweight_gpyr_0_stencil_2_dinput_lpyr_0_stencil_1_1286":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["mul_dweight_gpyr_0_stencil_2_dinput_lpyr_0_stencil_1_1286.out","add_1286_1287_1288.in0"],
-          ["mul_bweight_gpyr_0_stencil_2_binput_lpyr_0_stencil_1_1287.out","add_1286_1287_1288.in1"],
-          ["lshr_1288_1289_1290.in0","add_1286_1287_1288.out"],
-          ["lshr_1288_1289_1290.in1","const_p7__1289.out"],
-          ["self.out_merge_pyr_0_stencil","lshr_1288_1289_1290.out"],
-          ["self.in1_bweight_gpyr_0_stencil.0","mul_bweight_gpyr_0_stencil_2_binput_lpyr_0_stencil_1_1287.in0"],
-          ["self.in0_binput_lpyr_0_stencil.0","mul_bweight_gpyr_0_stencil_2_binput_lpyr_0_stencil_1_1287.in1"],
-          ["self.in3_dweight_gpyr_0_stencil.0","mul_dweight_gpyr_0_stencil_2_dinput_lpyr_0_stencil_1_1286.in0"],
-          ["self.in2_dinput_lpyr_0_stencil.0","mul_dweight_gpyr_0_stencil_2_dinput_lpyr_0_stencil_1_1286.in1"]
-        ]
-      },
-      "hcompute_merge_pyr_0_stencil_1":{
-        "type":["Record",[
-          ["out_merge_pyr_0_stencil",["Array",16,"Bit"]],
-          ["in0_merge_pyr_0_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_merge_pyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "instances":{
-          "add_merge_pyr_0_stencil_1_merge_pyr_1_stencil_2_1301":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["self.in0_merge_pyr_0_stencil.0","add_merge_pyr_0_stencil_1_merge_pyr_1_stencil_2_1301.in0"],
-          ["self.in1_merge_pyr_1_stencil.0","add_merge_pyr_0_stencil_1_merge_pyr_1_stencil_2_1301.in1"],
-          ["self.out_merge_pyr_0_stencil","add_merge_pyr_0_stencil_1_merge_pyr_1_stencil_2_1301.out"]
-        ]
-      },
-      "hcompute_merge_pyr_1_stencil":{
-        "type":["Record",[
-          ["out_merge_pyr_1_stencil",["Array",16,"Bit"]],
-          ["in0_binput_lpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_bweight_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in2_dinput_lpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in3_dweight_gpyr_1_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "instances":{
-          "add_1260_1261_1262":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "const_p7__1263":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0007"]}
-          },
-          "lshr_1262_1263_1264":{
-            "genref":"coreir.lshr",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_bweight_gpyr_1_stencil_2_binput_lpyr_1_stencil_1_1261":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          },
-          "mul_dweight_gpyr_1_stencil_2_dinput_lpyr_1_stencil_1_1260":{
-            "genref":"coreir.mul",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["mul_dweight_gpyr_1_stencil_2_dinput_lpyr_1_stencil_1_1260.out","add_1260_1261_1262.in0"],
-          ["mul_bweight_gpyr_1_stencil_2_binput_lpyr_1_stencil_1_1261.out","add_1260_1261_1262.in1"],
-          ["lshr_1262_1263_1264.in0","add_1260_1261_1262.out"],
-          ["lshr_1262_1263_1264.in1","const_p7__1263.out"],
-          ["self.out_merge_pyr_1_stencil","lshr_1262_1263_1264.out"],
-          ["self.in1_bweight_gpyr_1_stencil.0","mul_bweight_gpyr_1_stencil_2_binput_lpyr_1_stencil_1_1261.in0"],
-          ["self.in0_binput_lpyr_1_stencil.0","mul_bweight_gpyr_1_stencil_2_binput_lpyr_1_stencil_1_1261.in1"],
-          ["self.in3_dweight_gpyr_1_stencil.0","mul_dweight_gpyr_1_stencil_2_dinput_lpyr_1_stencil_1_1260.in0"],
-          ["self.in2_dinput_lpyr_1_stencil.0","mul_dweight_gpyr_1_stencil_2_dinput_lpyr_1_stencil_1_1260.in1"]
-        ]
-      },
-      "hcompute_merge_pyr_1_stencil_1":{
-        "type":["Record",[
-          ["out_merge_pyr_1_stencil",["Array",16,"Bit"]],
-          ["in0_merge_pyr_1_stencil",["Array",1,["Array",16,"BitIn"]]],
-          ["in1_merge_pyr_2_stencil",["Array",1,["Array",16,"BitIn"]]]
-        ]],
-        "instances":{
-          "add_merge_pyr_1_stencil_1_merge_pyr_2_stencil_1_1275":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          }
-        },
-        "connections":[
-          ["self.in0_merge_pyr_1_stencil.0","add_merge_pyr_1_stencil_1_merge_pyr_2_stencil_1_1275.in0"],
-          ["self.in1_merge_pyr_2_stencil.0","add_merge_pyr_1_stencil_1_merge_pyr_2_stencil_1_1275.in1"],
-          ["self.out_merge_pyr_1_stencil","add_merge_pyr_1_stencil_1_merge_pyr_2_stencil_1_1275.out"]
+          ["self.out_hw_output_stencil","self.in0_flattened_0_stencil.0"]
         ]
       },
       "hcompute_merge_pyr_2_stencil":{
@@ -398,38 +670,38 @@
           ["in3_dweight_gpyr_2_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_1241_1242_1243":{
+          "add_1385_1386_1387":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "const_p7__1244":{
+          "const_p7__1388":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0007"]}
           },
-          "lshr_1243_1244_1245":{
+          "lshr_1387_1388_1389":{
             "genref":"coreir.lshr",
             "genargs":{"width":["Int",16]}
           },
-          "mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1242":{
+          "mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1386":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           },
-          "mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1241":{
+          "mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1385":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1241.out","add_1241_1242_1243.in0"],
-          ["mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1242.out","add_1241_1242_1243.in1"],
-          ["lshr_1243_1244_1245.in0","add_1241_1242_1243.out"],
-          ["lshr_1243_1244_1245.in1","const_p7__1244.out"],
-          ["self.out_merge_pyr_2_stencil","lshr_1243_1244_1245.out"],
-          ["self.in1_bweight_gpyr_2_stencil.0","mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1242.in0"],
-          ["self.in0_binput_lpyr_2_stencil.0","mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1242.in1"],
-          ["self.in3_dweight_gpyr_2_stencil.0","mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1241.in0"],
-          ["self.in2_dinput_lpyr_2_stencil.0","mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1241.in1"]
+          ["mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1385.out","add_1385_1386_1387.in0"],
+          ["mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1386.out","add_1385_1386_1387.in1"],
+          ["lshr_1387_1388_1389.in0","add_1385_1386_1387.out"],
+          ["lshr_1387_1388_1389.in1","const_p7__1388.out"],
+          ["self.out_merge_pyr_2_stencil","lshr_1387_1388_1389.out"],
+          ["self.in1_bweight_gpyr_2_stencil.0","mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1386.in0"],
+          ["self.in0_binput_lpyr_2_stencil.0","mul_bweight_gpyr_2_stencil_1_binput_lpyr_2_stencil_1_1386.in1"],
+          ["self.in3_dweight_gpyr_2_stencil.0","mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1385.in0"],
+          ["self.in2_dinput_lpyr_2_stencil.0","mul_dweight_gpyr_2_stencil_1_dinput_lpyr_2_stencil_1_1385.in1"]
         ]
       },
       "hcompute_weight_sum_stencil":{
@@ -439,37 +711,26 @@
           ["in1_hw_input_dark_global_wrapper_stencil",["Array",1,["Array",16,"BitIn"]]]
         ]],
         "instances":{
-          "add_1159_1160_1161":{
+          "add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1192":{
             "genref":"coreir.add",
             "genargs":{"width":["Int",16]}
           },
-          "add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1157":{
-            "genref":"coreir.add",
-            "genargs":{"width":["Int",16]}
-          },
-          "const_p1__1160":{
-            "genref":"coreir.const",
-            "genargs":{"width":["Int",16]},
-            "modargs":{"value":[["BitVector",16],"16'h0001"]}
-          },
-          "const_p2__1158":{
+          "const_p2__1193":{
             "genref":"coreir.const",
             "genargs":{"width":["Int",16]},
             "modargs":{"value":[["BitVector",16],"16'h0002"]}
           },
-          "mul_1157_1158_1159":{
+          "mul_1192_1193_1194":{
             "genref":"coreir.mul",
             "genargs":{"width":["Int",16]}
           }
         },
         "connections":[
-          ["mul_1157_1158_1159.out","add_1159_1160_1161.in0"],
-          ["const_p1__1160.out","add_1159_1160_1161.in1"],
-          ["self.out_weight_sum_stencil","add_1159_1160_1161.out"],
-          ["self.in1_hw_input_dark_global_wrapper_stencil.0","add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1157.in0"],
-          ["self.in0_hw_input_bright_global_wrapper_stencil.0","add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1157.in1"],
-          ["mul_1157_1158_1159.in0","add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1157.out"],
-          ["mul_1157_1158_1159.in1","const_p2__1158.out"]
+          ["self.in1_hw_input_dark_global_wrapper_stencil.0","add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1192.in0"],
+          ["self.in0_hw_input_bright_global_wrapper_stencil.0","add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1192.in1"],
+          ["mul_1192_1193_1194.in0","add_hw_input_dark_global_wrapper_stencil_1_hw_input_bright_global_wrapper_stencil_2_1192.out"],
+          ["mul_1192_1193_1194.in1","const_p2__1193.out"],
+          ["self.out_weight_sum_stencil","mul_1192_1193_1194.out"]
         ]
       }
     }

@@ -3084,11 +3084,31 @@ void split_outer_loop(op* loop, const int level, const int factor) {
   }
 }
 
-void split_loop(op* loop, const int level, const int out_len, prog& prg) {
-  int len = loop->end_exclusive - loop->start;
-  int factor = len / out_len;
-  //split_outer_loop(loop, level, factor);
-  strip_mine(factor, loop, prg);
+void split_loop(op* root, const int depth, const int out_len, prog& prg) {
+  // Find the loops at the correct depth.
+  vector<op*> loops = {root};
+  for (int i=1; i<depth; ++i) {
+    vector<op*> next_loops;
+    for (auto op : loops) {
+      for (auto child : op->children) {
+        if (child->is_loop()) {
+          next_loops.push_back(child);
+        }
+      }
+    }
+    //std::vector::swap(loops, next_loops);
+    loops.swap(next_loops);
+    next_loops.clear();
+  }
+
+  // Iterate through loops and split them.
+  for (auto loop : loops) {
+    int len = loop->end_exclusive - loop->start;
+    int factor = len / out_len;
+    cout << "splitting " << loop->name << " with factor " << factor << " from len " << len << endl;
+    assert(factor * out_len == len);
+    strip_mine(factor, loop, prg);
+  }
 }
   
 void insert_pad_loops(const int level, op* root, const map<string, vector<int> >& pad_indexes) {
@@ -10176,7 +10196,7 @@ void gauss_pyramid_fpga_test(const std::string& name) {
   //assert(false);
 }
 
-void exposure_fusion() {
+void exposure_fusion1() {
 
   App lp = exposure_fusion_app("pyramid_synthetic_exposure_fusion");
   int size =
@@ -12309,7 +12329,7 @@ void iccad_tests() {
 
 
   // exposure_fusion_app
-  exposure_fusion();
+  exposure_fusion1();
   assert(false);
 
 
@@ -15210,18 +15230,24 @@ void test_compute_share(bool gen_config_only, bool multi_accessor=false, string 
   //test_apps.push_back(cascade2());     // cascade2: two back-to-back kernels shared, 2x2 kernel size
   //test_apps.push_back(cascade2k_t1()); // cascade2k_t1: two back-to-back kernels shared, then kernel not shared
   //test_apps.push_back(cascade1_2_1()); // cascade1_2_1: kernel, two back-to-back kernels shared, then kernel not shared
+
   // camera pipeline with sharing?
   
-  test_apps.push_back(gpyr());       // 2x2 convs with 3 kernels total
+  //test_apps.push_back(gpyr());       // 2x2 convs with 3 kernels total
   //test_apps.push_back(gpyr5());
   //test_apps.push_back(gpyr2_4k()); // 2x2 convs with 4 kernels total (pyramid blur)
+
   //test_apps.push_back(up_sample_pyramid()); // upsample pyramid
 
   //test_apps.push_back(laplacian_composite()); // gaussian pyramid, then laplacian (difference of levels); final output is sum of laplacian
+  //test_apps.push_back(laplacian_composites()); // gaussian pyramid, then shared laplacian kernels; final output is sum of laplacian
+  
+  //test_apps.push_back(exposure_fusion_1side()); // exposure fusion, but only 1 input that is fused to itself
+  test_apps.push_back(exposure_fusion()); // gaussian pyramids, then shared laplacian kernels, then blending
 
-  // laplacian pyramid: blur pyramid shared, flatten and upsample shared
-  // exposure fusion: blur pyramid shared, flatten and upsample shared
-  // image blend: blur pyramid shared, flatten and upsample shared
+  //test_apps.push_back(image_blend_1side()); // image blend, but only 1 input that is blended to itself
+  //test_apps.push_back(image_blend()); // gaussian pyramids, then shared laplacian kernels, then blending with static weights
+  
   // lk pyramid: 
   
     
@@ -18850,9 +18876,13 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       if (name_resource.second.num_users > 1) {
         auto compute_kernel = name_resource.second;
         shared_resources.emplace_back(compute_kernel);
+        cout << "Found a shared resource, " << name_resource.first << " with " << name_resource.second.num_users << " users" << endl;
+        
         edge_producers.insert(compute_kernel.op_names[0]); // first user is edge
+        cout << "compute ops: " << endl;
         for (auto op_name : compute_kernel.op_names) {
           shared_ops[op_name] = name_resource.first;
+          cout << " " << op_name << endl;
         }
       }
     }
@@ -18865,12 +18895,17 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     auto orig_valid = prg.validity_deps();
     auto orig_dom = prg.whole_iteration_domain();
     bool uses_shared = shared_resources.size() > 0;
+    int ndims = max_loop_depth(prg);
     int share_dim = uses_shared ? shared_resources[0].interleave_dimension : 0;
+    int split_depth = ndims - share_dim;
+    cout << "share_dim=" << share_dim << " and split_depth=" << split_depth << endl;
     
     // Use the qfactors to determine if there is a downsample => split loops.
-    map<string, isl_val*> qfactors = compute_qfactors_from_deps(orig_dom, cpy(orig_valid), share_dim);
+    //map<string, isl_val*> qfactors = compute_qfactors_from_deps(orig_dom, cpy(orig_valid), share_dim);
+    map<string, isl_val*> qfactors = compute_qfactors_from_deps(orig_dom, cpy(orig_valid), split_depth-1);
     cout << "qfactors before splitting: " << endl; //<< qfactors << endl;
     bool split = false;
+    //bool split = true;
     int largest_qfactor = 0;
     string largest_qfactor_name;
     for (auto& q_pair : qfactors) {
@@ -18893,9 +18928,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       cout << " " << out << endl;
     }
     if (uses_shared) {
-      cout << "compute ops: " << endl;
-      for (auto out : shared_resources[0].op_names) {
-        cout << " " << out << endl;
+      for (auto& shared_resource : shared_resources) {
+        cout << "compute ops: " << endl;
+        for (auto out : shared_resource.op_names) {
+          cout << " " << out << endl;
+        }
       }
       //cout << "compute out " << shared_resources[0].output_name << endl;
     }
@@ -18903,20 +18940,21 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     // Split the specified interleaving loops for the shared compute
     if (uses_shared && split) { // only needed for downsample apps
       // Determine the split size.
-      int output_index = shared_resources[0].op_names.size() - 1;
+      //int output_index = shared_resources[0].op_names.size() - 1;
       //string output_compute = shared_resources[0].op_names[output_index];
       string output_compute = largest_qfactor_name;
       //string output_compute = "op_hcompute_uppyr_0_stencil";
       map<string, isl_set*> kernel_doms = get_sets_in_map(orig_dom);
-      int outer_looplen = get_dim_extent(kernel_doms[output_compute], share_dim); // Split size is output's loop length
-      //int outer_looplen = 8;
-      cout << output_compute << " is using split of " << outer_looplen << endl;
+      //int outer_looplen = get_dim_extent(kernel_doms[output_compute], share_dim); // Split size is output's loop length
+      int outer_looplen = get_dim_extent(kernel_doms[output_compute], split_depth); // Split size is output's loop length
+      //int outer_looplen = 16;
+      cout << output_compute << " is using split of " << outer_looplen << " on dim " << share_dim << endl;
 
       // TODO: round up if doesn't split evenly
-      for (auto op : prg.root->children) {
-        split_loop(op, share_dim, outer_looplen, prg); // split loops such that the outer loop is length 8
-        std::cout << "split loop: " << op->name << std::endl;
-      }
+      split_loop(prg.root, split_depth, outer_looplen, prg); // split loops such that the outer loop is length 8
+      //for (auto op : prg.root->children) {
+      //  split_loop(op, share_dim_i, outer_looplen, prg); // split loops such that the outer loop is length 8
+      //}
     }
     prg.pretty_print();
     
@@ -18967,8 +19005,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     map<string, int> producer_delays; // producer delay to end of each kernel
     map<string, vector<int>> sharer_delays; // delays to insert (from root to innermost). Phase offset
 
-    //map<string, vector<int>> kernel_lens; // Extents in each dimension for each kernel.
-    map<string, vector<int>> kernel_loop_iis; // Extents in each dimension for each kernel.
+    map<string, vector<int>> kernel_lengths; // Extents in each dimension for each kernel.
     map<string, vector<int>> kernel_qs; // Intervals in each dimension for each kernel. Used for calculating IIs
     int interleave_dim = split ? share_dim + 1 : share_dim;
     int interleave_dim_inv = num_dims-1 - interleave_dim;
@@ -18985,11 +19022,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
 
         op* op = sched.name_to_op[name];
         auto kernel_domain = extent_vector(name, domain_map);
-        //kernel_lens[name] = kernel_domain;
-        //reverse(kernel_lens[name]);
         
-        kernel_loop_iis[name] = kernel_domain;
-        cout << "kernel loopiis " << name << " is " << kernel_loop_iis[name] << endl;
+        kernel_lengths[name] = kernel_domain;
+        kernel_lengths[name].pop_back();
+        reverse(kernel_lengths[name]);
+        kernel_lengths[name].push_back(1);
         
         auto prods = op->buffers_read();
         cout << "producers for " << name << ": " << endl;
@@ -19002,7 +19039,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
           if (domain_map.count("op_hcompute_" + prod)) {
             int prod_delay = 0;
             auto prod_domain = extent_vector("op_hcompute_" + prod, domain_map);
-            kernel_qs[name].resize(kernel_loop_iis[name].size());
+            kernel_qs[name].resize(kernel_lengths[name].size());
 
             int product_sizes = 1; // product of all previous levels
             for (int i=0; i<interleave_dim; ++i) {
@@ -19016,20 +19053,18 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
                 product_sizes *= dim_size;
                 //kernel_qs[name][inv_i] = dim_size / min(prod_len, kernel_len);
                 kernel_qs[name][inv_i] = dim_size / kernel_len;
-                kernel_loop_iis[name][inv_i-1] *= kernel_qs[name][inv_i];
-                //kernel_lens[name][inv_i] = dim_size / kernel_qs[name][inv_i];
+                kernel_lengths[name][inv_i-1] *= kernel_qs[name][inv_i];
               } else {
                 bool is_edge = edge_producers.count(name) > 0;
-                //int q = is_edge ? max(prod_len/kernel_len, kernel_len/prod_len) : 1;
                 int q = is_edge ? max(prod_len/kernel_len, 1) : 1;
                 int dim_size = kernel_len;
                 prod_delay += (dim_size-1) * q * product_sizes;
                 cout << " increment delay with q=" << q << " dim=" << dim_size-1 << " prev=" << product_sizes << " to " << prod_delay << endl;
                 kernel_qs[name][inv_i] = q;
-                //kernel_lens[name][inv_i] = (dim_size) * product_sizes;
+                kernel_lengths[name][inv_i] *= kernel_lengths[name][inv_i+1];
                 product_sizes *= dim_size;
               }
-              cout << " " << name << " for i=" << inv_i << " with q=" << kernel_qs[name][inv_i] << " and len=" << kernel_loop_iis[name][inv_i] << endl;
+              cout << " " << name << " for i=" << inv_i << " with q=" << kernel_qs[name][inv_i] << " and len=" << kernel_lengths[name][inv_i] << endl;
             }
             max_delay = max(max_delay, prod_delay);
           }
@@ -19039,10 +19074,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
         shared_kernel_delays[name] = max_delay;
         total_share_length += max_delay;
         
+        cout << "kernel lengths for " << name << " is " << kernel_lengths[name] << endl;
       }
 
       cout << "Final delay for interleaving is " << total_share_length << " for dim=" << interleave_dim_inv << endl;
-      shared_iis[interleave_dim_inv] = total_share_length;
+      shared_iis[interleave_dim_inv] = max(total_share_length, shared_iis[interleave_dim_inv]);
     }
 
     // Store shared delays
@@ -19134,25 +19170,27 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
         // Here the strides are computed from the q factor and previous loop latency.
         // The previous loop latencies are known before even scheduling due to depending
         // only on the iteration domain size and not the actual schedule and interleaving.
-        //int length =  // loop iis should be based on each kernel until interleave dimension
+        // Each length for shared kernels depend on the specific kernel.
         int length = fused_level_iis.at(level);
-        if (kernel_loop_iis.count(op->name) == 0) {
+        if (kernel_lengths.count(op->name) == 0) {
           // not shared kernel: the calculated qfactor and delay are correct
-        } else if (level == interleave_dim_inv) { // should only apply this to functions in shared kernel
+          //} else if (level == interleave_dim_inv) { // should only apply this to functions in shared kernel
           //qfactor = (op->name == edge_producer) ? qfactor : 1;
-          qfactor = 1;
+          ////qfactor = 1; // this one was working
           //qfactor = kernel_qs[op->name][level];
-          //length = kernel_lens[op->name][level];
-          //length = kernel_lens[op->name][0] * qfactor;
-          cout << "  interleave dimension q=" << qfactor << " len=" << length << " for " << var << endl;
-        } else if (level > interleave_dim_inv) { // these are innermost
+        } else if (level > interleave_dim_inv) { // these are innermost, calculated earlier
+          assert(kernel_qs.count(op->name));
+          assert(level < kernel_qs[op->name].size());
+          assert(kernel_lengths.count(op->name));
+          assert(level < kernel_lengths[op->name].size());
+
           //qfactor = 1; // innermost loops are done in order, for cascaded
           qfactor = kernel_qs[op->name][level];
           //qfactor = (op->name == edge_producer) ? 2 : kernel_qs[op->name][level]; // for gpyr
-          length = kernel_loop_iis[op->name][level];
-          //length = (op->name == edge_producer && level==num_dims-2) ? kernel_loop_iis[op->name][level]/2 : kernel_loop_iis[op->name][level];
-          cout << "  inner dimension q=" << qfactor << " len=" << length << " for " << var << endl;
-        } else if (level < interleave_dim_inv) {
+          length = kernel_lengths[op->name][level];
+          //length = (op->name == edge_producer && level==num_dims-2) ? kernel_lengths[op->name][level]/2 : kernel_lengths[op->name][level];
+          cout << "  inner dimension q=" << qfactor << " len=" << length << " for " << var << " level=" << level << " from " << kernel_lengths[op->name] << endl;
+        } else if (level <= interleave_dim_inv) {
           // outer loops: the calculated qfactor and delay are correct
         }
         

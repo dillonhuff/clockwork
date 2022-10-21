@@ -1534,9 +1534,13 @@ class UBuffer {
     bool can_be_broadcast(const std::string& pt0, const std::string& pt1) const {
       auto acc_0 = to_map(access_map.at(pt0));
       auto acc_1 = to_map(access_map.at(pt1));
+      cout << "sched_0: " << str(schedule.at(pt0)) << endl
+           << "sched_1: " << str(schedule.at(pt1)) << endl;
       auto sched_0 = range(schedule.at(pt0));
       auto sched_1 = range(schedule.at(pt1));
       bool acc_equal = equal_regardless_of_domain(acc_0, acc_1);
+      cout << acc_equal << endl;
+      if (!acc_equal) { return acc_equal; }
       bool sched_equal = equal(sched_0, sched_1);
       return acc_equal && sched_equal;
     }

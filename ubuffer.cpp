@@ -2647,6 +2647,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
       //CoreIR::Wireable* tmp = buf->sel("data_out_"+to_string(outpt_cnt));
       CoreIR::Wireable* tmp = buf->sel(memDataoutPort(config_mode, outpt_cnt));
       //CoreIR::map_insert(outpt_bank_rd, outpt, tmp);
+      cout << "Has " << impl.outpt_to_bank.at(outpt).size() << " ports for " << outpt << endl;
       if (impl.outpt_to_bank.at(outpt).size() == 1) {
         //no chaining
         def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), pt2wire.at(outpt));
@@ -2662,7 +2663,8 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
           } else {
             assert(conns.size() == 1);
             CoreIR::Wireable* last_dangling_chain_data_in =
-              findChainDataIn(pick(conns), outpt_cnt);
+              //findChainDataIn(pick(conns), outpt_cnt);
+              findChainDataIn(pick(conns), outpt_cnt-1);
             def->connect(buf->sel(memDataoutPort(config_mode, outpt_cnt)), last_dangling_chain_data_in);
           }
 
@@ -6092,11 +6094,14 @@ bank UBuffer::compute_bank_info(
 map<string, std::set<string> >
 UBuffer::get_unique_ports(std::set<string> &outpts) {
   map<string, std::set<string> > outmap;
+  cout << "getting unique ports from " << outpts.size() << " ports" << endl;
   for (auto pt : outpts) {
+    cout << "output port is " << pt << " and " << outmap.size() << " in outmap" << endl;
 
     bool is_duplicate = false;
 
     for (auto existing_pair : outmap) {
+      cout << "checking " << pt << " to " << existing_pair.first << endl;
       string existing = existing_pair.first;
 
       if (can_be_broadcast(existing, pt)){
@@ -6105,6 +6110,7 @@ UBuffer::get_unique_ports(std::set<string> &outpts) {
         outmap[existing].insert(pt);
         break;
       }
+      cout << "did not broadcast" << endl;
     }
 
     if (!is_duplicate) {
@@ -6241,6 +6247,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
   if (dynamic_ports.size() > 0 ||
       banking.partition == "register_file" ||
       banking.partition == "none") {
+    cout << "Doing register file banking" << endl;
 
     bank bnk = compute_bank_info();
     for (auto inpt : get_in_ports()) {
@@ -6253,6 +6260,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     cout << "Done generating register-file style banks for " << name << ", bank list size = " << bank_list.size() << endl;
 
   } else if (banking.partition == "cyclic") {
+    cout << "Doing cyclic style banking" << endl;
     int dim = logical_dimension();
 
     assert(dim == banking.cycle_factors.size());
@@ -6343,9 +6351,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         }*/
 
     } else {
-
+    cout << "exhaustive banking " << endl;
       auto outpts = get_out_ports();
       std::set<string> out_pt_set(outpts.begin(), outpts.end());
+      cout << "got ports" << endl;
       map<string, std::set<string> > unique_outs =
         get_unique_ports(out_pt_set);
 

@@ -1260,7 +1260,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     }
   }
   
-  std::cout << "qfactors are: " << std::endl;
+  std::cout << "qfactors are for dim=" << dim << ": " << std::endl;
   for (auto q_pair : qfactors) {
     std::cout << "  " << q_pair.first << " : " << str(q_pair.second) << std::endl;
   }

@@ -153,13 +153,21 @@ prog bc_repeat();
 prog bc_mirror();
 
 prog gaussian_unroll();
+
 prog cascaded();
 prog cascade2();
 prog cascade2k_t1();
 prog cascade1_2_1();
+
 prog gpyr();
 prog gpyr5();
 prog gpyr2_4k();
 
 prog laplacian_composite();
+prog laplacian_composites();
 prog up_sample_pyramid();
+
+prog exposure_fusion();
+prog exposure_fusion_1side();
+prog image_blend();
+prog image_blend_1side();
