@@ -15485,7 +15485,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   //test_apps.push_back(resnet2_x_full());
 
   //For debug the 7x7 layer
-  test_apps.push_back(resnet_last());
+  //test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
 
@@ -15621,7 +15621,6 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
-  test_apps.push_back(resnet_init_unroll_tile_dp());
   //test_apps.push_back(conv_3_3());
   //test_apps.push_back(camera_pipeline_2x2());
   //test_apps.push_back(unsharp_large());
@@ -15633,13 +15632,13 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   //test_apps.push_back(unsharp());
   //test_apps.push_back(unsharp_new());
   //Counter did not work
-  //test_apps.push_back(counter());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(counter());
+  test_apps.push_back(rom());
+  test_apps.push_back(conv_1_2());
+  test_apps.push_back(demosaic_unrolled());
   //Resnet does not work
-  //test_apps.push_back(resnet88());
-  //test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(resnet88());
+  test_apps.push_back(camera_pipeline_new());
 
   //Not working TODO: merge dp_tile branch and check if fix this error
   //test_apps.push_back(up_sample());
@@ -15652,7 +15651,8 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
 
   //test_apps.push_back(resnet_tiny());
   //test_apps.push_back(resnet_simple());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet());
+  test_apps.push_back(resnet_init_unroll_tile_dp());
 
   //////Big applications
   //test_apps.push_back(mobilenet_unrolled());
@@ -15686,7 +15686,6 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
       verilog_files.push_back("PondTop_flat.v");
       verilog_files.push_back("pondtop_new.sv");
       verilog_files.push_back("pond_module_wrappers.v");
-      verilog_files.push_back("lake_module_wrappers.v");
       add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
       verilator_regression_test(prg, verilog_files, "dual_port_buffer");
     }
@@ -18556,6 +18555,7 @@ void align_glb_load_start_cycle(schedule_info& sched, prog& prg) {
       auto lp = prg.find_non_op(name);
       //this is the starting cycle under the coarse loop level, no matter how deep the loopnest is
       delay_map[name] = sched.starting_delay_to_leaf(lp);
+      cout << tab(2) << "Name: " << name << ": delay = " << delay_map.at(name) << endl;
       max_delay = max(delay_map.at(name), max_delay);
     }
     for (auto name : kernels_to_be_aligned) {
@@ -19286,6 +19286,21 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
     cout << tab(2) << "Adjusting II to   : " << sched.II(cgpl) << endl << endl;
 }
 
+void adjust_coarse_grained_kernel_latency(CodegenOptions& options,
+        schedule_info& sched, RTable& RRT, prog& prg) {
+    int rolling_latency = 0;
+    for (auto kernels: RRT.getSortedKernels()) {
+        int latency_at_each_timestamp = 0;
+        for (string kernel: kernels) {
+            op* lp = prg.find_non_op(kernel);
+            latency_at_each_timestamp = std::max(
+                    sched.total_latency(lp), latency_at_each_timestamp);
+            sched.op_offset_within_parent.at(lp) = rolling_latency;
+        }
+        rolling_latency += latency_at_each_timestamp;
+    }
+}
+
 void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info& sched, prog& prg) {
 
   vector<op*> cgpls;
@@ -19301,6 +19316,8 @@ void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info
       //update_coarse_grained_loop_iis(sched, cgpl);
       tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
       //tighten_iis(sched, prg);
+      adjust_coarse_grained_kernel_latency(options, sched, RRT, prg);
+
     }
   }
 }
@@ -19591,7 +19608,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
 
     } else if(options.fallback_schedule == ISCA_SCHEDULE) {
       coarse_grained_pipeline_optimization(options, sched, prg);
-      adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
+      //adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
       align_glb_load_start_cycle(sched, prg);
       tighten_coarse_grained_iis(sched, prg);
       adjust_outer_delays_sequentially(sched, prg);
@@ -20162,6 +20179,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
 
 CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg, string dir) {
   CodegenOptions options;
+  //options.rtl_options.target_tile = TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
   options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
   options.fallback_schedule = ISCA_SCHEDULE;
@@ -20674,7 +20692,8 @@ void compile_for_garnet_dual_port_mem(prog& prg,
 
   //auto iis = garnet_fuse_ii_level(prg);
   //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
-  CodegenOptions options = garnet_codegen_dual_port_with_addrgen_options(prg, dir);
+  CodegenOptions options =
+      garnet_codegen_dual_port_with_addrgen_options(prg, dir);
   options.debug_options.traceWave = true;
   options.add_memory_hierarchy("mem");
   options.add_memory_hierarchy("glb");
@@ -20695,7 +20714,8 @@ void compile_for_garnet_dual_port_mem(prog& prg,
     prg.pretty_print();
   }
 
-  schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
+  schedule_info sched =
+      garnet_schedule_info(options, prg, use_metamapper);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
