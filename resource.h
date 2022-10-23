@@ -84,6 +84,21 @@ struct RTable {
         return timestamp.at(k);
     }
 
+    vector<vector<string>> getSortedKernels() {
+        int max_time = 0;
+        for (auto it: timestamp) {
+            max_time = std::max(max_time, it.second);
+        }
+        vector<vector<string>> sorted_kernels;
+        for (int i = 0; i < max_time+1; i++) {
+            sorted_kernels.push_back({});
+        }
+        for (auto it: timestamp) {
+            sorted_kernels.at(it.second).push_back(it.first);
+        }
+        return sorted_kernels;
+    }
+
     void setTimeStamp(string& k, int t) {
         timestamp[k] = t;
     }

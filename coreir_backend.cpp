@@ -2136,7 +2136,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d 512");
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -onyx -a -v -d 512");
   assert(res_lake == 0);
 
 
@@ -2167,7 +2167,10 @@ void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_name, int num_inpt, int num_outpt, int width) {
   std::ofstream verilog_collateral_file;
   //verilog_collateral_file.open(long_name + ".v");
-  verilog_collateral_file.open("lake_module_wrappers.v", std::ios_base::app);
+  if (options.mem_hierarchy.at("mem").fetch_width > 1)
+    verilog_collateral_file.open("lake_module_wrappers.v", std::ios_base::app);
+  else
+    verilog_collateral_file.open("pond_module_wrappers.v", std::ios_base::app);
 
   vector<string> port_decls = {};
   port_decls.push_back("input clk");
@@ -3470,7 +3473,7 @@ class RemoveFlush: public CoreIR::InstancePass {
             return true;
           }
         }
-      }  
+      }
       return false;
     }
 

@@ -127,6 +127,7 @@ struct LakeCollateral {
     bool multi_sram_accessor;
     bool dual_port_sram;
     bool wire_chain_en;
+    int interconnect_in_num, interconnect_out_num;
 
     LakeCollateral() {}
 
@@ -135,6 +136,8 @@ struct LakeCollateral {
         max_chaining(4),
         iteration_level(6),
         counter_ub(65535),
+        interconnect_in_num(1),
+        interconnect_out_num(1),
         multi_sram_accessor(true),
         dual_port_sram(false),
         wire_chain_en(false) {
@@ -142,6 +145,8 @@ struct LakeCollateral {
                 fetch_width = 4;
                 max_chaining = 4;
                 iteration_level = 6;
+                interconnect_in_num = 2;
+                interconnect_out_num = 2;
                 capacity = {{"agg", 16}, {"sram", 512}, {"tb", 16}};
                 in_port_width = {{"agg", 1}, {"sram", 4}, {"tb", 4}};
                 out_port_width = {{"agg", 4}, {"sram", 4}, {"tb", 1}};
@@ -332,11 +337,13 @@ struct LakeCollateral {
       fetch_width = 1;
       dual_port_sram = true;
       wire_chain_en = false;
+      interconnect_in_num = 1;
+      interconnect_out_num = 1;
       word_width = {{"mem", 1}};
       in_port_width = {{"mem", 1}};
       out_port_width = {{"mem", 1}};
       bank_num = {{"mem", 1}};
-      capacity = {{"mem", 512}};
+      capacity = {{"mem", 2048}};
       controller_name = {"regfile"};
     }
 
