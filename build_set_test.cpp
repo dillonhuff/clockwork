@@ -15646,29 +15646,26 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(camera_pipeline_2x2());
-  //test_apps.push_back(unsharp_large());
-  //test_apps.push_back(harris_color());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(unsharp_new());
-  //Counter did not work
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(harris_color());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(unsharp_new());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  //Resnet does not work
   test_apps.push_back(resnet88());
   test_apps.push_back(camera_pipeline_new());
 
-  //Not working TODO: merge dp_tile branch and check if fix this error
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(laplacian_pyramid_docker());
-  //test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
 
 
   ////////DNN apps
