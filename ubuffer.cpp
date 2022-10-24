@@ -3139,6 +3139,8 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       //buf->getMetaData()["init"] = v;
       config_file["init"] = v;
       bool has_stencil_valid = false;
+      if (dim == 1)
+        has_stencil_valid = true;
       auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
               "rst_n", "lake_dp", config_file, has_stencil_valid,  1, 1);
 

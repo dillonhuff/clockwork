@@ -5820,6 +5820,10 @@ int buffer_store_latency(CodegenOptions& options) {
     return 1;
   }
 
+  if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
+    return 1;
+  }
+
   if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
     return 0;
   }
@@ -5844,7 +5848,10 @@ int buffer_load_latency(CodegenOptions& options) {
   if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ) {
     return 0;
 
-  } else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
+  } else if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
+    return 0;
+  }
+  else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
     return 0;
   } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
   {

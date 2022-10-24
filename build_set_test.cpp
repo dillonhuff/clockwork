@@ -15629,29 +15629,26 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(camera_pipeline_2x2());
-  //test_apps.push_back(unsharp_large());
-  //test_apps.push_back(harris_color());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(unsharp_new());
-  //Counter did not work
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(harris_color());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(unsharp_new());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  //Resnet does not work
   test_apps.push_back(resnet88());
   test_apps.push_back(camera_pipeline_new());
 
-  //Not working TODO: merge dp_tile branch and check if fix this error
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(laplacian_pyramid_docker());
-  //test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(up_sample());
+  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
 
   //////DNN apps
   ////Not working
@@ -20056,7 +20053,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
 
       for (auto b : op->buffers_referenced()) {
-        if (!prg.is_boundary(b)) {
+        if (!prg.is_boundary(b) && !contains(b, "clkwrk_dsa")) {
           sched.buffer_load_latencies[b] = buffer_load_latency(options);
           sched.buffer_store_latencies[b] = buffer_store_latency(options);
         } else {
@@ -20098,7 +20095,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     }
 
     for (auto b : op->buffers_referenced()) {
-      if (!prg.is_boundary(b)) {
+      if (!prg.is_boundary(b) && !contains(b, "clkwrk_dsa")) {
         sched.buffer_load_latencies[b] = buffer_load_latency(options);
         sched.buffer_store_latencies[b] = buffer_store_latency(options);
       } else {
@@ -20169,7 +20166,7 @@ CodegenOptions garnet_codegen_single_port_with_addrgen_options(prog& prg, string
 CodegenOptions garnet_codegen_dual_port_with_addrgen_options(prog& prg, string dir) {
   CodegenOptions options;
   //options.rtl_options.target_tile = TARGET_TILE_DUAL_SRAM_WITH_ADDRGEN;
-  options.rtl_options.target_tile = TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN;
+  options.rtl_options.target_tile = TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN;
   options.conditional_merge = true;
   options.fallback_schedule = ISCA_SCHEDULE;
   options.merge_threshold = 10;
