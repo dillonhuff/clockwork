@@ -2350,10 +2350,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
 
         //Check if we have loop iteration larger than hardware limit,
         //root will be removed so we add 1
-        int ctrl_level = 4;
-        if (contains(ctrl_name, "tb2out") || contains(ctrl_name, "sram2tb")) {
-          ctrl_level = mem.iteration_level + 1;
-        }
+        int ctrl_level = mem.get_ctrl_iter_level(ctrl_name) + 1;
         if (num_in_dims(sched) > ctrl_level) {
 
         //{
@@ -2505,7 +2502,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    //reutrn:    pair(schedulem access_map)
    //FIXME: add a handle for running this pass
    auto m_pair = make_pair(sched, linear_acc_map);
-   if (num_in_dims(sched) < mem.iteration_level + 1) {
+   string ctrl_cfg_name = "in2"+ctrl_name+"_" + str(in_cnt);
+   if (num_in_dims(sched) > mem.get_ctrl_iter_level(ctrl_cfg_name) + 1) {
      auto pad_pair = pad_domain(sched, (linear_acc_map));
      m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
    }
@@ -2528,8 +2526,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    cout << "\tWrite map: " << str(acc_map) << endl;
 
    //Add configuration
-   add_lake_config(ret, config_info, num_in_dims(aff),
-           "in2"+ctrl_name+"_" + str(in_cnt));
+   add_lake_config(ret, config_info, num_in_dims(aff), ctrl_cfg_name);
    in_cnt ++;
  }
 
@@ -2549,7 +2546,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    //add a simplify optimization pass,
    //reutrn:    pair(schedulem access_map)
    auto m_pair = make_pair(sched, linear_acc_map);
-   if (num_in_dims(sched) < mem.iteration_level + 1) {
+   string ctrl_cfg_name = ctrl_name + "2out" + "_" + str(out_cnt);
+   if (num_in_dims(sched) > mem.get_ctrl_iter_level(ctrl_cfg_name) + 1) {
      auto pad_pair = pad_domain(sched, (linear_acc_map));
      m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
    }
@@ -2571,8 +2569,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    cout << "\tWrite map: " << str(acc_map) << endl;
 
    //Add configuration
-   add_lake_config(ret, config_info, num_in_dims(aff),
-           ctrl_name + "2out" + "_" + str(out_cnt));
+   add_lake_config(ret, config_info, num_in_dims(aff), ctrl_cfg_name);
    out_cnt ++;
  }
  return ret;

@@ -123,7 +123,10 @@ struct LakeCollateral {
     std::set<string> controller_name; //use for identify the controller name in configuration
     int fetch_width;
     int max_chaining;
+    //This is the max
     int iteration_level;
+    //Iteration level should associate to each hardware controller component
+    map<string, int> iter_level_map;
     int counter_ub;
     bool multi_sram_accessor;
     bool dual_port_sram;
@@ -146,6 +149,8 @@ struct LakeCollateral {
                 fetch_width = 4;
                 max_chaining = 4;
                 iteration_level = 6;
+                iter_level_map = {{"in2agg_0", 3}, {"in2agg_1", 3},
+                 {"agg2sram_0", 3}, {"agg2sram_1", 3}};
                 interconnect_in_num = 2;
                 interconnect_out_num = 2;
                 capacity = {{"agg", 16}, {"sram", 512}, {"tb", 16}};
@@ -163,8 +168,8 @@ struct LakeCollateral {
                 bank_num = {{"regfile", 1}};
                 capacity = {{"regfile", 32}};
                 controller_name = {"regfile"};
-                iteration_level = 3;
-
+                iteration_level = 4;
+                iter_level_map = {{"in2regfile_1", 2}, {"regfile2out_1", 2}};
             } else if (level == "glb") {
                 fetch_width = 1;
                 max_chaining = 1;
@@ -179,6 +184,8 @@ struct LakeCollateral {
                 assert(false);
             }
     }
+
+    int get_ctrl_iter_level(string ctrl_name);
 
     void add_memory_component(string name, bool is_single_port) {
       controller_name.insert(name);

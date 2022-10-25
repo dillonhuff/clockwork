@@ -25,6 +25,14 @@ string CodegenOptions::get_hierarchy_level(int capacity) {
 
 }
 
+int LakeCollateral::get_ctrl_iter_level(string ctrl_name) {
+        if (iter_level_map.count(ctrl_name)) {
+            return iter_level_map.at(ctrl_name);
+        } else {
+            return iteration_level;
+        }
+    }
+
 LakeCollateral create_single_port_wide_fetch_memory(int fetch_width, int capacity, int SIPO_num) {
     LakeCollateral mem;
 
