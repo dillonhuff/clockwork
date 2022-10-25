@@ -2136,7 +2136,7 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -onyx -a -v -d 512");
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d 512");
   assert(res_lake == 0);
 
 
@@ -2158,7 +2158,7 @@ void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
   //int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper_lake.py -c " + options.dir + "lake_collateral/" + ub_ins_name + " -n " + v_name + " -p True -pl 4 -pd 128");
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -onyx -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv -a -v -dp -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
+          "/config.json -wmn "+ v_name + " -wfn pond_module_wrappers.v -vmn PondTop -vfn pondtop.sv -a -v -dp -onyx -ii 4 -oi 4 -rd 0 -d 128 -mw 16");
   assert(res_lake == 0);
   //cmd("mkdir -p "+options.dir+"verilog");
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
