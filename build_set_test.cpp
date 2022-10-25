@@ -15473,14 +15473,14 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(glb_channel_reduction());
   test_apps.push_back(matmul());
   //Simplified multi-tile DNN application
-  //test_apps.push_back(resnet_init_unroll_tile());
+  test_apps.push_back(resnet_init_unroll_tile());
 
   //Too large which will go beyound the 64k counter ub
   //test_apps.push_back(resnet5_1_full());
   //test_apps.push_back(resnet2_x_full());
 
   //For debug the 7x7 layer
-  //test_apps.push_back(resnet_last());
+  test_apps.push_back(resnet_last());
 
   //Sample DNN Layers
   test_apps.push_back(resnet1_docker());
