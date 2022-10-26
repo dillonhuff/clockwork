@@ -20151,19 +20151,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
                sched.buf2level[b] = "mem";
             }
           }
-        /*
-        auto pmap = prg.producer_map(b);
-        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
-        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
-        //This is a hacky rewrite
-        if (!contains(b, "glb")) {
-          if (sched.buf2level[b] == "glb") {
-             sched.buf2level[b] = "mem";
-          }
-        >>>>>>> resource reservation table added
-        */
+
         }
       }
     }
@@ -20211,20 +20199,6 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
             //cout << "buf2level: " << sched.buf2level[b] << endl;
         }
       }
-      /*
-      auto pmap = prg.producer_map(b);
-      cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-          << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-          "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
-      sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
-        //This is a hacky rewrite
-        if (!contains(b, "glb")) {
-          if (sched.buf2level[b] == "glb") {
-             sched.buf2level[b] = "mem";
-          }
-        }
-        cout << "buf2level: " << sched.buf2level[b] << endl;
-       */
     }
   }
   cout << sched.compute_unit_latencies << endl;
