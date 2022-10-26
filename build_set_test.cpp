@@ -20060,16 +20060,19 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
           sched.buffer_store_latencies[b] = 0;
         }
 
-        auto pmap = prg.producer_map(b);
-        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
-        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
-        //This is a hacky rewrite
-        if (!contains(b, "glb")) {
-          if (sched.buf2level[b] == "glb") {
-             sched.buf2level[b] = "mem";
+        if (options.rtl_options.use_prebuilt_memory) {
+          auto pmap = prg.producer_map(b);
+          cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+              << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+              "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+          sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+          //This is a hacky rewrite
+          if (!contains(b, "glb")) {
+            if (sched.buf2level[b] == "glb") {
+               sched.buf2level[b] = "mem";
+            }
           }
+
         }
       }
     }
@@ -20101,18 +20104,22 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.buffer_load_latencies[b] = 0;
         sched.buffer_store_latencies[b] = 0;
       }
-      auto pmap = prg.producer_map(b);
-      cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-          << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-          "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
-      sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
-        //This is a hacky rewrite
-        if (!contains(b, "glb")) {
-          if (sched.buf2level[b] == "glb") {
-             sched.buf2level[b] = "mem";
+
+      if (options.rtl_options.use_prebuilt_memory) {
+        auto pmap = prg.producer_map(b);
+        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+          //This is a hacky rewrite
+          if (!contains(b, "glb")) {
+            if (sched.buf2level[b] == "glb") {
+               sched.buf2level[b] = "mem";
+            }
           }
-        }
-        cout << "buf2level: " << sched.buf2level[b] << endl;
+          cout << "buf2level: " << sched.buf2level[b] << endl;
+
+      }
     }
   }
   }
@@ -20988,18 +20995,19 @@ vector<prog> isca_programs() {
 
   //Scheduler has some issue, not support cyclic banking
   //test_programs.push_back(matmul_single());
-
-  test_programs.push_back(resnet88());
-  test_programs.push_back(matmul_single_m1());
-  test_programs.push_back(camera_pipeline());
-  test_programs.push_back(camera_pipeline_new());
-  test_programs.push_back(camera_pipeline_2x2());
+  test_programs.push_back(conv_3_3());
   test_programs.push_back(gaussian());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
   //test_programs.push_back(harris());
   test_programs.push_back(harris_color());
   test_programs.push_back(up_sample());
+  test_programs.push_back(laplacian_pyramid());
+  //test_programs.push_back(resnet88());
+  test_programs.push_back(matmul_single_m1());
+  test_programs.push_back(camera_pipeline());
+  test_programs.push_back(camera_pipeline_new());
+  test_programs.push_back(camera_pipeline_2x2());
   //test_programs.push_back(unsharp());
   //test_programs.push_back(unsharp_new());
   test_programs.push_back(unsharp_large());
@@ -21409,7 +21417,7 @@ void cgra_flow_tests() {
 
   //vector<prog> bram_test_programs{pointwise(), gaussian(), harris(), resnet()};
   //vector<prog> bram_test_programs{resnet88()};
-  //vector<prog> bram_test_programs{pointwise()};
+  //vector<prog> bram_test_programs{laplacian_pyramid()};
   //test_codegen(bram_test_programs, compile_for_FPGA_BRAM_mem);
 
   //vector<prog> M3_test_programs = harris_variants();
