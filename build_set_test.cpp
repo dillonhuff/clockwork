@@ -15664,6 +15664,10 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
+  test_apps.push_back(up_sample());
+  test_apps.push_back(laplacian_pyramid_docker());
+  test_apps.push_back(laplacian_pyramid());
+
   test_apps.push_back(conv_3_3());
   test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(unsharp_large());
@@ -15681,9 +15685,6 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(resnet88());
   test_apps.push_back(camera_pipeline_new());
 
-  test_apps.push_back(up_sample());
-  test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
 
   //////DNN apps
   ////Not working
@@ -19573,7 +19574,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       sched.op_offset_within_parent[op] = offset;
       for (auto init_op: init_ops) {
         assert(sched.op_offset_within_parent[init_op] <= offset);
-        sched.op_offset_within_parent[init_op] = offset;
+        sched.op_offset_within_parent[init_op] = offset - buffer_load_latency(options) - buffer_store_latency(options);
         cout << "force inner op: " << init_op->name << ", has same offset as update: " << offset << endl;
       }
       cout << "inner ops: " << op->name << ", offset: "<< offset << endl;
@@ -20103,7 +20104,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
 
       for (auto b : op->buffers_referenced()) {
-        if (!prg.is_boundary(b) && !contains(b, "clkwrk_dsa")) {
+        if (!prg.is_boundary(b) ) {
           sched.buffer_load_latencies[b] = buffer_load_latency(options);
           sched.buffer_store_latencies[b] = buffer_store_latency(options);
         } else {
@@ -20147,7 +20148,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
 
     for (auto b : op->buffers_referenced()) {
-      if (!prg.is_boundary(b) && !contains(b, "clkwrk_dsa")) {
+      if (!prg.is_boundary(b) ) {
         sched.buffer_load_latencies[b] = buffer_load_latency(options);
         sched.buffer_store_latencies[b] = buffer_store_latency(options);
       } else {
@@ -21044,8 +21045,8 @@ vector<prog> isca_programs() {
 
   //Scheduler has some issue, not support cyclic banking
   //test_programs.push_back(matmul_single());
-  test_programs.push_back(conv_3_3());
   test_programs.push_back(gaussian());
+  test_programs.push_back(conv_3_3());
   test_programs.push_back(cascade());
   test_programs.push_back(down_sample());
   //test_programs.push_back(harris());
