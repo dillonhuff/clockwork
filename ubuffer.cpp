@@ -1426,6 +1426,35 @@ void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
   }
 }
 
+void UBufferImpl::capacity_partition(CodegenOptions& options) {
+    for (auto it: bank_rddom) {
+        GarnetImpl cgra_impl = lowering_info.at(it.first);
+        //TODO: You need to first check the capacity of each bank
+        //and partition those banks that execeed the memory capacity into multiple banks
+        //do not forget to rewrite the bank outpt_to_bank and inpt_to_bank
+        //Which will change your chaining wiring
+        //
+        //TODO: do not forget double buffer, let's be conservative
+        //It should be check by the schedule for input output overlapping
+        int N_buffer = 2;
+
+        //Get the memory from options
+        cout << "mem mode: " << cgra_impl.config_mode << endl;
+        string mem_string = options.get_memory_hierarchy_from_config_mode(cgra_impl.config_mode);
+        cout << "mem hierarchy: " << mem_string << endl;
+        auto mem = options.mem_hierarchy.at(mem_string);
+        int capacity = get_bank_capacity(it.first);
+        cout << "Capacity: " << capacity << endl;
+        int chaining_tile = (capacity - 1) * N_buffer / mem.get_single_tile_capacity() + 1;
+        if (chaining_tile > 1) {
+           cout << "Need Chaining, NOT Implemented! " << endl;
+           cout << "Max chaining: " << mem.max_chaining << endl;
+           assert(chaining_tile <= mem.max_chaining);
+           assert(false);
+        }
+    }
+}
+
 void UBufferImpl::bank_merging(CodegenOptions & options) {
   auto comp = [this](const int& a, const int& b) {
       return !equal(this->bank_rddom.at(a), this->bank_rddom.at(b));

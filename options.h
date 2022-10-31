@@ -464,6 +464,20 @@ struct CodegenOptions {
   banking_strategy get_banking_strategy(const std::string& buffer);
   string get_hierarchy_level(int capacity);
 
+  string get_memory_hierarchy_from_config_mode(const string & mode) const {
+    if (mode == "lake") {
+      return "mem";
+    } else if (mode == "lake_dp") {
+      return "mem";
+    } else if (mode == "pond") {
+      return "regfile";
+    } else if (mode == "glb") {
+      return "glb";
+    } else {
+      cout << "Not implemented config mode: " << mode << endl;
+      assert(false);
+    }
+  }
 };
 
 struct power_analysis_params {

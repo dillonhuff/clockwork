@@ -2712,9 +2712,12 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       //all the memory optimization pass goes here
       auto impl = generate_optimized_memory_implementation(options, buf.second, prg, hwinfo);
 
+
       lower_to_garnet_implementation(options, buf.second, impl, hwinfo);
 
       impl.bank_merging_and_rewrite(options);
+
+      impl.capacity_partition(options);
 
       //Generate the memory module
       auto ub_mod = generate_coreir_without_ctrl(options, context, buf.second, impl, hwinfo);

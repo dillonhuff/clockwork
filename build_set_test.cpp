@@ -15624,6 +15624,34 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   }
 }
 
+void test_chaining(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
+  vector<prog> test_apps;
+  test_apps.push_back(matmul_chaining());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers(prg);
+    prg.pretty_print();
+#ifdef COREIR
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_dual_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
+    cout << "Output name: " << prg.name << endl;
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      vector<string> verilog_files;;
+      verilog_files.push_back("PondTop_flat.v");
+      verilog_files.push_back("pondtop_new.sv");
+      verilog_files.push_back("pond_module_wrappers.v");
+      add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
+      verilator_regression_test(prg, verilog_files, "dual_port_buffer");
+    }
+#endif
+  }
+}
+
 void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
   vector<prog> test_apps;
 
@@ -19428,7 +19456,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     sequential_schedule(sched, root, prg);
     return;
   //} else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
-  } else if (is_rate_matchable_loopnest(prg, pad_indices)) {
+  } else if (is_rate_matchable_loopnest(prg, pad_indices) && !contains(prg.name, "matmul")) {
     prg.pretty_print();
 
     loop_split(prg);
@@ -29372,6 +29400,13 @@ int main(int argc, char** argv) {
       bool gen_config_only = false;
       bool use_multi_accessor_tile = true;
       test_dual_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
+      return 0;
+    }
+
+    if (cmd == "chaining-tests") {
+      bool gen_config_only = false;
+      bool use_multi_accessor_tile = true;
+      test_chaining(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
       return 0;
     }
 

@@ -3727,6 +3727,7 @@ struct UBufferImpl {
   void conditional_merging(CodegenOptions & options, const vector<int> & banks_tobe_merged);
   void bank_merging(CodegenOptions & options);
   void bank_merging_and_rewrite(CodegenOptions & options);
+  void capacity_partition(CodegenOptions& options);
   void sort_bank_port();
   void sort_bank_port(string , UBuffer& , int);
   void sort_bank_port_for_lake(string , UBuffer& , int);
@@ -3735,7 +3736,7 @@ struct UBufferImpl {
 
   int get_bank_capacity(int bank_id) const {
     int capacity_without_circular_buf =
-        int_upper_bound(card(to_uset(bank_rddom.at(bank_id))));
+        int_upper_bound(card(to_uset(simplify(bank_rddom.at(bank_id)))));
     auto bank_read_set = bank_readers.at(bank_id);
     int shift_register_depth = -1;
     for (string read_pt: bank_read_set) {
