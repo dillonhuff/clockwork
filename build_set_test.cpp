@@ -18988,7 +18988,7 @@ void asap_input_iis(schedule_info& sched, prog& prg) {
 void break_up_multi_channel_outputs(prog& prg) {
   std::set<string> to_erase;
   for (auto out : prg.outs) {
-    std::set<op*> writers = find_writers(out, prg);
+    std::set<op*, cmp_op> writers = find_writers(out, prg);
     if (writers.size() > 1) {
       for (auto wr : writers) {
         string replacement = prg.un(out + "_clkwrk_");
@@ -19007,7 +19007,7 @@ void break_up_multi_channel_outputs(prog& prg) {
 void break_up_multi_channel_inputs(prog& prg) {
   std::set<string> to_erase;
   for (auto in : prg.ins) {
-    std::set<op*> readers = find_readers(in, prg);
+    std::set<op*, cmp_op> readers = find_readers(in, prg);
     if (readers.size() > 1) {
       for (auto rd : readers) {
         string replacement = prg.un(in + "_clkwrk_");
@@ -28133,8 +28133,8 @@ void load_pe_power_stats(power_analysis_params& power_params, const std::string&
   //assert(false);
 }
 
-std::set<op*> find_users(const std::string& buf, prog& prg) {
-  std::set<op*> rds = find_readers(buf, prg);
+std::set<op*, cmp_op> find_users(const std::string& buf, prog& prg) {
+  std::set<op*, cmp_op> rds = find_readers(buf, prg);
   for (auto p : find_writers(buf, prg)) {
     rds.insert(p);
   }

@@ -2317,8 +2317,8 @@ map<string, int> get_variable_levels(prog& prg){
 	return variable_map;
 }
 
-std::set<op*> find_writers(const string& buff, prog& prg){
-	std::set<op*> readers;
+std::set<op*, cmp_op> find_writers(const string& buff, prog& prg){
+	std::set<op*, cmp_op> readers;
 
 	for(auto op : prg.all_ops()){
 		if(elem(buff, op->buffers_written())){
@@ -2328,8 +2328,8 @@ std::set<op*> find_writers(const string& buff, prog& prg){
 
 	return readers;
 }
-std::set<op*> find_readers(const string& buff, prog& prg){
-	std::set<op*> readers;
+std::set<op*, cmp_op> find_readers(const string& buff, prog& prg){
+	std::set<op*, cmp_op> readers;
 
 	for(auto op : prg.all_ops()){
 		if(elem(buff, op->buffers_read())){

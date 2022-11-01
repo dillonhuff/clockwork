@@ -283,6 +283,13 @@ T pick(const std::set<T>& s) {
   return *(begin(s));
 }
 
+template<typename T, typename Cmp>
+static inline
+T pick(const std::set<T, Cmp>& s) {
+  assert(s.size() > 0);
+  return *(begin(s));
+}
+
 static inline
 std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
 
