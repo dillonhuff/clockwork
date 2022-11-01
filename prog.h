@@ -974,6 +974,12 @@ struct ir_node {
 
 };
 
+struct cmp_op {
+  bool operator() (op* l, op* r) const {
+    return l->name < r->name;
+  }
+};
+
 
 struct prog {
 
@@ -1656,7 +1662,7 @@ void get_variable_levels(op* node, map<string,int>& variable_map, int current_le
 map<string, int> get_variable_levels(prog& prg);
 
 std::set<string> all_buffers(prog& prg);
-std::set<op*> find_readers(const string& buff, prog& prg);
+std::set<op*, cmp_op> find_readers(const string& buff, prog& prg);
 
 // std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group);
 //prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original);
@@ -1685,7 +1691,7 @@ pair<std::string, std::string> remove_whitespace(const pair<std::string, std::st
 std::string remove_whitespace(const std::string& addr);
 piecewise_address remove_whitespace(const piecewise_address& addr);
 
-std::set<op*> find_writers(const string& buff, prog& prg);
+std::set<op*, cmp_op> find_writers(const string& buff, prog& prg);
 
 
 void extend_bounds_to_multiple_of(const int factor, const std::string& buf, prog& prg);

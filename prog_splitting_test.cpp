@@ -216,8 +216,8 @@ normalized_address_components get_components(const normalized_address& addr, pro
 std::set<normalized_address_components> get_normalized_addresses(const string& buff, prog& prg){
 
 	// Create a map here from key = buff >> value = addr
-	std::set<op*> buff_readers = find_readers(buff, prg);
-	std::set<op*> buff_writers = find_writers(buff, prg);
+	auto buff_readers = find_readers(buff, prg);
+	auto buff_writers = find_writers(buff, prg);
 	std::set<address> addresses;
 	auto levels = get_variable_levels(prg);
 	vector<pair<std::string, int>> ordered_levels;
@@ -384,7 +384,7 @@ bool is_stencil(const string& buff, prog& prg){
 bool is_reduction(const string& buff, prog& prg){
 
 	// Create a set with all the ops that write in the given buff
-	std::set<op*> buff_writers = find_writers(buff, prg);
+	auto buff_writers = find_writers(buff, prg);
 
 	//For each op, use the buff's addr to get the set of variables being used
 	std::map<op*, std::set<string>> op_variables;
