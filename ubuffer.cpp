@@ -3145,7 +3145,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       def->connect(dp_buf_for_counter->sel("data_out_pond_0"), def->sel("self")->sel("d")->sel(dim));
       generate_lake_tile_verilog(options, dp_buf_for_counter);
       if (has_stencil_valid) {
-        def->connect(dp_buf_for_counter->sel("valid_out_pond"), def->sel("self.valid"));
+        def->connect(dp_buf_for_counter->sel("stencil_valid"), def->sel("self.valid"));
       }
 
     }
