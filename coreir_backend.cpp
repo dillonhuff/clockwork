@@ -1925,7 +1925,7 @@ CoreIR::Wireable* op_control_wires(Instance* ctrl) {
     if (mode == "lake") {
         return ctrl->sel("stencil_valid");
     } else if (mode == "lake_dp") {
-        return ctrl->sel("valid_out_pond");
+        return ctrl->sel("stencil_valid");
     } else {
         cout << "Config mode: " << mode << "Not implemented" << endl;
         assert(false);

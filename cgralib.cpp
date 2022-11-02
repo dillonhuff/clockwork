@@ -340,7 +340,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 recordparams.push_back({"data_out_pond_" + to_string(i), c->Bit()->Arr(width)});
             }
             if (has_stencil_valid)
-              recordparams.push_back({"valid_out_pond", c->Bit()});
+              recordparams.push_back({"stencil_valid", c->Bit()});
             recordparams.push_back({"flush", c->BitIn()});
 
         return c->Record(recordparams);
@@ -396,7 +396,7 @@ CoreIR::Namespace* CoreIRLoadLibrary_cgralib(Context* c) {
                 recordparams.push_back({"data_out_pond_" + to_string(i), c->Bit()->Arr(width)});
             }
             if (has_stencil_valid)
-              recordparams.push_back({"valid_out_pond", c->Bit()});
+              recordparams.push_back({"stencil_valid", c->Bit()});
             recordparams.push_back({"flush", c->BitIn()});
 
         return c->Record(recordparams);
