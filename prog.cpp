@@ -5271,6 +5271,7 @@ int op_latency(op* op, schedule_info& hwinfo) {
 }
 
 void schedule_info::init_op_latencies(prog& prg) {
+    //FIXME: this was comment out in aha flow may result problem in dp test
     // for (auto stmt : prg.all_ops()) {
     //     op_latencies[stmt->name] = op_latency(stmt, *this);
     // }
