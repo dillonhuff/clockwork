@@ -1824,6 +1824,8 @@ struct schedule_info {
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
+  //Save the latency in this data structure
+  map<string, int> op_latencies;
   map<string, string> op_compute_unit_names;
   //map<string, int> op_compute_unit_latencies;
 
@@ -1937,6 +1939,8 @@ struct schedule_info {
   void assign_memory_write_resource(CodegenOptions& options, op* op_, string buf) {
     buf_write_assignment[op_] = buf;
   }
+
+  void init_op_latencies(prog& prg);
 
 
 };
