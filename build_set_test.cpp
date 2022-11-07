@@ -15663,21 +15663,22 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
   vector<prog> test_apps;
 
-  //CGRA tests that pass dual port test
-  test_apps.push_back(up_sample());
-  test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
 
   test_apps.push_back(conv_3_3());
-  test_apps.push_back(camera_pipeline_2x2());
-  test_apps.push_back(unsharp_large());
-  test_apps.push_back(harris_color());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(down_sample());
   test_apps.push_back(unsharp());
   test_apps.push_back(unsharp_new());
+  //CGRA tests that pass dual port test
+  test_apps.push_back(up_sample());
+  test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(laplacian_pyramid_docker());
+
+  test_apps.push_back(camera_pipeline_2x2());
+  test_apps.push_back(unsharp_large());
+  test_apps.push_back(harris_color());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
@@ -15686,12 +15687,12 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(camera_pipeline_new());
 
 
-  //////DNN apps
-  ////Not working
-  ////test_apps.push_back(matmul_single());
+  ////////DNN apps
+  //////Not working
+  //////test_apps.push_back(matmul_single());
 
-  //test_apps.push_back(resnet_tiny());
-  //test_apps.push_back(resnet_simple());
+  ////test_apps.push_back(resnet_tiny());
+  ////test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(resnet_init_unroll_tile_dp());
 
@@ -15724,10 +15725,10 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
     //run verilator on all the generated verilog
     if (!gen_config_only) {
       vector<string> verilog_files;;
-      verilog_files.push_back("PondTop_flat.v");
-      verilog_files.push_back("pondtop_new.sv");
-      verilog_files.push_back("pond_module_wrappers.v");
-      add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_dp__0");
       verilator_regression_test(prg, verilog_files, "dual_port_buffer");
     }
 #endif
@@ -19565,6 +19566,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       for (auto other : scheduled) {
         if (intersection(other->buffers_written(), read).size() > 0) {
           offset = max(offset, sched.op_offset_within_parent[other] + op_latency(other, sched));
+          //cout << "op latency: " << other->name << "->" << op_latency(other, sched) << endl;
           if (contains(pick(other->buffers_written()), "clkwrk_dsa")) {
               //This is the op which need forcing to have the same offset
               init_ops.push_back(other);
@@ -20104,7 +20106,8 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
 
       for (auto b : op->buffers_referenced()) {
-        if (!prg.is_boundary(b) ) {
+        //TODO: put this into lakecollateral
+        if (!prg.is_boundary(b) && !contains(b, "glb")) {
           sched.buffer_load_latencies[b] = buffer_load_latency(options);
           sched.buffer_store_latencies[b] = buffer_store_latency(options);
         } else {
@@ -20148,7 +20151,8 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
 
     for (auto b : op->buffers_referenced()) {
-      if (!prg.is_boundary(b) ) {
+      //TODO: put this into lakecollateral
+      if (!prg.is_boundary(b) && !contains(b, "glb")) {
         sched.buffer_load_latencies[b] = buffer_load_latency(options);
         sched.buffer_store_latencies[b] = buffer_store_latency(options);
       } else {
@@ -20188,6 +20192,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 #ifdef COREIR
   pipeline_compute_units(prg, sched);
 #endif
+  sched.init_op_latencies(prg);
   return sched;
 }
 
@@ -21444,6 +21449,7 @@ void buffet_tests() {
   //vector<prog> buffet_test_programs = {pointwise_conv()};
   vector<prog> buffet_test_programs;
   //unsharp not work
+  //buffet_test_programs.push_back(unsharp());
   //buffet_test_programs.push_back(unsharp());
   buffet_test_programs.push_back(gaussian());
   buffet_test_programs.push_back(conv_3_3_buffet());

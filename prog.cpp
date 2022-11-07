@@ -5259,6 +5259,12 @@ int op_latency(op* op, schedule_info& hwinfo) {
   return total_latency;
 }
 
+void schedule_info::init_op_latencies(prog& prg) {
+    for (auto stmt : prg.all_ops()) {
+        op_latencies[stmt->name] = op_latency(stmt, *this);
+    }
+}
+
 
 //Binary search the smallest outer delay
 void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_load_latency) {
@@ -5849,7 +5855,7 @@ int buffer_load_latency(CodegenOptions& options) {
     return 0;
 
   } else if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
-    return 0;
+    return 1;
   }
   else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
     return 0;

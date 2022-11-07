@@ -3098,7 +3098,7 @@ void tighten_address_space() {
     void collect_memory_cnt(CodegenOptions& options, mem_access_cnt& mem_access);
 #ifdef COREIR
     pair<isl_map*, isl_map*> get_bank_pt_IR(string inpt, isl_set* rddom, schedule_info & info);
-    UBuffer generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank);
+    UBuffer generate_ubuffer(CodegenOptions& optiosn, UBufferImpl& impl, schedule_info & info, int bank);
     //CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 
     //kernel function for generate coreir
@@ -3135,9 +3135,10 @@ void tighten_address_space() {
     CoreIR::Instance* generate_lake_tile_instance(
         CoreIR::ModuleDef* def,
         CodegenOptions options,
-        string ub_ins_name, string bk_name,
+        string ub_ins_name, string mode,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush);
+
 
     CoreIR::Instance* generate_pond_instance(
         CoreIR::ModuleDef* def,

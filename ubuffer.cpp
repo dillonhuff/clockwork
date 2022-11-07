@@ -1588,7 +1588,7 @@ pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, sc
   return {acc_map, sched};
 }
 
-UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int bank) {
+UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, schedule_info & info, int bank) {
   //for(auto it: impl.bank_rddom) {
     //int bank = it.first;
     string bname = name + "_BANK_" + str(bank);
@@ -1630,11 +1630,16 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
       auto dom = ::domain(acc_map);
 
       //update op latency
-      op_latency = info.compute_latency(::domain_name(acc_map));
+      //op_latency = info.compute_latency(::domain_name(acc_map));
+      op_latency = info.op_latencies.at(::domain_name(acc_map));
 
 
       auto sched_aff = get_aff(schedule.at(inpt));
-      sched_aff = add(sched_aff, op_latency);
+      //cout << "buffer name:" << name << endl;
+      //for (auto it: info.buffer_load_latencies) {
+      //    cout << "\tbuffer: " << it.first << ", " << it.second << endl;
+      //}
+      sched_aff = add(sched_aff, op_latency  - info.buffer_store_latencies.at(name));
       isl_map* sched = its(to_map(sched_aff), dom);
 
       //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
@@ -1694,8 +1699,10 @@ UBuffer UBuffer::generate_ubuffer(UBufferImpl& impl, schedule_info & info, int b
 
         auto dom = ::domain(acc_map);
 
+        int ajust_latency =
+            info.buffer_load_latencies.at(name) + info.buffer_store_latencies.at(name);
         //Take consider of the latency in delay
-        sched = linear_schedule(sched, {1}, delay+op_latency, false);
+        sched = linear_schedule(sched, {1}, delay + op_latency - adjust_latency, false);
        // auto reduce_map = linear_address_map_lake(rddom, 4);
        // cout << "Reduce map: " << str(reduce_map) << endl;
        // reduce_map = set_range_name(reduce_map, bname);
@@ -3118,7 +3125,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
     } else {
       //This is the dual port version
-      auto config_mem2out = generate_accessor_config_from_aff_expr(dom, aff);
+      auto config_mem2out = generate_accessor_config_from_aff_expr(dom, sub(aff, buffer_load_latency(options)));
       {
         int word_width = mem.word_width.at("mem");
         int capacity = mem.capacity.at("mem");
@@ -3136,16 +3143,30 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       //buf->getMetaData()["init"] = v;
       config_file["init"] = v;
       bool has_stencil_valid = false;
+
+      auto* g = context->getGenerator("cgralib.Mem_amber");
+      buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
+
+      buf->getMetaData()["config"] = config_file;
+      buf->getMetaData()["mode"] = "lake_dp";
+
+      //garnet wire reset to flush of memory
+      def->connect(buf->sel("flush"), def->sel("self.rst_n"));
+      def->connect(buf->sel("clk"), def->sel("self.clk"));
+      def->connect(buf->sel("clk_en"), clk_en_const->sel("out"));
+      def->connect(buf->sel("rst_n"), clk_en_const->sel("out"));
       if (dim == 1)
         has_stencil_valid = true;
-      auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
-              "rst_n", "lake_dp", config_file, has_stencil_valid,  1, 1);
+      //Original use pond, now change to a lake generator
+      //auto dp_buf_for_counter = generate_pond_instance(def, options, ub_ins_name + "_counter_" + str(dim),
+      //        "rst_n", "lake_dp", config_file, has_stencil_valid,  1, 1);
+
 
       //Wire the output data
-      def->connect(dp_buf_for_counter->sel("data_out_pond_0"), def->sel("self")->sel("d")->sel(dim));
-      generate_lake_tile_verilog(options, dp_buf_for_counter);
+      def->connect(buf->sel("data_out_0"), def->sel("self")->sel("d")->sel(dim));
+      generate_lake_tile_verilog(options, buf);
       if (has_stencil_valid) {
-        def->connect(dp_buf_for_counter->sel("stencil_valid"), def->sel("self.valid"));
+        def->connect(buf->sel("stencil_valid"), def->sel("self.valid"));
       }
 
     }
@@ -3211,18 +3232,22 @@ CoreIR::Instance* affine_controller_use_lake_tile(
     //buf->getMetaData()["verilog_name"] = "aff_ctrl_counter_"+genargs.at("ID")->get<string>();
 
   } else {
+    bool has_chain_en = options.mem_hierarchy.at("mem").wire_chain_en;
     CoreIR::Values genargs = {
       {"width", CoreIR::Const::make(context, 16)},
       {"num_inputs", CoreIR::Const::make(context, 1)},
       {"num_outputs", CoreIR::Const::make(context, 1)},
       {"has_stencil_valid", CoreIR::Const::make(context, true)},
-      {"ID", CoreIR::Const::make(context, context->getUnique())},
+      {"has_chain_en", CoreIR::Const::make(context, has_chain_en)},
+      {"has_flush",  CoreIR::Const::make(context, true)},
+      {"use_prebuilt_mem",  CoreIR::Const::make(context, true)},
+      {"ID", CoreIR::Const::make(context, context->getUnique())}
     };
-    auto* g = context->getGenerator("cgralib.Pond_amber");
+    auto* g = context->getGenerator("cgralib.Mem_amber");
     //auto* generatedModule = g->getModule(genargs);
     //g->getMetaData()["verilog_name"] =
     //  "pond_"+genargs.at("ID")->get<string>();
-    buf = def->addInstance(ub_ins_name, "cgralib.Pond_amber", genargs);
+    buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
     buf->getMetaData()["mode"] = "lake_dp";
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "pond_"+genargs.at("ID")->get<string>();
@@ -3289,7 +3314,7 @@ CoreIR::Instance* UBuffer::generate_pond_instance(
 CoreIR::Instance* UBuffer::generate_lake_tile_instance(
         ModuleDef* def,
         CodegenOptions options,
-        string ub_ins_name, string bank_name,
+        string ub_ins_name, string mode,
         size_t input_num, size_t output_num,
         bool has_stencil_valid, bool has_flush) {
 
@@ -3307,13 +3332,8 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     {"use_prebuilt_mem", CoreIR::Const::make(context, options.rtl_options.use_prebuilt_memory)}
   };
   CoreIR::Values modargs = {
-    {"mode", CoreIR::Const::make(context, "lake")}
+    {"mode", CoreIR::Const::make(context, mode)}
   };
-  //TODO: this pass has been deprecated
-  //if (has_stencil_valid) {
-  //  cout << "Generate stencil valid signal" << endl;
-  //  generate_stencil_valid_config(options, bank_name);
-  //}
   cout << "Add lake node:" << ub_ins_name << " with input_num = " << input_num
       << ", output_num = " << output_num << endl;
   if (options.pass_through_valid) {
@@ -3324,13 +3344,14 @@ CoreIR::Instance* UBuffer::generate_lake_tile_instance(
     //  "lake_"+genargs.at("ID")->get<string>();
     buf = def->addInstance(ub_ins_name, "cgralib.Mem_amber", genargs);
     buf->getMetaData()["config"] = config_file;
-    buf->getMetaData()["mode"] = string("lake");
+    buf->getMetaData()["mode"] = string(mode);
     //buf->getModuleRef()->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
     //buf->getMetaData()["verilog_name"] = "lake_"+genargs.at("ID")->get<string>();
   } else {
+    assert(false);
     //TODO: remove cwlib in the future
-    genargs["config"] = CoreIR::Const::make(context, config_file);
-    buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
+    //genargs["config"] = CoreIR::Const::make(context, config_file);
+    //buf = def->addInstance(ub_ins_name, "cwlib.Mem", genargs, modargs);
   }
 
   auto clk_en_const = def->addInstance(ub_ins_name+"_clk_en_const", "corebit.const",
@@ -3371,9 +3392,8 @@ string memDatainPort(CodegenOptions& options, string mode, int pt_cnt) {
     if (mode == "lake"  || mode == "glb")
         return "data_in_" + to_string(pt_cnt);
     else if ( mode == "lake_dp") {
-        return "data_in_pond_" + to_string(pt_cnt);
+        return "data_in_" + to_string(pt_cnt);
     } else if (mode == "pond") {
-        int inpt_cnt = options.rtl_options.max_inpt;
         return "data_in_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -3385,9 +3405,8 @@ string memDataoutPort(CodegenOptions& options, string mode, int pt_cnt) {
     if (mode == "lake" || mode == "glb")
         return "data_out_" + to_string(pt_cnt);
     else if (mode == "lake_dp") {
-        return "data_out_pond_" + to_string(pt_cnt);
+        return "data_out_" + to_string(pt_cnt);
     } else if (mode == "pond") {
-        int outpt_cnt = options.rtl_options.max_outpt;
         return "data_out_pond_" + to_string(pt_cnt);
     } else {
         cout << "Mode: " << mode << " is not implemented yet" << endl;
@@ -3454,7 +3473,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
 
         chain_en = true;
         auto conns = getConnectWires(pt2wire.at(outpt));
-        if (config_mode == "lake" || config_mode == "glb") {
+        if (config_mode == "lake" || config_mode == "glb" || config_mode == "lake_dp") {
           //lake chaining wiring method
           if(conns.size() == 0) {
             //First chaining wiring, wire to the output
@@ -3467,7 +3486,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
             def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)), last_dangling_chain_data_in);
           }
 
-        } else if (config_mode == "pond" || config_mode == "lake_dp") {
+        } else if (config_mode == "pond" ) {
           if (bank_id == impl.outpt_to_bank.at(outpt).size() - 1) {
             //last port directly connec to the wire
             def->connect(buf->sel(memDataoutPort(options, config_mode, outpt_cnt)),  pt2wire.at(outpt));
@@ -3502,7 +3521,7 @@ void UBuffer::wire_ubuf_IO(CodegenOptions& options,CoreIR::ModuleDef* def, map<s
     outpt_cnt++;
   }
 
-  if (config_mode == "lake") {
+  if (config_mode == "lake" || config_mode == "lake_dp") {
     if (!chain_en) {
       if (options.mem_hierarchy.at("mem").wire_chain_en) {
         auto chain_en_const = def->addInstance("chain_en_const"+context->getUnique(), "corebit.const",
@@ -3655,7 +3674,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
     assert(hw_impl.sub_component.size());
     config_file = generate_ubuf_args(options, hw_impl.sub_component);
     buf = generate_lake_tile_instance(def, options,
-      ub_ins_name, target_buf.name,
+      ub_ins_name, "lake",
       target_buf.num_in_ports(),
       target_buf.num_out_ports(),
       hw_impl.insert_shift_register/*TODO: exclude stencil valid signal*/, true);
@@ -3663,8 +3682,15 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
   } else if (hw_impl.config_mode == "lake_dp") {
     config_file = generate_ubuf_args(options, target_buf, "mem");
     bool has_stencil_valid = has_stencil_valid;
-    buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp", has_stencil_valid,
-            target_buf.num_in_ports(), target_buf.num_out_ports());
+
+    //Change to lake generator
+    buf = generate_lake_tile_instance(def, options,
+      ub_ins_name, "lake_dp",
+      target_buf.num_in_ports(),
+      target_buf.num_out_ports(),
+      hw_impl.insert_shift_register/*TODO: exclude stencil valid signal*/, true);
+    //buf = generate_pond_instance(def, options, ub_ins_name, "lake_dp", has_stencil_valid,
+    //        target_buf.num_in_ports(), target_buf.num_out_ports());
   } else if (hw_impl.config_mode == "pond") {
     config_file = generate_ubuf_args(options, target_buf, "regfile");
     bool has_stencil_valid = false;
@@ -12135,7 +12161,7 @@ void lower_to_garnet_implementation(CodegenOptions& options,
   for (auto it: impl.bank_rddom) {
     GarnetImpl CGRAImpl;
     auto bank_id = it.first;
-    UBuffer target_buf = buf.generate_ubuffer(impl, info, bank_id);
+    UBuffer target_buf = buf.generate_ubuffer(options, impl, info, bank_id);
 
     //This is used for tighten the cyclic banking space
     target_buf.tighten_iteration_domain();

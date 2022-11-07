@@ -2005,6 +2005,8 @@ struct schedule_info {
     buf_write_assignment[op_] = buf;
   }
 
+  void init_op_latencies(prog& prg);
+
 
 };
 

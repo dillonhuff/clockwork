@@ -2153,6 +2153,14 @@ void run_lake_dp_verilog_codegen(CodegenOptions& options, string v_name, string 
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
 }
 
+//For Po-Han, using lake tile generator not using a pond
+void run_lake_dp_verilog_codegen_new(CodegenOptions& options, string v_name, string ub_ins_name) {
+    ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
+    int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
+                     "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v  -a -v -dp -ii 6 -oi 6 -rd 1 -d 2048 -mw 16");
+    assert(res_lake == 0);
+}
+
 void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_ins_name) {
   //cmd("export LAKE_CONTROLLERS=$PWD");
   ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
@@ -2166,11 +2174,7 @@ void run_pond_verilog_codegen(CodegenOptions& options, string v_name, string ub_
 
 void run_glb_verilog_codegen(CodegenOptions& options, const std::string& long_name, int num_inpt, int num_outpt, int width) {
   std::ofstream verilog_collateral_file;
-  //verilog_collateral_file.open(long_name + ".v");
-  if (options.mem_hierarchy.at("mem").fetch_width > 1)
-    verilog_collateral_file.open("lake_module_wrappers.v", std::ios_base::app);
-  else
-    verilog_collateral_file.open("pond_module_wrappers.v", std::ios_base::app);
+  verilog_collateral_file.open("lake_module_wrappers.v", std::ios_base::app);
 
   vector<string> port_decls = {};
   port_decls.push_back("input clk");
@@ -2275,7 +2279,7 @@ void generate_lake_tile_verilog(CodegenOptions& options, Instance* buf) {
       config["mode"] = "pond";
 
     emit_lake_config_collateral(options, ub_ins_name, config);
-    run_lake_dp_verilog_codegen(options, v_name, ub_ins_name);
+    run_lake_dp_verilog_codegen_new(options, v_name, ub_ins_name);
   }
   else if (config_mode == "pond") {
       buf->getMetaData()["mode"] = "pond";
