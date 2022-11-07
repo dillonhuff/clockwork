@@ -1699,7 +1699,7 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
 
         auto dom = ::domain(acc_map);
 
-        int ajust_latency =
+        int adjust_latency =
             info.buffer_load_latencies.at(name) + info.buffer_store_latencies.at(name);
         //Take consider of the latency in delay
         sched = linear_schedule(sched, {1}, delay + op_latency - adjust_latency, false);
