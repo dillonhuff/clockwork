@@ -261,6 +261,7 @@ CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,
 
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def);
 CoreIR::Instance* build_addrgen(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width);
+CoreIR::Instance* build_addrgen_lake(const std::string& reader, UBuffer& buf, CoreIR::ModuleDef* def, int width);
 
 CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf);
 
