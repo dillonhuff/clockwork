@@ -127,6 +127,8 @@ struct LakeCollateral {
     int iteration_level;
     //Iteration level should associate to each hardware controller component
     map<string, int> iter_level_map;
+    //latency
+    int load_latency, store_latency;
     int counter_ub;
     bool multi_sram_accessor;
     bool dual_port_sram;
@@ -142,6 +144,8 @@ struct LakeCollateral {
         counter_ub(65535),
         interconnect_in_num(1),
         interconnect_out_num(1),
+        load_latency(0),
+        store_latency(0),
         multi_sram_accessor(true),
         dual_port_sram(false),
         wire_chain_en(false) {
@@ -353,6 +357,8 @@ struct LakeCollateral {
       bank_num = {{"mem", 1}};
       capacity = {{"mem", 2048}};
       controller_name = {"regfile"};
+      load_latency = 1;
+      store_latency = 1;
     }
 
     int get_max_capacity() const {

@@ -20056,9 +20056,9 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
       for (auto b : op->buffers_referenced()) {
         //TODO: put this into lakecollateral
-        if (!prg.is_boundary(b) && !contains(b, "glb")) {
-          sched.buffer_load_latencies[b] = buffer_load_latency(options);
-          sched.buffer_store_latencies[b] = buffer_store_latency(options);
+        if (!prg.is_boundary(b)) {
+          sched.buffer_load_latencies[b] = buffer_load_latency(options, b);
+          sched.buffer_store_latencies[b] = buffer_store_latency(options, b);
         } else {
           sched.buffer_load_latencies[b] = 0;
           sched.buffer_store_latencies[b] = 0;
@@ -20102,9 +20102,9 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
     for (auto b : op->buffers_referenced()) {
       //TODO: put this into lakecollateral
-      if (!prg.is_boundary(b) && !contains(b, "glb")) {
-        sched.buffer_load_latencies[b] = buffer_load_latency(options);
-        sched.buffer_store_latencies[b] = buffer_store_latency(options);
+      if (!prg.is_boundary(b)) {
+        sched.buffer_load_latencies[b] = buffer_load_latency(options, b);
+        sched.buffer_store_latencies[b] = buffer_store_latency(options, b);
       } else {
         sched.buffer_load_latencies[b] = 0;
         sched.buffer_store_latencies[b] = 0;
