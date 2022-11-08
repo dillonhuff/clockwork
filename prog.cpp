@@ -5816,6 +5816,26 @@ void dsa_writers(prog& prg) {
   }
 }
 
+int buffer_store_latency(CodegenOptions& options, string& bname) {
+
+  if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
+    if (contains(bname, "glb")) {
+      return options.mem_hierarchy.at("glb").store_latency;
+    } else {
+      return options.mem_hierarchy.at("mem").store_latency;
+    }
+  }
+  else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
+    if (contains(bname, "glb")) {
+      return options.mem_hierarchy.at("glb").store_latency;
+    } else {
+      return options.mem_hierarchy.at("mem").store_latency;
+    }
+  } else {
+    return buffer_store_latency(options);
+  }
+}
+
 int buffer_store_latency(CodegenOptions& options) {
   if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ||
       options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
@@ -5850,17 +5870,40 @@ int buffer_store_latency(CodegenOptions& options) {
   assert(false);
 }
 
+int buffer_load_latency(CodegenOptions& options, string& bname) {
+
+  if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
+    if (contains(bname, "glb")) {
+      return options.mem_hierarchy.at("glb").load_latency;
+    } else {
+      return options.mem_hierarchy.at("mem").load_latency;
+    }
+  }
+  else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
+    if (contains(bname, "glb")) {
+      return options.mem_hierarchy.at("glb").load_latency;
+    } else {
+      return options.mem_hierarchy.at("mem").load_latency;
+    }
+  } else {
+    return buffer_load_latency(options);
+  }
+}
+
 int buffer_load_latency(CodegenOptions& options) {
   if (options.rtl_options.target_tile == TARGET_TILE_REGISTERS ) {
     return 0;
+  }
 
-  } else if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
+  if (options.rtl_options.target_tile == TARGET_TILE_SINGLE_FETCH_WITH_ADDRGEN) {
     return 1;
   }
-  else if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN ) {
+
+  if (options.rtl_options.target_tile == TARGET_TILE_WIDE_FETCH_WITH_ADDRGEN) {
     return 0;
-  } else if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC)
-  {
+  }
+
+  if(options.rtl_options.target_tile == TARGET_TILE_PLATONIC) {
     return 0;
   }
 

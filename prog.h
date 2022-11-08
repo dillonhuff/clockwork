@@ -2144,6 +2144,8 @@ void dsa_readers(prog& prg);
 
 int buffer_store_latency(CodegenOptions& options);
 int buffer_load_latency(CodegenOptions& options);
+int buffer_store_latency(CodegenOptions&, string&);
+int buffer_load_latency(CodegenOptions&, string&);
 
 
 vector<isl_multi_aff*> write_addrs(op* op, const std::string& buf, prog& prg);
