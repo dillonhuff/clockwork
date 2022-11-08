@@ -3241,7 +3241,7 @@ void generate_garnet_verilator_tb(
       hw_sched,
       buffers);
 
-  rgtb << tab(1) << "V" << prg.name << " dut;" << endl;
+  rgtb << tab(1) << "static V" << prg.name << " dut;" << endl;
   if (options.debug_options.traceWave) {
     rgtb << tab(1) << "V"<< prg.name << "* dut_ptr = &dut;" << endl;
     rgtb << tab(1) << "Verilated::traceEverOn(true);" << endl;

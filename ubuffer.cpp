@@ -3724,7 +3724,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       isl_aff* aff = get_aff(to_map(target_buf.schedule.at(inpt)));
       auto accessor = ::affine_controller(def, dom, aff, 32);
       accessor->getMetaData()["garnet_remove"] = true;
-      auto agen = build_addrgen(inpt, target_buf, def, 32);
+      auto agen = build_addrgen_lake(inpt, target_buf, def, 32);
       def->connect(agen->sel("d"), accessor->sel("d"));
       def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
       def->connect(agen->sel("out"), buf->sel("write_addr_" + str(count)));
@@ -3740,7 +3740,7 @@ CoreIR::Instance* UBuffer::map_ubuffer_to_cgra(CodegenOptions& options, CoreIR::
       aff = add(aff, -1);
       auto accessor = ::affine_controller(def, dom, aff, 32);
       accessor->getMetaData()["garnet_remove"] = true;
-      auto agen = build_addrgen(outpt, target_buf, def, 32);
+      auto agen = build_addrgen_lake(outpt, target_buf, def, 32);
       def->connect(agen->sel("d"), accessor->sel("d"));
       def->connect(accessor->sel("rst_n"), def->sel("self.reset"));
       def->connect(agen->sel("out"), buf->sel("read_addr_" + str(count)));

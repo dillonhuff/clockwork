@@ -15495,8 +15495,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   test_apps.push_back(resnet_1x1());
   test_apps.push_back(resnet3_1());
   test_apps.push_back(resnet4_x());
-  //docker resnet5x test seqfault...
-  //test_apps.push_back(resnet5_x_docker());
+  test_apps.push_back(resnet5_x_docker());
   test_apps.push_back(resnet5_1());
   test_apps.push_back(resnet5_x());
   test_apps.push_back(resnet5_x_new());
@@ -15557,8 +15556,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(stereo_unroll());
   //
   //CGRA tests
-  test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(conv_3_3());
+  test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
   test_apps.push_back(camera_pipeline_new());
