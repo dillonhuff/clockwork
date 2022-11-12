@@ -1133,6 +1133,7 @@ UBuffer merge_sram_with_different_outpt(vector<UBuffer> & buffers, string new_na
 
     //Add another pass to rename the port name
     merge_buf.sequentially_rename_output_domain_suffix(0);
+    merge_buf.sequentially_rename_input_domain_suffix(0);
 
     cout << merge_buf << endl;
     return merge_buf;
@@ -1222,15 +1223,20 @@ void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged) {
   auto stmt2sched = sram_merged.get_stmt2sched();
 
   int tb_cnt = 0;
+  int agg_cnt = 0;
   map<string, UBuffer> outpt2tb;
+  map<string, UBuffer> inpt2agg;
   for (auto bank_id: banks_tobe_merged) {
     for (auto it: lowering_info.at(bank_id).sub_component) {
         cout << "sub component buf: " << get_micro_buf_name(it.first) << endl;
       if (get_micro_buf_name(it.first) == "agg") {
         auto micro_buf = it.second;
-        string new_agg_name = new_sram_name + "_0_agg";
-        micro_buf.remap_access_to_new_buffer_name(new_agg_name);
-        merged_impl.sub_component.insert({new_agg_name, micro_buf});
+        assert(micro_buf.get_in_bundles().size() == 1);
+        string inbd = pick(micro_buf.get_in_bundles());
+        inpt2agg.insert({inbd, micro_buf});
+        //string new_agg_name = new_sram_name + "_0_agg";
+        //micro_buf.remap_access_to_new_buffer_name(new_agg_name);
+        //merged_impl.sub_component.insert({new_agg_name, micro_buf});
       }
       // sort the tb name by it's bundle
       if (get_micro_buf_name(it.first) == "tb") {
@@ -1240,6 +1246,22 @@ void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged) {
         outpt2tb.insert({outbd, micro_buf});
       }
     }
+  }
+
+  for (auto it: inpt2agg) {
+    string new_agg_name = new_sram_name + "_" + str(agg_cnt) + "_agg";
+    it.second.remap_access_to_new_buffer_name(new_agg_name);
+    it.second.sequentially_rename_input_domain_suffix(agg_cnt);
+    it.second.sequentially_rename_output_domain_suffix(agg_cnt);
+    //update tb in schedule with
+    for (auto& schedule_it: it.second.schedule) {
+      string dname = domain_name(schedule_it.second);
+      if (stmt2sched.count(dname))
+        schedule_it.second = stmt2sched.at(dname);
+    }
+    merged_impl.sub_component.insert({new_agg_name, it.second});
+    agg_cnt++;
+    //cout << "micor buf: " << it.second << endl;
   }
   for (auto it: outpt2tb) {
     string new_tb_name = new_sram_name + "_" + str(tb_cnt) + "_tb";
@@ -1254,7 +1276,7 @@ void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged) {
     }
     merged_impl.sub_component.insert({new_tb_name, it.second});
     tb_cnt++;
-    cout << "micor buf: " << it.second << endl;
+    //cout << "micor buf: " << it.second << endl;
   }
   for (auto bk: banks_tobe_merged) {
       remove_bank(bk);
@@ -2201,15 +2223,17 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     bool tb_share = false;
 
     for (auto it: rewrite_buffer) {
+      cout << "sub buffer: " << it.first << endl;
       //check it is sram
-      if (contains(it.first, "sram")) {
+      if (contains(it.second.name, "sram")) {
         auto buf = it.second;
+        //cout << "SRAM" << buf << endl;
         auto stmt2bd_map = buf.get_stmt2bd_after_vec();
 
         for (auto map_it: stmt2bd_map) {
-          cout << map_it.first << ": " << map_it.second << endl;
+          //cout << tab(2) << "Go over all stmt to bd: " << map_it.first << ": " << map_it.second << endl;
           if (map_it.second.size() > 1){
-            cout << "found shared with size: " << map_it.second.size() << endl;
+            //cout << "found shared with size: " << map_it.second.size() << endl;
             assert (map_it.second.size() == 2);
             // find the delay
             int ctrl_number = 6; // other than 0 or 1
