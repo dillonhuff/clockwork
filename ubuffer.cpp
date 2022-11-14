@@ -3592,10 +3592,12 @@ void UBuffer::generate_sreg_and_wire(CodegenOptions& options, UBufferImpl& impl,
 }
 
 //Take the fanin structure and generate the wiring
-void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def, map<string, CoreIR::Wireable*> & pt2wire){
+void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& impl, CoreIR::ModuleDef* def,
+        map<string, CoreIR::Wireable*> & pt2wire, schedule_info& info){
   auto context = def->getContext();
   for (auto it: impl.fanin_outputs) {
     map<string, CoreIR::Wireable*> output_map;
+    map<string, int> output_delay;
     for (auto in_delay: it.second) {
       string src = in_delay.first;
       int delay = in_delay.second;
@@ -3609,6 +3611,7 @@ void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& im
         last_out = reg->sel("out");
       }
       output_map[src] = last_out;
+      output_delay[src] = delay;
     }
     string outpt = it.first;
 
@@ -3621,6 +3624,8 @@ void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& im
       //Creating the input selection logic
       isl_aff* sched_aff = get_aff(to_map(schedule.at(src.first)));
       cout << "pt schedule: " << str(sched_aff) << endl;
+      int op_latency = info.op_latencies.at(::domain_name(to_map(schedule.at(src.first))));
+      sched_aff = add(sched_aff, op_latency - buffer_store_latency(options) + output_delay.at(src.first));
       auto mux_ctrl = affine_controller_use_lake_tile(
               options, def, context, domain.at(src.first),
               sched_aff, "dataout_pt_mux_ctrl_" + context->getUnique());
@@ -4457,7 +4462,7 @@ void UBuffer::generate_coreir_refactor(CodegenOptions& options,
   //Generate the shift register connection
   generate_sreg_and_wire(options, impl, def, pt2wire);
 
-  generate_fanin_connection(options, impl, def, pt2wire);
+  generate_fanin_connection(options, impl, def, pt2wire, info);
 
 }
 
@@ -10313,10 +10318,10 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
               sched = add_domain_suffix(sram_ir.second, "_sram2tb_" + str(tb_cnt));
               sched_record_map[domain_name(sched)] = sched;
 
-              auto acc_pattern = AccessPattern(
-                  to_map(access_map.at(out_pt_name)), ctx);
+              //auto acc_pattern = AccessPattern(
+              //    to_map(access_map.at(out_pt_name)), ctx);
 
-              std::cout << "before rewrite: " << acc_pattern << endl;
+              //std::cout << "before rewrite: " << acc_pattern << endl;
 
               /*
               //produce the operation transfomation
@@ -11566,7 +11571,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
         for (auto e : dg.out_edges) {
           out << "Fanin Group: "<< tab(2) << e.first << endl;
           for (auto src: e.second) {
-            out << tab(4) << src << " -> (" << dg.weight(src, e.first) << ") " << e.first << endl;
+            out << tab(4) << src << " -> (" << dg.weight(e.first, src) << ") " << e.first << endl;
           }
         }
         return out;
@@ -12231,10 +12236,12 @@ UBufferImpl port_group2bank(CodegenOptions& options, prog& prg, UBuffer& buf, sc
     if (!sr_graph.has_nodes())
       return impl;
     for (auto it: sr_graph.fanin_edges) {
+        cout << tab(1) << "Fanin info: " << endl;
         for (auto src: it.second) {
-            cout << "dst: " << it.first << endl;
-            cout << "src: " << src << endl;
+            cout << tab(2) << "dst: " << it.first << endl;
+            cout << tab(2) << "src: " << src << endl;
             int delay = sr_graph.weights.at({src, it.first});
+            cout << tab(3) << delay << endl;
             if (delay < options.merge_threshold) {
                 impl.add_fanin_info(src, it.first, delay);
             } else {
