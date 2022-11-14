@@ -15663,6 +15663,7 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
 
+  test_apps.push_back(camera_pipeline_2x2_unroll());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
@@ -20116,9 +20117,9 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
         if (options.rtl_options.use_prebuilt_memory) {
           auto pmap = prg.producer_map(b);
-          cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-              << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-              "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+          //cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+          //    << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+          //    "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
           sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
           //This is a hacky rewrite
           if (!contains(b, "glb")) {
@@ -20161,9 +20162,9 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
 
       if (options.rtl_options.use_prebuilt_memory) {
         auto pmap = prg.producer_map(b);
-        cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-            << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-            "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+        //cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+        //    << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+        //    "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
         sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
           //This is a hacky rewrite
           if (!contains(b, "glb")) {
@@ -20171,7 +20172,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
                sched.buf2level[b] = "mem";
             }
           }
-          cout << "buf2level: " << sched.buf2level[b] << endl;
+          //cout << "buf2level: " << sched.buf2level[b] << endl;
 
       }
     }
