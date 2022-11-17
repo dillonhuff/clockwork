@@ -2358,6 +2358,16 @@ void tighten_address_space() {
       return s;
     }
 
+    isl_union_set* input_range() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      for (auto other : access_map) {
+        if (isIn.at(other.first)) {
+          s = unn(s, (range(other.second)));
+        }
+      }
+      return s;
+    }
+
     string buf_range_name() {
       auto am = pick(access_map);
       return range_name(to_map(am.second));

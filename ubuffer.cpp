@@ -2342,7 +2342,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
 
             //linearize access map before codegen
             cout << str(ubuf.global_range()) << endl;
-            auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+            auto reduce_map = linear_address_map_lake(to_set(ubuf.input_range()), mem.fetch_width);
             auto linear_acc_map = dot(out_acc_map, reduce_map);
             map_insert(op2write_map, domain_name(out_acc_map), to_umap(linear_acc_map));
         }
@@ -2353,7 +2353,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             in_acc_map = remove_irrelevant_in_dim(in_acc_map);
 
             //linearize access map before codegen
-            auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+            auto reduce_map = linear_address_map_lake(to_set(ubuf.input_range()), mem.fetch_width);
             auto linear_acc_map = dot(in_acc_map, reduce_map);
             map_insert(op2read_map, domain_name(in_acc_map), to_umap(linear_acc_map));
 
@@ -10000,10 +10000,12 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
     //Move the schedule ahead and pad the domain
     //fetch extra to cover the whole iteration domain after vectorization
-    //if (ahead_step) {
-    int new_max = get_dim_max(range(acc_vec_rem), addr_dim);
-    int origin_max = get_dim_max(range(acc_slice), addr_dim);
-    if (new_max < origin_max) {
+    if (ahead_step) {
+    //int new_max = get_dim_max(range(acc_vec_rem), addr_dim);
+    //int origin_max = get_dim_max(range(acc_slice), addr_dim);
+    //cout << "new max: " << new_max << ", acc map: " << str(acc_vec_rem) << endl;
+    //cout << "origin max: " << origin_max << ", acc map: " << str(acc_slice) << endl;
+    //if (new_max < origin_max) {
       acc_vec_rem = pad_to_domain_ubuf_map(acc_vec_rem, vectorized_dim, ahead_step);
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
