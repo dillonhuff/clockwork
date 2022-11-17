@@ -2307,7 +2307,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     for (auto it: rewrite_buffer) {
         auto ubuf = it.second;
         if (contains(ubuf.name, "tb")) {
-          if (ubuf.get_capacity(mem.fetch_width) > 2) {
+          if (ubuf.get_capacity(mem.fetch_width) > mem.get_capacity("tb")/mem.fetch_width) {
             tb_share = true;
           }
           //tb_cnt += 1;
@@ -8921,10 +8921,10 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             sram_rd.insert(it);
         }
     }
-    bool no_wr = is_dual_port && contains(domain_name(temp_sched), "agg2sram");
-    bool no_rd = is_dual_port && contains(domain_name(temp_sched), "sram2tb");
+    bool no_rd = is_dual_port && contains(domain_name(temp_sched), "agg2sram");
+    bool no_wr = is_dual_port && contains(domain_name(temp_sched), "sram2tb");
     if (!no_wr) {
-      for (auto sched_it: sram_rd) {
+      for (auto sched_it: sram_wr) {
         auto collision = dot(temp_sched, inv(sched_it.second));
         if (!empty(collision)) {
           return true;
@@ -8932,7 +8932,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
       }
     }
     if (!no_rd) {
-      for (auto sched_it: sram_wr) {
+      for (auto sched_it: sram_rd) {
         auto collision = dot(temp_sched, inv(sched_it.second));
         if (!empty(collision)) {
           return true;
