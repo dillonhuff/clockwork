@@ -15361,26 +15361,26 @@ void test_energy_model(string dir) {
 void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design_fetch2") {
   vector<prog> test_apps;
 
-  //test_apps.push_back(conv_3_3());
-  ////test_apps.push_back(camera_pipeline_new());
-  ////test_apps.push_back(laplacian_pyramid());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //////test_apps.push_back(conv_1_2());
-  //////test_apps.push_back(up_sample());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(camera_pipeline());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(up_sample());
+  test_apps.push_back(conv_3_3());
+  //test_apps.push_back(camera_pipeline_new());
+  //test_apps.push_back(laplacian_pyramid());
+  test_apps.push_back(counter());
+  test_apps.push_back(gaussian());
+  test_apps.push_back(cascade());
+  test_apps.push_back(harris());
+  ////test_apps.push_back(conv_1_2());
+  test_apps.push_back(unsharp());
+  test_apps.push_back(rom());
+  test_apps.push_back(demosaic_unrolled());
+  test_apps.push_back(camera_pipeline());
+  test_apps.push_back(down_sample());
+  test_apps.push_back(up_sample());
   test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(camera_pipeline_2x2());
 
   ////DNN apps
-  //test_apps.push_back(resnet_tiny());
-  //test_apps.push_back(resnet());
+  test_apps.push_back(resnet_tiny());
+  test_apps.push_back(resnet());
 
   //Big applications
   //test_apps.push_back(mobilenet_unrolled());
@@ -15445,6 +15445,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
 
   //camera pipeline variant tests
+  test_apps.push_back(resnet3_x_glb_unroll());
   test_apps.push_back(camera_pipeline_2x2_unroll());
   //Still not work need to add a fanin pass support delay row buffer
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
@@ -15619,8 +15620,8 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
 
-  test_apps.push_back(camera_pipeline_2x2_unroll());
   test_apps.push_back(conv_3_3());
+  test_apps.push_back(camera_pipeline_2x2_unroll());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
   test_apps.push_back(harris());
@@ -19460,7 +19461,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       int lmin = to_int(lexminval(pr));
       int lmax = to_int(lexmaxval(pr));
       bounds.push_back({lmin, lmax});
-      lengths.push_back(lmax - lmin + 1);
+      //This is a hack for wide fetch memory
+      lengths.push_back(lmax - lmin + 1 + (lmax - lmin +1)%2);
     }
 
     // Reorder so that root is level 0
