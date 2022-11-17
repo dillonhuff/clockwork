@@ -342,7 +342,7 @@ struct LakeCollateral {
        in_port_width = {{"agg", 1}, {"sram", 2}, {"tb", 2}};
        out_port_width = {{"agg", 2}, {"sram", 2}, {"tb", 1}};
        bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
-       capacity = {{"agg", 8}, {"sram", 512}, {"tb", 8}};
+       capacity = {{"agg", 8}, {"sram", 1024}, {"tb", 8}};
     }
 
     void set_config_dp() {

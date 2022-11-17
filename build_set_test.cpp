@@ -15360,25 +15360,26 @@ void test_energy_model(string dir) {
 void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design_fetch2") {
   vector<prog> test_apps;
 
-  test_apps.push_back(conv_3_3());
-  //test_apps.push_back(camera_pipeline_new());
-  //test_apps.push_back(laplacian_pyramid());
+  //test_apps.push_back(conv_3_3());
+  ////test_apps.push_back(camera_pipeline_new());
+  ////test_apps.push_back(laplacian_pyramid());
   //test_apps.push_back(counter());
   //test_apps.push_back(gaussian());
-  //test_apps.push_back(down_sample());
   //test_apps.push_back(cascade());
   //test_apps.push_back(harris());
+  //////test_apps.push_back(conv_1_2());
+  //////test_apps.push_back(up_sample());
+  //test_apps.push_back(unsharp());
   //test_apps.push_back(rom());
-  //test_apps.push_back(conv_1_2());
   //test_apps.push_back(demosaic_unrolled());
   //test_apps.push_back(camera_pipeline());
+  //test_apps.push_back(down_sample());
   //test_apps.push_back(up_sample());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(camera_pipeline_new());
+  test_apps.push_back(camera_pipeline_new());
 
-  //DNN apps
-  test_apps.push_back(resnet_tiny());
-  test_apps.push_back(resnet_multi_tiny());
+  ////DNN apps
+  //test_apps.push_back(resnet_tiny());
+  //test_apps.push_back(resnet());
 
   //Big applications
   //test_apps.push_back(mobilenet_unrolled());
@@ -15397,21 +15398,12 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
     //TODO: move to a function
     //run verilator on all the generated verilog
     if (!gen_config_only) {
-      string name = prg.name;
-      auto verilog_files = get_files("./" + dir + "/"+name+"/verilog/");
-      verilog_files.push_back(name + ".v");
-      verilog_files.push_back("LakeWrapper.v");
-      bool extra_flag_for_lake = true;
-      auto cpu = unoptimized_result(prg);
-      int res = run_verilator_on(name, name + "_verilog_tb.cpp", verilog_files, extra_flag_for_lake);
-      assert(res == 0);
-      cmd("rm LakeWrapper.v");
-
-      auto verilator_res = verilator_results(prg.name);
-      compare("cgra_" + prg.name + "_cpu_vs_verilog_comparison", verilator_res, cpu);
-      //string app_type = "dualwithaddr";
-      string app_type = "single_port_buffer";
-      cpy_app_to_folder(app_type, prg.name);
+      vector<string> verilog_files;// = get_files("./" + dir + "/"+name+"/verilog/");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_dp__0", 1);
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
   }
 }
@@ -20627,6 +20619,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
   options.add_memory_hierarchy("mem");
   options.add_memory_hierarchy("glb");
   options.mem_hierarchy.at("mem").set_config_fetch2();
+  options.debug_options.traceWave = true;
   cout << options.mem_hierarchy.at("mem").fetch_width << endl;
   if (multi_level_mem)
       options.add_memory_hierarchy("regfile");
