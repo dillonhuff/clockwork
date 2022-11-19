@@ -15196,6 +15196,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_level_mem, bool use_metamapper, string dse_compute_filename, bool energy_model = false);
+void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_metampper, bool energy_model = false);
 void compile_for_garnet_dual_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -15442,8 +15443,9 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-  //test_apps.push_back(resnet3_x_glb_unroll());
+
   //camera pipeline variant tests
+  //test_apps.push_back(resnet3_x_glb_unroll());
   test_apps.push_back(camera_pipeline_2x2_unroll());
   //Still not work need to add a fanin pass support delay row buffer
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
