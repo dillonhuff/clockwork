@@ -2175,12 +2175,14 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     }
 }
 
-ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
+ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read, bool tb_share = false) {
      string buf_name = range_name(to_map(acc_map));
      string micro_buf_name = get_micro_buf_name(buf_name);
      cout << "\tMicro buf name: " << micro_buf_name << endl;
      int word_width = mem.word_width.at(micro_buf_name);
      int capacity = mem.capacity.at(micro_buf_name);
+     if (micro_buf_name == "tb")
+       capacity *= mem.bank_num.at(micro_buf_name);
      int port_width;
      if (is_read)
          port_width = mem.out_port_width.at(micro_buf_name);
@@ -2392,7 +2394,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             isl_map* opt_access_map =
                 add_config_with_dom_dim_merge(config_info, opt_sched, op2write_map.at(op_name), sched);
             ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false);
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false, tb_share);
             config_info.merge(addressor);
             // add agg2sram_opt config register
             if(agg2sram_cfg_map.count(op_name)) {
@@ -2427,7 +2429,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             isl_map* opt_access_map =
                 add_config_with_dom_dim_merge(config_info, opt_sched, op2read_map.at(op_name), sched);
             ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, true);
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, true, tb_share);
             config_info.merge(addressor);
           }
 
@@ -2474,14 +2476,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
               }
               for (auto acc_map : op2write_map.at(op_name)) {
                   ConfigMap addressor =
-                      generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
+                      generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/, tb_share);
                   config_info.merge(addressor);
               }
           }
           if(op2read_map.count(op_name)) {
               for (auto acc_map : op2read_map.at(op_name)) {
                   ConfigMap addressor =
-                      generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/);
+                      generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/, tb_share);
                   config_info.merge(addressor);
               }
           }
@@ -10000,12 +10002,12 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
     //Move the schedule ahead and pad the domain
     //fetch extra to cover the whole iteration domain after vectorization
-    if (ahead_step) {
-    //int new_max = get_dim_max(range(acc_vec_rem), addr_dim);
-    //int origin_max = get_dim_max(range(acc_slice), addr_dim);
+    //if (ahead_step && ! pad_zero_iteration) {
+    int new_max = get_dim_max(range(acc_vec_rem), addr_dim);
+    int origin_max = get_dim_max(range(acc_slice), addr_dim);
     //cout << "new max: " << new_max << ", acc map: " << str(acc_vec_rem) << endl;
     //cout << "origin max: " << origin_max << ", acc map: " << str(acc_slice) << endl;
-    //if (new_max < origin_max) {
+    if (new_max < origin_max) {
       acc_vec_rem = pad_to_domain_ubuf_map(acc_vec_rem, vectorized_dim, ahead_step);
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
@@ -10341,9 +10343,10 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
                 }
 
                 auto sram_in_access_map = add_range_suffix(rewrite_access_map, "_sram");
+                cout << "rewrite sram access map: " << str(sram_in_access_map) << endl;
                 string sram_pt_name = in_pt_name + "_in_" + std::to_string(pt_cnt++);
                 sram.port_bundles[bd_name].push_back(sram_pt_name);
-                sram.add_in_pt(sram_pt_name, dom, sram_in_access_map, simplify_expr(its(sched, dom)));
+                sram.add_in_pt(sram_pt_name, dom, simplify(sram_in_access_map), simplify_expr(its(sched, dom)));
               }
 
               //auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
@@ -10363,7 +10366,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
             agg_cnt ++;
             agg_buf.set_dim_id();
             ret.insert({agg_buf.name, agg_buf});
-            remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
+            //remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
             cout << "AGG : " << agg_buf << endl;
             cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
           }

@@ -15196,7 +15196,6 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_level_mem, bool use_metamapper, string dse_compute_filename, bool energy_model = false);
-void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_metampper, bool energy_model = false);
 void compile_for_garnet_dual_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -15361,6 +15360,7 @@ void test_energy_model(string dir) {
 void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design_fetch2") {
   vector<prog> test_apps;
 
+  test_apps.push_back(gaussian_glb2());
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(camera_pipeline_new());
   //test_apps.push_back(laplacian_pyramid());
@@ -15443,9 +15443,8 @@ void resnet_profiling() {
 void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
 
-
+  //test_apps.push_back(resnet3_x_glb_unroll());
   //camera pipeline variant tests
-  test_apps.push_back(resnet3_x_glb_unroll());
   test_apps.push_back(camera_pipeline_2x2_unroll());
   //Still not work need to add a fanin pass support delay row buffer
   //test_apps.push_back(camera_pipeline_extra_buf_glb());
@@ -19461,8 +19460,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
       int lmin = to_int(lexminval(pr));
       int lmax = to_int(lexmaxval(pr));
       bounds.push_back({lmin, lmax});
-      //This is a hack for wide fetch memory
-      lengths.push_back(lmax - lmin + 1 + (lmax - lmin +1)%2);
+      //This is a hack for fetch 2 memory
+      if (options.mem_hierarchy.at("mem").fetch_width == 2)
+        lengths.push_back(lmax - lmin + 1 + (lmax - lmin +1)%2);
+      else
+        lengths.push_back(lmax - lmin + 1);
     }
 
     // Reorder so that root is level 0
