@@ -58,3 +58,14 @@ void compile_app_for_garnet_dual_port_mem(prog& prg, string dir, bool gen_config
             gen_smt, gen_config_only, multi_level_memory, use_metamapper, prg.name + "_compute_mapped.json", false);
 
 }
+
+void compile_app_for_garnet_fetch2_mem(prog& prg, string dir, bool gen_config_only, bool multi_level_memory, bool use_metamapper) {
+    cout << "Running CGRA flow on " << prg.name << endl;
+
+    //TODO: make this argument explicit to user
+    bool gen_smt = false;
+
+    compile_for_garnet_fetch2_mem(prg, dir,
+            gen_smt, gen_config_only, multi_level_memory, use_metamapper, prg.name + "_compute_mapped.json", false);
+
+}
