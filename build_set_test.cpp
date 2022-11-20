@@ -15196,7 +15196,7 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 
 
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_level_mem, bool use_metamapper, string dse_compute_filename, bool energy_model = false);
-void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_metampper, bool energy_model = false);
+void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_metampper, string dse_compute_filename, bool energy_model = false);
 void compile_for_garnet_dual_port_mem(prog& prg,
         string dir,
         bool gen_smt_stream,
@@ -15395,7 +15395,7 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
     prg.pretty_print();
 
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_fetch2_mem(prg, dir, false, gen_config_only, false, false);
+    compile_for_garnet_fetch2_mem(prg, dir, false, gen_config_only, false, false, "");
     cout << "Output name: " << prg.name << endl;
     //TODO: move to a function
     //run verilator on all the generated verilog
@@ -20559,6 +20559,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
         bool config_gen_only,
         bool multi_level_mem,
         bool use_metamapper,
+	string dse_compute_filename,
         bool energy_model) {
 
   //make sure the loop bound and address is positive
@@ -20614,7 +20615,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
 
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, "");
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename); 
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
