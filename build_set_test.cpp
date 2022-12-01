@@ -15361,6 +15361,7 @@ void test_energy_model(string dir) {
 void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design_fetch2") {
   vector<prog> test_apps;
 
+  test_apps.push_back(camera_pipeline_2x2());
   test_apps.push_back(gaussian_glb2());
   test_apps.push_back(conv_3_3());
   //test_apps.push_back(camera_pipeline_new());
@@ -15377,7 +15378,6 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(down_sample());
   test_apps.push_back(up_sample());
   test_apps.push_back(camera_pipeline_new());
-  test_apps.push_back(camera_pipeline_2x2());
 
   ////DNN apps
   test_apps.push_back(resnet_tiny());
@@ -20615,7 +20615,7 @@ void compile_for_garnet_fetch2_mem(prog& prg,
 
 
 #ifdef COREIR
-  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename); 
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);
   if (!options.config_gen_only) {
     generate_garnet_verilog_top(options, prg.name);
     generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
