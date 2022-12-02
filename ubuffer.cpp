@@ -1068,13 +1068,14 @@ void UBufferImpl::remove_bank(int bank_id) {
   }
 }
 
-UBuffer merge_sram_with_different_outpt(vector<UBuffer> & buffers, string new_name) {
+UBuffer merge_sram_with_different_outpt(vector<UBuffer> & buffers, string new_name, bool is_dual_port) {
     //Merge buffers into one
     UBuffer merge_buf;
     auto buf = pick(buffers);
     merge_buf.port_widths = buf.port_widths;
     merge_buf.ctx = buf.ctx;
     merge_buf.name = new_name + "_sram";
+
 
 
     map<string, isl_map*> sched_record_map;
@@ -1106,7 +1107,7 @@ UBuffer merge_sram_with_different_outpt(vector<UBuffer> & buffers, string new_na
                 cout << str(sched_map) << endl;
               }
 
-              if (!violate_deps(sched_map, sched_record_map)) {
+              if (!violate_deps(sched_map, sched_record_map, is_dual_port)) {
 
                 // Input port should not violate dependency
                 sched_record_map.insert({domain_name(sched_map), sched_map});
@@ -1118,7 +1119,7 @@ UBuffer merge_sram_with_different_outpt(vector<UBuffer> & buffers, string new_na
               } else {
                 assert(!sram.is_in_pt(unique_pt));
                 isl_map* adjust_schedule =
-                    get_sram2tb_schedule_with_check(sched_map, sched_record_map, 0/*ahead step*/, num_in_dims(sched_map) - 1/**/, 0, false/*is_dual_port*/);
+                    get_sram2tb_schedule_with_check(sched_map, sched_record_map, 0/*ahead step*/, num_in_dims(sched_map) - 1/**/, 0, is_dual_port);
                 sched_record_map.insert({domain_name(adjust_schedule), adjust_schedule});
 
                 //All sram ports should share the same schedule
@@ -1168,7 +1169,7 @@ UBuffer merge_buf_with_different_outpt(vector<UBuffer> & buffers, string new_nam
     return merge_buf;
 }
 
-void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged) {
+void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged, bool is_dual_port) {
     vector<UBuffer> srams, target_buffers;
   for (auto bank_id: banks_tobe_merged) {
     UBuffer sram;
@@ -1213,7 +1214,7 @@ void UBufferImpl::merge_banks_and_rewrite(vector<int> & banks_tobe_merged) {
 
   string new_sram_name = get_buf_name() + "_bank_" + str(new_bk);
 
-  auto sram_merged = merge_sram_with_different_outpt(srams, new_sram_name);
+  auto sram_merged = merge_sram_with_different_outpt(srams, new_sram_name, is_dual_port);
 
   //Also merge target buffer
   merged_impl.target_buf = merge_buf_with_different_outpt(target_buffers, new_sram_name);
@@ -1392,7 +1393,6 @@ void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
         continue;
 
 
-
     //cout << "BANK ID: " << bank_id << "\n\tbank_map:" << str(it.second) << endl;
 
     //Not merge this buffer if it decouple the control or
@@ -1416,6 +1416,7 @@ void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
       }
     }
   }
+  bool is_dual_port = options.mem_hierarchy.at("mem").dual_port_sram;
   for (auto it: merge_map) {
     cout << "bank id: " << it.first << ", to be merged: " << it.second << endl;
     if (it.second.size() > 1) {
@@ -1433,11 +1434,11 @@ void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
           auto last_bank = merging_banks.back();
           merging_banks.pop_back();
           //cout << merging_banks << endl;
-          merge_banks_and_rewrite(merging_banks);
+          merge_banks_and_rewrite(merging_banks, is_dual_port);
           merging_banks.clear();
           merging_banks.push_back(last_bank);
         } else if (bk_it == banks_tobe_merged.end()) {
-          merge_banks_and_rewrite(merging_banks);
+          merge_banks_and_rewrite(merging_banks, is_dual_port);
           break;
         } else {
           merging_banks.push_back(*bk_it);
@@ -1758,7 +1759,7 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
       //FIXME: should do this after figure out vectorization dimension
       //Maybe it's correct ???
       //ASPLOS: this need to be tested for high throughput
-    buf.linear_address_space(project_out_zero_dim(to_set(buf.global_range())), 4);
+    buf.linear_address_space(project_out_zero_dim(to_set(buf.global_range())), options.mem_hierarchy.at("mem").fetch_width);
     //buf.linear_address_space(project_out_zero_dim(rddom),
     //        max(4/*fetch_width*/, stride_in_dim(rddom, ::num_dims(rddom) - 1)));
     //buf.tighten_address_space();
@@ -2174,12 +2175,14 @@ void add_lake_config(Json& jdata, ConfigMap data, int dimensionality, string dom
     }
 }
 
-ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read) {
+ConfigMap generate_addressor_config_from_access_map(umap* acc_map, LakeCollateral mem, bool is_read, bool tb_share = false) {
      string buf_name = range_name(to_map(acc_map));
      string micro_buf_name = get_micro_buf_name(buf_name);
      cout << "\tMicro buf name: " << micro_buf_name << endl;
      int word_width = mem.word_width.at(micro_buf_name);
      int capacity = mem.capacity.at(micro_buf_name);
+     if (micro_buf_name == "tb")
+       capacity *= mem.bank_num.at(micro_buf_name);
      int port_width;
      if (is_read)
          port_width = mem.out_port_width.at(micro_buf_name);
@@ -2306,7 +2309,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
     for (auto it: rewrite_buffer) {
         auto ubuf = it.second;
         if (contains(ubuf.name, "tb")) {
-          if (ubuf.get_capacity(mem.fetch_width) > 2) {
+          if (ubuf.get_capacity(mem.fetch_width) > mem.get_capacity("tb")/mem.fetch_width) {
             tb_share = true;
           }
           //tb_cnt += 1;
@@ -2341,7 +2344,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
 
             //linearize access map before codegen
             cout << str(ubuf.global_range()) << endl;
-            auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+            auto reduce_map = linear_address_map_lake(to_set(ubuf.input_range()), mem.fetch_width);
             auto linear_acc_map = dot(out_acc_map, reduce_map);
             map_insert(op2write_map, domain_name(out_acc_map), to_umap(linear_acc_map));
         }
@@ -2352,7 +2355,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             in_acc_map = remove_irrelevant_in_dim(in_acc_map);
 
             //linearize access map before codegen
-            auto reduce_map = linear_address_map_lake(to_set(ubuf.global_range()), mem.fetch_width);
+            auto reduce_map = linear_address_map_lake(to_set(ubuf.input_range()), mem.fetch_width);
             auto linear_acc_map = dot(in_acc_map, reduce_map);
             map_insert(op2read_map, domain_name(in_acc_map), to_umap(linear_acc_map));
 
@@ -2391,7 +2394,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             isl_map* opt_access_map =
                 add_config_with_dom_dim_merge(config_info, opt_sched, op2write_map.at(op_name), sched);
             ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false);
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, false, tb_share);
             config_info.merge(addressor);
             // add agg2sram_opt config register
             if(agg2sram_cfg_map.count(op_name)) {
@@ -2412,8 +2415,10 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
               int agg2sram_read_padding;
               if (in2agg_extent_0 == 1 && in2agg_stride_0 == 0) // corner case, and dim = 1
                 agg2sram_read_padding = 1;
-              else
-                agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+              else {
+                int agg_capacity = mem.fetch_width;
+                agg2sram_read_padding = (in2agg_extent_0 % agg_capacity == 0) ? 0 : (agg_capacity - in2agg_extent_0 % agg_capacity) * in2agg_stride_0 + 1;
+              }
               config_info["mode"] = {0};
               config_info["agg_read_padding"] = {agg2sram_read_padding};
               config_info["delay"] = {0};
@@ -2424,7 +2429,7 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
             isl_map* opt_access_map =
                 add_config_with_dom_dim_merge(config_info, opt_sched, op2read_map.at(op_name), sched);
             ConfigMap addressor =
-              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, true);
+              generate_addressor_config_from_access_map(to_umap(opt_access_map), mem, true, tb_share);
             config_info.merge(addressor);
           }
 
@@ -2459,8 +2464,11 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
                 int agg2sram_read_padding;
                 if (in2agg_extent_0 == 1 && in2agg_stride_0 == 0) // corner case, and dim = 1
                   agg2sram_read_padding = 1;
-                else
-                  agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+                else {
+                  int agg_capacity = mem.fetch_width;
+                  agg2sram_read_padding = (in2agg_extent_0 % agg_capacity == 0) ? 0 : (agg_capacity - in2agg_extent_0 % agg_capacity) * in2agg_stride_0 + 1;
+                  //agg2sram_read_padding = (in2agg_extent_0 % 4 == 0) ? 0 : (4 - in2agg_extent_0 % 4) * in2agg_stride_0 + 1;
+                }
                 config_info["mode"] = {0};
                 config_info["agg_read_padding"] = {agg2sram_read_padding};
                 config_info["delay"] = {0};
@@ -2468,14 +2476,14 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options, map<string, UBuffer> &
               }
               for (auto acc_map : op2write_map.at(op_name)) {
                   ConfigMap addressor =
-                      generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/);
+                      generate_addressor_config_from_access_map(acc_map, mem, false/*is write*/, tb_share);
                   config_info.merge(addressor);
               }
           }
           if(op2read_map.count(op_name)) {
               for (auto acc_map : op2read_map.at(op_name)) {
                   ConfigMap addressor =
-                      generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/);
+                      generate_addressor_config_from_access_map(acc_map, mem, true/*is read*/, tb_share);
                   config_info.merge(addressor);
               }
           }
@@ -3073,7 +3081,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
 
       //generate sram2tb controller
       //TODO: change 4 to fetch width
-      auto trans = get_domain_trans(dom, dim, 4);
+      auto trans = get_domain_trans(dom, dim, mem.fetch_width);
       cout << "Vectorization Trans: " << str(trans) << endl;
 
       //Apply the vectorization trans on both accessor and addressor
@@ -3123,7 +3131,7 @@ CoreIR::Module* affine_controller_use_lake_tile_counter(
       buf = def->addInstance(ub_ins_name + "_Counter_" + str(dim), "cgralib.Mem_amber", genargs);
       //assign the init value
       //TODO change 4 to fetch width
-      std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), 4));
+      std::vector<int> v(round_up_to_multiple_of(get_domain_range(dom, dim), mem.fetch_width));
       std::iota(v.begin(), v.end(), 0);
 
       //TODO: this is a temporary fix for lake counter, need to move to the root level
@@ -8905,6 +8913,37 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return sched;
   }
 
+  bool violate_deps(isl_map* temp_sched, map<string, isl_map*> sched_map, bool is_dual_port) {
+    map<string, isl_map*> sram_rd, sram_wr;
+    for(auto it: sched_map) {
+        if (contains(it.first, "agg2sram")) {
+            sram_wr.insert(it);
+        }
+        if (contains(it.first, "sram2tb")) {
+            sram_rd.insert(it);
+        }
+    }
+    bool no_rd = is_dual_port && contains(domain_name(temp_sched), "agg2sram");
+    bool no_wr = is_dual_port && contains(domain_name(temp_sched), "sram2tb");
+    if (!no_wr) {
+      for (auto sched_it: sram_wr) {
+        auto collision = dot(temp_sched, inv(sched_it.second));
+        if (!empty(collision)) {
+          return true;
+        }
+      }
+    }
+    if (!no_rd) {
+      for (auto sched_it: sram_rd) {
+        auto collision = dot(temp_sched, inv(sched_it.second));
+        if (!empty(collision)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   bool violate_deps(isl_map* temp_sched, map<string, isl_map*> sched_map) {
     for (auto sched_it: sched_map) {
       auto collision = dot(temp_sched, inv(sched_it.second));
@@ -8914,7 +8953,6 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     }
     return false;
   }
-
 
   //Delay steps define how conservative the schedule recipe should be
   isl_map* get_sram2tb_schedule_with_check(umap* out_sched, map<string, isl_map*> sched_map,
@@ -8958,14 +8996,9 @@ void UBuffer::generate_banks(CodegenOptions& options) {
     return temp_sched;
   }
 
-  //New method to find dynamic schedule
-  isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> sched_map, int ahead_step, int vectorize_loop_dim, int offset, bool is_dual_port) {
-    cout << "\t output sched: "  << str(out_sched)<< endl;
-    cout << "vectorized dim: " << vectorize_loop_dim << endl;
-    int fetch_ii = stride_in_dim(out_sched, vectorize_loop_dim);
-    //TODO: may need to adjust the delay, /2 is made resnet work
-    auto temp_sched = linear_schedule(out_sched, {1}, - offset - ahead_step * fetch_ii/2, false);
-    cout << "\t temp sched: " << str(temp_sched) << endl;
+
+  isl_map* search_for_sram2tb_schedule(isl_map* temp_sched,
+          map<string, isl_map*> & sched_map, bool is_dual_port) {
 
     //GET SRAM2TB list and AGG2SRAM list
     map<string, isl_map*> sram_rd, sram_wr;
@@ -8980,6 +9013,7 @@ void UBuffer::generate_banks(CodegenOptions& options) {
 
     //Finding the delayfor SRAM access
     bool adjust = true;
+    int step = 0;
     while (adjust) {
         adjust = false;
         //adjust against write
@@ -8987,6 +9021,8 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             //check dependency against sram write
             temp_sched = linear_schedule(temp_sched, {1}, -1, false);
             adjust = true;
+            step ++;
+            assert(step < 100);
         }
         //adjust against read
         while(violate_deps(temp_sched, sram_rd)) {
@@ -8994,10 +9030,24 @@ void UBuffer::generate_banks(CodegenOptions& options) {
             //temp_sched = linear_schedule(temp_sched, {1}, -out_fetch_ii * fetch_width / 2, false);
             cout << "\tadjust temp sched: " << str(temp_sched) << endl;
             adjust = true;
+            step ++;
+            assert(step < 100);
         }
-
     }
-    return temp_sched;
+    return cpy(temp_sched);
+  }
+
+
+  //New method to find dynamic schedule
+  isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> & sched_map, int ahead_step, int vectorize_loop_dim, int offset, bool is_dual_port) {
+    cout << "\t output sched: "  << str(out_sched)<< endl;
+    cout << "vectorized dim: " << vectorize_loop_dim << endl;
+    int fetch_ii = stride_in_dim(out_sched, vectorize_loop_dim);
+    //TODO: may need to adjust the delay, /2 is made resnet work
+    auto temp_sched = linear_schedule(out_sched, {1}, - offset - ahead_step * fetch_ii/2, false);
+    cout << "\t temp sched: " << str(temp_sched) << endl;
+
+    return search_for_sram2tb_schedule(temp_sched, sched_map, is_dual_port);
   }
 
   //new recipe schedule provider for accumulation buffer
@@ -9952,9 +10002,12 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
     //Move the schedule ahead and pad the domain
     //fetch extra to cover the whole iteration domain after vectorization
-    //if (ahead_step) {
-    if (get_dim_max(range(acc_vec_rem), addr_dim) <
-                get_dim_max(range(acc_slice), addr_dim) ) {
+    //if (ahead_step && ! pad_zero_iteration) {
+    int new_max = get_dim_max(range(acc_vec_rem), addr_dim);
+    int origin_max = get_dim_max(range(acc_slice), addr_dim);
+    //cout << "new max: " << new_max << ", acc map: " << str(acc_vec_rem) << endl;
+    //cout << "origin max: " << origin_max << ", acc map: " << str(acc_slice) << endl;
+    if (new_max < origin_max) {
       acc_vec_rem = pad_to_domain_ubuf_map(acc_vec_rem, vectorized_dim, ahead_step);
       sched_vec_new = pad_to_domain_ubuf_map(sched_vec_new, vectorized_dim, ahead_step);
     }
@@ -9969,7 +10022,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
     //Get final schedule
     auto final_sched =
-        get_sram2tb_schedule_with_check(sched_vec_new, sched_record_map, ahead_step, vectorized_dim, 2/*1 cycle read latency, 1 extra cycle */, false);
+        get_sram2tb_schedule_with_check(sched_vec_new, sched_record_map, ahead_step, vectorized_dim, 2/*1 cycle read latency, 1 extra cycle */, is_dual_port);
 
     cout << "final schedule: " << str(final_sched) << endl;
     cout << "final access: " << str(acc_vec_rem) << endl;
@@ -10290,9 +10343,10 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
                 }
 
                 auto sram_in_access_map = add_range_suffix(rewrite_access_map, "_sram");
+                cout << "rewrite sram access map: " << str(sram_in_access_map) << endl;
                 string sram_pt_name = in_pt_name + "_in_" + std::to_string(pt_cnt++);
                 sram.port_bundles[bd_name].push_back(sram_pt_name);
-                sram.add_in_pt(sram_pt_name, dom, sram_in_access_map, simplify_expr(its(sched, dom)));
+                sram.add_in_pt(sram_pt_name, dom, simplify(sram_in_access_map), simplify_expr(its(sched, dom)));
               }
 
               //auto slice_dim = acc_pattern.get_dom_slice(ctx, dim_id, fetch_width, suffix);
@@ -10312,7 +10366,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
             agg_cnt ++;
             agg_buf.set_dim_id();
             ret.insert({agg_buf.name, agg_buf});
-            remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
+            //remove_deps.push_back(domain_name(agg_buf.access_map.at(pick(agg_buf.get_out_ports()))));
             cout << "AGG : " << agg_buf << endl;
             cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
           }

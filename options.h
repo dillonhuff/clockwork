@@ -157,7 +157,7 @@ struct LakeCollateral {
                  {"agg2sram_0", 3}, {"agg2sram_1", 3}};
                 interconnect_in_num = 2;
                 interconnect_out_num = 2;
-                capacity = {{"agg", 16}, {"sram", 512}, {"tb", 16}};
+                capacity = {{"agg", 8}, {"sram", 512}, {"tb", 8}};
                 in_port_width = {{"agg", 1}, {"sram", 4}, {"tb", 4}};
                 out_port_width = {{"agg", 4}, {"sram", 4}, {"tb", 1}};
                 word_width = {{"agg", 1}, {"sram", 4}, {"tb", 1}};
@@ -219,6 +219,11 @@ struct LakeCollateral {
       assert(controller_name.count(name));
       assert(bank_num.at(name) == 1);
       capacity.insert({name, size});
+    }
+
+    int get_capacity(string name) {
+      assert(controller_name.count(name));
+      return capacity.at(name);
     }
 
     void infer_word_width() {
@@ -342,7 +347,7 @@ struct LakeCollateral {
        in_port_width = {{"agg", 1}, {"sram", 2}, {"tb", 2}};
        out_port_width = {{"agg", 2}, {"sram", 2}, {"tb", 1}};
        bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
-       capacity = {{"agg", 8}, {"sram", 512}, {"tb", 8}};
+       capacity = {{"agg", 8}, {"sram", 1024}, {"tb", 8}};
     }
 
     void set_config_dp() {

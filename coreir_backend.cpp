@@ -2067,7 +2067,7 @@ void emit_lake_config_collateral(CodegenOptions options, string tile_name, json 
         out.close();
     }
 }
-void add_init_code(ofstream& lake_new, string keyword) {
+void add_init_code(ofstream& lake_new, string keyword, int fetch_bit_width) {
     if (contains(keyword, "sp")) {
       lake_new << "//Add initial block here" << endl;
       lake_new << "initial begin" << endl;
@@ -2079,17 +2079,20 @@ void add_init_code(ofstream& lake_new, string keyword) {
       lake_new << tab(2) << "data_array[big_addr][small_addr +: 8] = i;" << endl;
       lake_new << tab(1) << "end" << endl << "end" << endl;
     } else {
+      int fetch_width = 1 << fetch_bit_width;
       lake_new << "//Add initial block here" << endl;
       lake_new << "initial begin" << endl;
       lake_new << tab(1) << "integer i = 0;" << endl;
       lake_new << tab(1) << "for(i = 0; i < 512; i ++) begin" << endl;
-      //lake_new << tab(2) << "data_array[big_addr][small_addr] = i;" << endl;
-      lake_new << tab(2) << "data_array[i] = i;" << endl;
+      lake_new << tab(2) << "integer big_addr = i >> " + str(fetch_bit_width)+ ";" << endl;
+      lake_new << tab(2) << "integer small_addr = (i & " + str(fetch_width - 1) + ")<<4;" << endl;
+      lake_new << tab(2) << "data_array[big_addr][small_addr +: 8] = i;" << endl;
+      //lake_new << tab(2) << "data_array[i] = i;" << endl;
       lake_new << tab(1) << "end" << endl << "end" << endl;
     }
 }
 
-void add_default_initial_block(string filename, string keyword) {
+void add_default_initial_block(string filename, string keyword, int fetch_bit_width) {
     //ifstream lake_top("LakeTop_W.v");
     //ofstream lake_new("LakeTop_W_new.v");
     ifstream lake_top(filename + ".sv");
@@ -2103,7 +2106,7 @@ void add_default_initial_block(string filename, string keyword) {
             //if (loc == "endmodule   // sram_sp__0") {
             if (loc == keyword) {
                 find_macro = true;
-                add_init_code(lake_new, keyword);
+                add_init_code(lake_new, keyword, fetch_bit_width);
             }
             lake_new << loc << endl;
         }
@@ -2134,9 +2137,14 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   //}
   //cmd("mkdir -p "+options.dir+"verilog");
   //cmd("mv LakeWrapper_"+v_name+".v " + options.dir + "verilog");
+  auto mem_collateral = options.mem_hierarchy.at("mem");
+  bool dp_flag = mem_collateral.dual_port_sram;
+  string dp_flag_str = dp_flag ? " -dp " : "";
+  int fw = mem_collateral.fetch_width;
+  int capacity = mem_collateral.get_single_tile_capacity()/fw;
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d 512");
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d " + str(capacity) + " -mw " + str(fw*16) + dp_flag_str);
   assert(res_lake == 0);
 
 
