@@ -144,7 +144,7 @@ struct LakeCollateral {
         counter_ub(65535),
         interconnect_in_num(1),
         interconnect_out_num(1),
-        load_latency(0),
+        load_latency(1),
         store_latency(0),
         multi_sram_accessor(true),
         dual_port_sram(false),

@@ -1724,6 +1724,8 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
 
         int adjust_latency =
             info.buffer_load_latencies.at(name) + info.buffer_store_latencies.at(name);
+        assert(adjust_latency == 1);
+        cout << "Adjust latency: " << adjust_latency << endl;
         //Take consider of the latency in delay
         sched = linear_schedule(sched, {1}, delay + op_latency - adjust_latency, false);
        // auto reduce_map = linear_address_map_lake(rddom, 4);
