@@ -9921,7 +9921,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
     return pad_zero_iteration;
 }
 
-  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int& vectorized_dim, bool is_dual_port) {
+  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map,
+          int fetch_width, int tb_capacity, int addr_dim, int& vectorized_dim, bool is_dual_port) {
 
     isl_ctx* ctx = ::ctx(acc_0);
 
@@ -9933,6 +9934,15 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
     //From the range transform get the domain transform
     auto dim2denom = get_dim2denom(acc_slice);
+
+    //Get the innermost dimension for stripmining
+    int innermost_stripmining_dim = 0;
+    for (auto it: dim2denom) {
+        if (it.first > innermost_stripmining_dim) {
+            innermost_stripmining_dim = it.first;
+        }
+    }
+
     auto div_trans = get_div_trans(acc_slice, dim2denom);
     cout << str(div_trans) << endl;
     auto acc_vec_new = simplify_expr(dot(inv(div_trans), acc_slice));
@@ -9957,6 +9967,12 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
     //Get the vectorized dimension
     vectorized_dim =
         get_inner_most_related_dom_dim_debug(acc_vec_rem, addr_dim, fetch_width);
+    //Force it to be the inner most dimension
+
+    int data_btw_fetch = card_in_dim(cpy(acc_0), innermost_stripmining_dim);
+    if (data_btw_fetch > tb_capacity) {
+      vectorized_dim = num_in_dims(acc_vec_rem) - 1;
+    }
     cout << "Vectorization dimension: " << vectorized_dim << endl;
     //cout << "Relation map: " << relation_map(acc_vec_rem) << endl;
 
@@ -10391,13 +10407,13 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
               auto am = to_map(access_map.at(out_pt_name));
               auto sched = to_map(schedule.at(out_pt_name));
 
-
+              int tb_capacity = options.mem_hierarchy.at("mem").get_capacity("tb");
               //New method for sram read schedule
               int vectorized_dim = 0;
               auto sram_ir = get_vectorized_read_simplified(
                       to_map(access_map.at(out_pt_name)),
                       to_map(schedule.at(out_pt_name)),
-                      sched_record_map, fetch_width, dim_id, vectorized_dim, is_dual_port);
+                      sched_record_map, fetch_width, tb_capacity, dim_id, vectorized_dim, is_dual_port);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_sram2tb_" + str(tb_cnt));
               isl_set* dom = ::domain(vectorized_access);

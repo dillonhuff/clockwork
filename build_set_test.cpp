@@ -11924,6 +11924,20 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 void playground() {
     {
+        vector<int> a = {0, 1, 2, 4};
+        vector<int> b = {0, 2, 1, 4};
+        auto ret = pad_alignment(a, b);
+        cout << ret.first << endl;
+        cout << ret.second << endl;
+        assert(false);
+    }
+    {
+        auto prg = conv_3_3();
+        prg.pretty_print();
+        align_loop_var_with_pad(prg);
+        assert(false);
+    }
+    {
 
       isl_ctx* ctx = isl_ctx_alloc();
       auto m = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1,i2,i3]-> [16*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8 and 0<=i2<=1 and 0<=i3<=16}");
@@ -11936,12 +11950,6 @@ void playground() {
       assert(false);
     }
 
-    {
-        auto prg = stereo();
-        prg.pretty_print();
-        align_loop_var_with_pad(prg);
-        assert(false);
-    }
     {
         vector<int> a = {3, 40, 3, 40};
         vector<int> b = {44, 44};
@@ -15577,6 +15585,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(stereo_unroll());
   //
   //CGRA tests
+  test_apps.push_back(conv_3_3_reorder());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(counter());
@@ -17643,7 +17652,7 @@ void access_pattern_read_unit_tests() {
   auto acc_0 = isl_map_read_from_str(ctx,"{ op[i0]-> data[i0]: 0<=i0<=61}");
   auto sched = isl_map_read_from_str(ctx,"{ op[i0]-> [i0]: 0<=i0<=61 }");
   //auto read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
-  auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0, dummy_dim);
+  auto read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 8, 0, dummy_dim);
   auto acc_vec = read_ir.first;
   auto sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
@@ -17657,7 +17666,7 @@ void access_pattern_read_unit_tests() {
   auto sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
   //read_ir = get_vectorized_read(acc_0, sched,
   read_ir = get_vectorized_read_simplified(acc_0, sched,
-          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0, dummy_dim);
+          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 8, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
@@ -17671,7 +17680,7 @@ void access_pattern_read_unit_tests() {
   sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [4 + 4*i0]: 0<=i0<=15 }");
   //read_ir = get_vectorized_read(acc_0, sched,
   read_ir = get_vectorized_read_simplified(acc_0, sched,
-          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 0, dummy_dim);
+          {{"sram2tb_0", sched_read}, {"agg2sram_0", sched_write}}, 4, 8, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
@@ -17683,7 +17692,7 @@ void access_pattern_read_unit_tests() {
   sched_write = isl_map_read_from_str(ctx,"{ op_write[i0]-> [8 + 8*i0]: 0<=i0<=7 }");
   //read_ir = get_vectorized_read(acc_0, sched,
   read_ir = get_vectorized_read_simplified(acc_0, sched,
-          {{"agg2sram_0", sched_write}}, 4, 0, dummy_dim);
+          {{"agg2sram_0", sched_write}}, 4, 8, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(acc_vec) << endl;
@@ -17705,7 +17714,7 @@ void access_pattern_read_unit_tests() {
 
   acc_0 = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> data[i0, i1+i2]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
   sched = isl_map_read_from_str(ctx,"{ sram2tb[root = 0, i0, i2, i1]-> [560*i0+ 70*i2+i1]: 0<=i0<=61 and 0<=i1<=61 and 0<=i2<=7}");
-  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 1, dummy_dim);
+  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 8, 1, dummy_dim);
   //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 1);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
@@ -17717,7 +17726,7 @@ void access_pattern_read_unit_tests() {
   acc_0 = isl_map_read_from_str(ctx,"{ op[i0, i1]-> data[i0 + i1]: 0<=i0<8 and 0 <= i1 <= 2}");
   sched = isl_map_read_from_str(ctx,"{ op[i0, i1]-> [14 + i0*3 + i1]: 0<=i0<8and 0 <= i1 <= 2 }");
   //read_ir = get_vectorized_read(acc_0, sched, {}, 4, 0);
-  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 0, dummy_dim);
+  read_ir = get_vectorized_read_simplified(acc_0, sched, {}, 4, 8, 0, dummy_dim);
   acc_vec = read_ir.first;
   sched_vec = read_ir.second;
   cout << "After vec read access map: " << str(simplify_expr(acc_vec)) << endl;
@@ -18134,7 +18143,13 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
       sched.op_offset_within_parent[other] = 0;
       latency = max(latency, sched.total_latency(other));
     }
-    sched.loop_iis[op->name] = max(latency, 1);
+    int min_ii = 1;
+    if ((fetch_width > 1) &&
+            check_if_relax_inner_iis(op, prg)){
+        min_ii = 2;
+    }
+    sched.loop_iis[op->name] = max(latency, min_ii);
+    sched.target_inner_iis[op->name] = min_ii;
   } else if(op->is_loop()) {
     int latency = 0;
     for (auto other : op->children) {
@@ -18158,6 +18173,15 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
       }
     }
     sched.loop_iis[op->name] = max(latency, 1);
+    int offset = 0;
+    if ((latency % 2 != 0) && (latency > fetch_width)) {
+        cout << "offset: " << latency << endl;
+        //FIXME: 2 is the magic number 4 does not work
+        offset = - latency%2 + 2;
+    }
+    sched.loop_iis[op->name] = max(latency + offset, 1);
+    cout << tab(1) <<  "Loop : " << op->name << endl;
+    cout << tab(2) << "ASAP iis = " << latency << endl;
   } else if (op->is_if()) {
     assert(op->children.size() == 1);
     auto child = pick(op->children);
@@ -18304,7 +18328,7 @@ void tighten_iis(schedule_info& sched, prog& prg, int fetch_width) {
     for (auto loop : prg.all_loops()) {
       cout << loop->name << endl;
       int ii = sched.II(loop);
-      if (ii != 1) {
+      if (ii != 1 && (!is_inner_loop(loop))) {
         int L = sched.last_update_delay(loop);
         int offset = 0;
         if (L % 2!= 0) {

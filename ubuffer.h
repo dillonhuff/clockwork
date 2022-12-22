@@ -3357,7 +3357,7 @@ vector<string> buffer_vectorization(vector<string> buf_name_vec, int dim_id, int
 //helper function for the new vectorization pass
 pair<isl_map*, isl_map*> get_vectorized_write(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int agg_cnt=0, int extra_delay=0);
 pair<isl_map*, isl_map*> get_vectorized_read(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, bool is_dual_port = false);
-pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int& vectorized_dim,  bool is_dual_port = false);
+pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int tb_capacity, int addr_dim, int& vectorized_dim,  bool is_dual_port = false);
 //Helper function to get schedule
 isl_map* get_sram2tb_schedule_with_check(isl_map* out_sched, map<string, isl_map*> & sched_map, int ahead_step, int vectorize_loop_dim, int offset, bool is_dual_port);
 

@@ -1653,6 +1653,9 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 
 pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r);
 map<string, vector<int>> align_loop_var_with_pad(op* root, prog& prg);
+pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
+        vector<int> & p_align_dim,
+        vector<int> & c_align_dim);
 void align_loop_var_with_pad(prog& prg);
 std::vector<string> topologically_sort_kernels(prog& prg);
 std::vector<string> topologically_sort_kernels(op* root, prog& prg);
@@ -1895,6 +1898,9 @@ struct schedule_info {
 
   // Schedule offsets
   map<string, int> loop_iis;
+  //This is the target ii for each inner loop
+  //We need to save it for ii tighten, since some loop cannot support ii=1 due to the fetch width
+  map<string, int> target_inner_iis;
   //map<op*, int> instance_latencies;
   map<op*, int> op_offset_within_parent;
   map<op*, int> op_pad_step;
@@ -2166,6 +2172,7 @@ bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_in
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
+bool check_if_relax_inner_iis(op* lp, prog& prg);
 
 void loop_split(prog& prg);
 void perfect_loop_split(op*, prog& );
