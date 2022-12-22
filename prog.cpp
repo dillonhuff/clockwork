@@ -679,10 +679,10 @@ void align_loop_var_with_pad(prog& prg) {
 
 
 //Transform align dimension into pad dimension
-//{0, 1,2,5} {0,2,3,5}
+//{0, 1,2,4} {0,2,3,4}
 //->
-//{0, -1. 1, 2, 3, 4}
-//{0,  1,  2, 3, 4, -1 }
+//{0, -1. 1, 2, 3}
+//{0,  1, 2, 3, -1 }
 pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
         vector<int> & p_align_dim,
         vector<int> & c_align_dim) {
@@ -847,6 +847,7 @@ pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r) {
     }
     return make_pair(l_pad, r_pad);
 }
+
 
 //Pad both the origin map and float map
 //node exist in both map
@@ -3428,7 +3429,7 @@ bool can_achieve_full_rate(prog& prg, map<string, vector<int> > & pad_indices, i
 
 bool is_rate_matchable_loopnest(prog& prg, map<string, vector<int> >& pad_indices) {
 
-    if (all_perfect_loop_nests(prg)) {
+    if (all_perfect_loop_nests(prg) && (pad_indices.size() > 0)) {
         int max_depth = max_loop_depth(prg);
         int align_loop_depth = pick(pad_indices).second.size();
         if (align_loop_depth == max_depth) {
@@ -5389,13 +5390,46 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
   }
 }
 
+bool check_if_relax_inner_iis(op* lp, prog& prg) {
+
+    //Add a method to check the stride
+    for (string b: buffers_read(lp)) {
+        //Skip all the input buffers(read only)
+        if (prg.ins.count(b) || contains(b, "glb") || contains(b, "pond")) {
+          continue;
+        }
+        //cout << " buffer consumed: " << b << endl;
+        isl_map* reads = consumer_map(lp, b, prg);
+        auto single_maps = to_map(pick(get_basic_maps(reads)));
+        cout << "access map: " << str(reads) << endl;
+        cout << "access map single: " << str(single_maps) << endl;
+        auto reduce_map = linear_address_map_lake(range(reads));
+        reduce_map = set_domain_name(reduce_map, b);
+        reduce_map = set_range_name(reduce_map, b);
+        auto linear_reads = dot(single_maps, reduce_map);
+        int cms = common_max_stride(linear_reads, 0);
+        cout << "cms: " << cms << endl;
+        auto stride = stride_in_dim(linear_reads, num_in_dims(linear_reads) - 1);
+        //Chances are that this buffer only access to single pixel
+        if (cms == 0)
+            continue;
+        cout << " inner most read stride: " << stride/cms << endl;
+        cout << "  linear reads: " << str(linear_reads) << endl;
+        if (stride/cms > 2) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
   auto deps = cycle_accurate_deps(prg);
   cout << "Adjusting iis of " << prg.name << endl;
   for (auto lp : get_inner_loops(prg)) {
     cout << "Adjusting ii of " << lp->name << endl;
     int old_ii = map_find(lp->name, sched.loop_iis);
-    int try_ii = 1;
+    int try_ii = sched.target_inner_iis.at(lp->name);
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
