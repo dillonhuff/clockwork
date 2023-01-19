@@ -1730,7 +1730,8 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       ub_field.push_back({"valid_pass_out", context->Bit()});
   }
   for (auto var : op->index_variables_needed_by_compute) {
-    ub_field.push_back({var, context->BitIn()->Arr(16)});
+    string real_var = take_until_str(var, "_split_");
+    ub_field.push_back({real_var, context->BitIn()->Arr(16)});
   }
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
@@ -1827,7 +1828,9 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       assert(halide_cu != nullptr);
 
       for (auto var : op->index_variables_needed_by_compute) {
-        def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
+
+        string real_var = take_until_str(var, "_split_");
+        def->connect(halide_cu->sel(real_var), def->sel("self")->sel(real_var));
       }
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
@@ -2777,9 +2780,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
     for (auto var : op->index_variables_needed_by_compute) {
+
+      string real_var = take_until_str(var, "_split_");
       int level = dbhc::map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
-      def->connect(def->sel(op->name)->sel(var), var_wire);
+      def->connect(def->sel(op->name)->sel(real_var), var_wire);
     }
 
 
@@ -2996,8 +3001,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     for (auto var : op->index_variables_needed_by_compute) {
       assert(options.rtl_options.use_external_controllers);
       int level = dbhc::map_find(var, levels);
+      //FIXME: it's a hack index var may be splited and we need to remove the suffix
+      string real_var = take_until_str(var, "_split_");
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
-      def->connect(def->sel(op->name)->sel(var), var_wire);
+      def->connect(def->sel(op->name)->sel(real_var), var_wire);
     }
   }
 

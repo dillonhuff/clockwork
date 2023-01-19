@@ -716,6 +716,8 @@ pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
     return make_pair(pad_dim_p, pad_dim_c);
 }
 
+
+
 /*
  * this function will return the index of matrix of aligning dimension
  * It will be a pair of int
@@ -1320,15 +1322,39 @@ std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
   return producers;
 }
 
+std::set<string> get_producers_outside_SSC(string next_kernel, op* root, prog& prg) {
+    std::set<string> ret;
+    auto prods = get_producers(next_kernel, root, prg);
+    for (auto prod : prods) {
+        auto prods_of_prod = get_producers(prod, root, prg);
+        if (prods_of_prod.count(next_kernel) == 0) {
+            ret.insert(prod);
+        }
+    }
+    return ret;
+}
+
+//Helper function that checks if k_l is producer or consumer of k_r
+bool is_prod_or_cons(string k_l, string k_r, op* root, prog& prg) {
+
+    auto k_l_prod =  get_producers(k_l, root, prg);
+    auto k_r_prod =  get_producers(k_r, root, prg);
+    //cout << k_l << " prod: " << k_l_prod << endl;
+    //cout << k_r << "r_prod: " << k_r_prod << endl;
+
+    return k_r_prod.count(prg.find_non_op(k_l)->name)
+        ^ k_l_prod.count(prg.find_non_op(k_r)->name);
+
+}
+
 
 std::set<string> get_producers(string next_kernel, prog& prg) {
 
-  //   cout << "next kernel: " << next_kernel<< endl;
   std::set<string> producers;
-  op* loop = prg.find_loop(next_kernel);
+  op* loop = prg.find_non_op(next_kernel);
 
   std::set<string> buffers_read;
-  for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+  for (auto op : prg.find_non_op(next_kernel)->descendant_ops()) {
     for (auto buff : op->buffers_read()){
       buffers_read.insert(buff);
       //             cout << tab(1) << buff << endl;
@@ -1339,7 +1365,7 @@ std::set<string> get_producers(string next_kernel, prog& prg) {
   for (auto other_kernel : get_kernels(prg)) {
     if (other_kernel != next_kernel) {
       std::set<string> buffers_written;
-      for (auto op : prg.find_loop(other_kernel)->descendant_ops()) {
+      for (auto op : prg.find_non_op(other_kernel)->descendant_ops()) {
         for (auto buff : op -> buffers_written()) {
           buffers_written.insert(buff);
         }
@@ -2376,6 +2402,25 @@ std::set<op*, cmp_op> find_readers(const string& buff, prog& prg){
 
 // 	return groups;
 // }
+//
+prog extract_cgl_to_separate_prog(const std::set<op*>& cg_loops, prog& original) {
+	prog extracted;
+	extracted.name = "Extracted_subloop";
+	op* new_root = extracted.root;
+	for(auto cgl : cg_loops){
+        cout << cgl->name << " has children = " << cgl->children.size() << endl;
+        assert(cgl->children.size() == 1);
+        if (is_inner_loop(cgl)) {
+            string l_name = "loop_" + pick(cgl->children)->name;
+            op* container_loop = new_root->add_loop(l_name, 0, 1);
+		    deep_copy_child(container_loop, pick(cgl->children), original);
+        } else {
+		    deep_copy_child(new_root, pick(cgl->children), original);
+        }
+	}
+	cout << "Programs copied" << endl;
+    return extracted;
+}
 
 
 prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original) {
@@ -3520,14 +3565,14 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
       QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
       QExpr root_sched{{root_sched_t}};
 
-      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QAV delayv = qconst(map_find(c->name, sched.op_offset_within_parent));
       QTerm delayt{{delayv}};
       QExpr delay{{delayt}};
 
       root_sched = parent_sched + root_sched + delay;
       schedule_exprs[c] = root_sched;
     } else {
-      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QAV delayv = qconst(map_find(c->name, sched.op_offset_within_parent));
       QTerm delayt{{delayv}};
       QExpr delay{{delayt}};
 
@@ -3892,7 +3937,7 @@ int schedule_info::instance_latency(op* op) {
   if (op->is_loop()) {
     int maxoffset = 1;
     for (auto c : op->children) {
-      int delay = map_find(c, op_offset_within_parent);
+      int delay = map_find(c->name, op_offset_within_parent);
       int latency = total_latency(c);
       int inner_delay = delay + latency;
       maxoffset = max(maxoffset, inner_delay);
@@ -3915,7 +3960,7 @@ int schedule_info::instance_latency(op* op) {
 
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
   //bool has_latency = contains_key(op, sched.instance_latencies);
-  bool has_offset = contains_key(op, sched.op_offset_within_parent);
+  bool has_offset = contains_key(op->name, sched.op_offset_within_parent);
   bool has_ii = contains_key(op->name, sched.loop_iis);
 
   if (op == prg.root) {
@@ -5145,7 +5190,7 @@ void print_partial_schedule(schedule_info& sched, prog& prg) {
   cout << endl;
   cout << "Offsets in parent" << endl;
   for (auto e : sched.op_offset_within_parent) {
-    cout << tab(1) << e.first->name << ": " << e.second << endl;
+    cout << tab(1) << e.first << ": " << e.second << endl;
   }
   cout << endl;
   //cout << "Instance latencies" << endl;
@@ -5158,10 +5203,10 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
   int delay = 0;
   for (auto outer_loop : outer) {
     for (auto c : outer_loop->children) {
-      sched.op_offset_within_parent[c] = delay;
+      sched.op_offset_within_parent[c->name] = delay;
       delay += sched.total_latency(c);
     }
-    sched.op_offset_within_parent[outer_loop] = 0;
+    sched.op_offset_within_parent[outer_loop->name] = 0;
   }
 
   for (auto outer_loop : outer) {
@@ -5291,7 +5336,7 @@ void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_l
 
     int earliest_possible_delay = 0;
     int latest_legal_delay =
-      map_find(lp, sched.op_offset_within_parent);
+      map_find(lp->name, sched.op_offset_within_parent);
 
     int current_delay = latest_legal_delay;
 
@@ -5299,7 +5344,7 @@ void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_l
     while (latest_legal_delay - earliest_possible_delay > 0) {
       assert(latest_legal_delay >= earliest_possible_delay);
       int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
-      sched.op_offset_within_parent[lp] = try_delay;
+      sched.op_offset_within_parent[lp->name] = try_delay;
       if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         latest_legal_delay = try_delay;
       } else {
@@ -5317,10 +5362,10 @@ void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_l
         for (string prod: get_producers(name, prg)) {
             op* prod_op = prg.find_loop(prod);
             latest_legal_delay = std::max(latest_legal_delay,
-                    sched.total_latency(prod_op) + sched.op_offset_within_parent.at(prod_op));
+                    sched.total_latency(prod_op) + sched.op_offset_within_parent.at(prod_op->name));
         }
     }
-    sched.op_offset_within_parent[lp] = latest_legal_delay;
+    sched.op_offset_within_parent[lp->name] = latest_legal_delay;
   }
 }
 
@@ -5335,7 +5380,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
 
     int earliest_possible_delay = 0;
     int latest_legal_delay =
-      map_find(lp, sched.op_offset_within_parent);
+      map_find(lp->name, sched.op_offset_within_parent);
 
     int current_delay = latest_legal_delay;
 
@@ -5343,7 +5388,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
     while (latest_legal_delay - earliest_possible_delay > 100) {
       assert(latest_legal_delay >= earliest_possible_delay);
       int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
-      sched.op_offset_within_parent[lp] = try_delay;
+      sched.op_offset_within_parent[lp->name] = try_delay;
       if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         latest_legal_delay = try_delay;
       } else {
@@ -5353,7 +5398,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
       cout << "Latest legal  : " << latest_legal_delay << endl;
     }
 
-    sched.op_offset_within_parent[lp] = latest_legal_delay;
+    sched.op_offset_within_parent[lp->name] = latest_legal_delay;
 
     //int old_delay = map_find(lp, sched.op_offset_within_parent);
 
@@ -5382,11 +5427,11 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int old_delay = map_find(lp->name, sched.op_offset_within_parent);
     int try_delay = 1;
     bool found_smaller_delay = false;
     while (try_delay < old_delay) {
-      sched.op_offset_within_parent[lp] = try_delay;
+      sched.op_offset_within_parent[lp->name] = try_delay;
       if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         found_smaller_delay = true;
         break;
@@ -5397,7 +5442,7 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
     }
 
     if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
+      sched.op_offset_within_parent[lp->name] = old_delay;
     }
   }
 }
@@ -5457,7 +5502,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
     } else {
       cout << "Found smaller II of " << lp->name << " to " << sched.loop_iis[lp->name] << endl;
       if (sched.pad_step(lp)) {
-        sched.op_offset_within_parent.at(lp) = sched.pad_step(lp) *sched.loop_iis[lp->name];
+        sched.op_offset_within_parent.at(lp->name) = sched.pad_step(lp) *sched.loop_iis[lp->name];
       }
     }
   }
@@ -5495,7 +5540,7 @@ void loop_split(prog& prg) {
   vector<op*> cgpl_lp;
   find_split_inner_perfect_loop(prg.root, cgpl_lp, prg);
   for (auto lp: cgpl_lp) {
-      cout << tab(4) << lp->name << endl;
+    //cout << tab(4) << lp->name << endl;
     perfect_loop_split(lp, prg);
   }
 }
@@ -5533,9 +5578,6 @@ void perfect_loop_split(op* lp, prog& prg) {
     op* outtest_lp = prg.root->container_child(lp);
     auto child_list = lp->children;
 
-    //Cannot split loop if they share index variable
-    if (share_index_var(child_list))
-        return;
     for (op* child: child_list) {
         //Get surrounding loops from root to leave
         cout << "\tVisiting child: " << child->name << endl;
@@ -5546,9 +5588,16 @@ void perfect_loop_split(op* lp, prog& prg) {
         auto new_lp = prg.root->add_loop_before(outtest_lp,
                 outtest_lp->name + "_split_"+str(child_cnt),
                 outtest_lp->start, outtest_lp->end_exclusive);
+        if (child->index_variables_needed_by_compute.size() > 0) {
+          child->rename_index_var(outtest_lp->name, outtest_lp->name + "_split_"+str(child_cnt));
+        }
         for (auto it = loop_nest.begin()+1; it != loop_nest.end(); it ++) {
             new_lp = new_lp->add_loop((*it)->name + "_split_" + str(child_cnt),
                     (*it)->start, (*it)->end_exclusive);
+
+            if (child->index_variables_needed_by_compute.size() > 0) {
+              child->rename_index_var((*it)->name, (*it)->name + "_split_"+str(child_cnt));
+            }
         }
         move_node(child, new_lp, prg);
         child->add_var_suffix_to_writes("_split_" + str(child_cnt), surrounding_loops);
