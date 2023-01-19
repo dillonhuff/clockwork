@@ -8,6 +8,9 @@ struct RTableEntry {
     map<string, int> timestamps;
     map<int, vector<string>> modulo_table;
 
+    //Helper data structures to keep track of the memory partition
+    map<string, vector<string> > partition_groups;
+
     void insertKernel(string& k) {
         kernels.insert(k);
     }
@@ -24,6 +27,36 @@ struct RTableEntry {
         return false;
     }
 
+    bool moduloTableInsert(string& k, int t, op* cgpl, prog & prg) {
+        assert(modulo_table.count(t));
+        vector<string>& slots = modulo_table.at(t);
+        for (int i = 0; i < slots.size(); i ++) {
+            if (slots.at(i) == "") {
+                slots.at(i) = k;
+                map_insert(partition_groups, k, k);
+                return true;
+            } else {
+                string key_kernel = slots.at(i);
+                //Go over all kernels check the prod consumer relations
+                bool can_partition = true;
+                for (string k_added : partition_groups.at(key_kernel)) {
+                    cout << "K add: " << k_added << ", current k: " << k << endl;
+                    if (is_prod_or_cons(k, k_added, cgpl, prg)) {
+                        cout << k_added << " is prd or cons of " << k << endl;
+                        can_partition = false;
+                        break;
+                    }
+                }
+                if (can_partition) {
+                    map_insert(partition_groups, key_kernel,  k);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     bool scheduleKernel(string& k, int t) {
         cout << "\t Schedule kernel : " << k << " at time = " << t << endl;
         assert(kernels.count(k));
@@ -34,8 +67,19 @@ struct RTableEntry {
         return find_slot;
     }
 
+    bool scheduleKernel(string& k, int t, op* cgpl, prog & prg) {
+        cout << "\t Schedule kernel : " << k << " at time = " << t << endl;
+        assert(kernels.count(k));
+        bool find_slot = moduloTableInsert(k, t, cgpl, prg);
+        if (find_slot) {
+            timestamps[k] = t;
+        }
+        return find_slot;
+    }
+
     void clearSchedule() {
         modulo_table.clear();
+        partition_groups.clear();
     }
 
     void initModuloTable(int II) {
@@ -54,6 +98,12 @@ struct RTableEntry {
         } else {
           cout << " timestamp: undef" << endl;
         }
+        if (partition_groups.count(k)) {
+            cout << tab(5) << "Partition group of " << k << endl;
+            for (string p: partition_groups.at(k)) {
+                cout << tab(6) << "group member: " << p << endl;
+            }
+        }
       }
     }
 
@@ -61,12 +111,15 @@ struct RTableEntry {
         return (kernels.size() + ins_num - 1) / ins_num;
     }
 
-    vector<string> getKernels(int coarse_t) {
+    std::set<string> getKernels(int coarse_t) {
         assert(modulo_table.count(coarse_t));
-        vector<string> ret;
+        std::set<string> ret;
         for (string k : modulo_table.at(coarse_t)) {
             if (k != "") {
-                ret.push_back(k);
+                ret.insert(k);
+                for (string g: partition_groups.at(k)) {
+                    ret.insert(g);
+                }
             }
         }
         return ret;
@@ -229,6 +282,59 @@ struct RTable {
           }
         }
         return true;
+    }
+
+    //This is the schedule method that considers producer consumer relation
+    bool scheduleKernel(string k, int t, op* cgpl, prog & prg){
+
+        op* k_op = prg.find_non_op(k);
+        for (auto b : buffers_written_by_kernel(k_op)) {
+          if (memWriteTable.count(b)) {
+            bool can_schedule =
+              memWriteTable.at(b).scheduleKernel(k, t, cgpl, prg);
+            if (!can_schedule)
+              return false;
+
+          }
+        }
+        for (auto b : buffers_read_by_kernel(k_op)) {
+          if (memReadTable.count(b)) {
+            bool can_schedule =
+              memReadTable.at(b).scheduleKernel(k, t, cgpl, prg);
+            if (!can_schedule)
+              return false;
+          }
+        }
+        for (auto func : kernel_func(k_op)) {
+          if (compTable.count(func)) {
+            bool can_schedule =
+             compTable.at(func).scheduleKernel(k, t);
+            if (!can_schedule)
+              return false;
+          }
+        }
+        return true;
+    }
+
+
+    //A special optimization for optimize the init buffer into a wire
+    void align_init_with_update() {
+      for (auto & it: memWriteTable) {
+        //found the init buffer
+        if (contains(it.first, "clkwrk_dsa")) {
+          auto & read_entry = memReadTable.at(it.first);
+          //Can have multiple kernels just multiple ops that are banked later
+          //assert(it.second.kernels.size() == 1);
+          //assert(read_entry.kernels.size() == 1);
+          //string wr_kernel = pick(it.second.kernels);
+          string rd_kernel = pick(read_entry.kernels);
+          int cons_timestamp = read_entry.timestamps.at(rd_kernel);
+          for (auto wr_kernel : it.second.kernels) {
+            it.second.timestamps.at(wr_kernel) = cons_timestamp;
+            timestamp.at(wr_kernel) = timestamp.at(rd_kernel);
+          }
+        }
+      }
     }
 
     void print() {

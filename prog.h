@@ -86,14 +86,19 @@ struct ir_node {
   // latency which further extract by schedule into
   int latency = 0;
 
-  // Annotation used for debug printouts
+  // Annotation used for debug printouts, if all set to false,
+  // fuse all loop by inner most dim
   int unroll_factor;
+
+  // Tag for loop fusion
+  bool cgl_tag;
 
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr),
   tp(IR_NODE_TYPE_OPERATION),
-  unroll_factor(1) {}
+  unroll_factor(1),
+  cgl_tag(false){}
 
   ~ir_node();
 
@@ -108,7 +113,7 @@ struct ir_node {
   void shift_address(const std::string& var, const std::vector<int>& min_locs);
 
   bool is_inner_loop() const {
-    if (this->is_loop()) {
+    if (!this->is_loop()) {
       return false;
     }
     for (auto c : children) {
@@ -369,6 +374,14 @@ struct ir_node {
 
   void compute_unit_needs_index_variable(const std::string& v) {
     index_variables_needed_by_compute.push_back(v);
+  }
+
+  void rename_index_var(const std::string org, const std::string new_) {
+      for (string& var: index_variables_needed_by_compute) {
+          if (var == org) {
+              var = new_;
+          }
+      }
   }
 
   void index_variable_prefetch_cycle(const int v) {
@@ -648,6 +661,10 @@ struct ir_node {
     return lp;
   }
 
+  void coarse_grain_loop_tag() {
+    cgl_tag = true;
+  }
+
   op* store(const pair<string, string>& dst, const pair<string, string>& src) {
     auto op = add_op("store_" + dst.first + "_from_" + src.first);
     op->add_load(src.first, src.second);
@@ -917,6 +934,23 @@ struct ir_node {
     return loops;
   }
 
+  std::set<op*> all_loops_to_be_fused() {
+    std::set<op*> loops;
+    if (cgl_tag) {
+      loops.insert(this);
+    } else if (is_inner_loop()) {
+      //By default fuse at inner most level
+      loops.insert(this);
+    } else {
+      for (auto c: children) {
+        for (auto loop: c->all_loops_to_be_fused()) {
+          loops.insert(loop);
+        }
+      }
+    }
+    return loops;
+  }
+
   std::set<std::string> all_existing_loop_names() {
     std::set<string> names;
     for (auto op : all_root_ops()) {
@@ -1023,6 +1057,11 @@ struct prog {
 
   op* add_loop(const int l, const int u) {
     return add_loop(unique_name("l"), l, u);
+  }
+
+  //Fuse at root level
+  void coarse_grain_loop_tag() {
+    root->coarse_grain_loop_tag();
   }
 
   isl_set* domain(op* op);
@@ -1619,7 +1658,10 @@ bool writes(const std::string& target_buf, op* p);
 
 op* find_writer(const std::string& target_buf, prog& prg);
 
+
+bool is_prod_or_cons(string k_l, string k_r, op* root, prog& prg);
 std::set<string> get_producers(string next_kernel, prog& prg);
+std::set<string> get_producers_outside_SSC(string next_kernel, op* root, prog& prg);
 //in sub ast under root
 std::set<string> get_producers(string next_kernel, op* root, prog& prg);
 
@@ -1648,6 +1690,8 @@ bool compile_regression_tb(prog& prg);
 vector<string> surrounding_vars(op* loop, prog& prg);
 vector<string> surrounding_vars(const std::string& op, prog& prg);
 vector<op*> surrounding_vars_ops(op* loop, prog& prg);
+
+prog extract_cgl_to_separate_prog(const std::set<op*>& cg_loops, prog& original);
 prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original);
 
 
@@ -1845,7 +1889,7 @@ struct schedule_info {
   //We need to save it for ii tighten, since some loop cannot support ii=1 due to the fetch width
   map<string, int> target_inner_iis;
   //map<op*, int> instance_latencies;
-  map<op*, int> op_offset_within_parent;
+  map<string, int> op_offset_within_parent;
 
   int compute_latency(const std::string& op_name);
   int compute_latency(op* op);
@@ -1861,8 +1905,8 @@ struct schedule_info {
   }
 
   int offset_in_parent(op* c) {
-    assert(contains_key(c, op_offset_within_parent));
-    return map_find(c, op_offset_within_parent);
+    assert(contains_key(c->name, op_offset_within_parent));
+    return map_find(c->name, op_offset_within_parent);
   }
 
   int perfect_loop_update_delay(op* lp) {

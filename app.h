@@ -1078,6 +1078,10 @@ clockwork_schedule_umap(uset* domain,
     umap* validity,
     umap* proximity);
 
+umap*
+clockwork_schedule_umap(isl_ctx* c,
+    map<string, vector<isl_aff*> > & sched);
+
 umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);
 
 

@@ -15558,8 +15558,10 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(stereo_unroll());
   //
   //CGRA tests
-  test_apps.push_back(conv_3_3_reorder());
-  test_apps.push_back(conv_3_3());
+  //test_apps.push_back(cascade_coarse());
+  //test_apps.push_back(conv_3_3());
+  //test_apps.push_back(cascade());
+  //test_apps.push_back(conv_3_3_reorder());
   test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
@@ -15568,7 +15570,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(unsharp_large());
   test_apps.push_back(unsharp());
   test_apps.push_back(gaussian());
-  test_apps.push_back(cascade());
   test_apps.push_back(harris());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
@@ -15629,7 +15630,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
   vector<prog> test_apps;
 
-
+  test_apps.push_back(resnet_init_unroll_tile_dp());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(camera_pipeline_2x2_unroll());
   test_apps.push_back(gaussian());
@@ -15661,7 +15662,6 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   ////test_apps.push_back(resnet_tiny());
   ////test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
-  test_apps.push_back(resnet_init_unroll_tile_dp());
 
   //////Big applications
   //test_apps.push_back(mobilenet_unrolled());
@@ -18004,8 +18004,8 @@ void relax_write(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
       if (loop->trip_count() < fetch_width) {
           continue;
       } else {
-          sched.op_offset_within_parent[loop] += (fetch_width - (loop->trip_count() * sched.II(loop)) % fetch_width) % fetch_width;
-          cout << "\t change loop : " << loop->name << "'s offset to " << sched.op_offset_within_parent.at(loop) << endl;
+          sched.op_offset_within_parent[loop->name] += (fetch_width - (loop->trip_count() * sched.II(loop)) % fetch_width) % fetch_width;
+          cout << "\t change loop : " << loop->name << "'s offset to " << sched.op_offset_within_parent.at(loop->name) << endl;
       }
     }
     //Should only go over one time
@@ -18074,12 +18074,12 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
 
               //This loop is the innermost loop that access the vectorized dimension
               if (levels.at(loop->name) == in_involve_d.back()) {
-                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0));
+                  sched.op_offset_within_parent.at(loop->name) = sched.II(loop) * ((loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0));
              } else {
                   //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
                   //if (range_span % fetch_width)
                   //TODO: also check the logic here, this is conservative
-                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((4- (loop->trip_count()) % fetch_width));
+                  sched.op_offset_within_parent.at(loop->name) = sched.II(loop) * ((4- (loop->trip_count()) % fetch_width));
               }
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
               return true;
@@ -18110,7 +18110,7 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
     int latency = 0;
     for (auto other : op->children) {
       int old_latency = latency;
-      sched.op_offset_within_parent[other] = 0;
+      sched.op_offset_within_parent[other->name] = 0;
       latency = max(latency, sched.total_latency(other));
     }
     int min_ii = 1;
@@ -18124,7 +18124,7 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
     int latency = 0;
     for (auto other : op->children) {
       int old_latency = latency;
-      sched.op_offset_within_parent[other] = latency;
+      sched.op_offset_within_parent[other->name] = latency;
       //if (is_inner_loop(other)) {
       //  //TODO: currently only need to pad read op
       //  relax_inner_delay_for_vec_read(sched, other, prg, fetch_width);
@@ -18155,7 +18155,7 @@ void asap_inner_loops_schedule(schedule_info& sched, op* op, prog& prg, int fetc
   } else if (op->is_if()) {
     assert(op->children.size() == 1);
     auto child = pick(op->children);
-    sched.op_offset_within_parent[child] = 0;
+    sched.op_offset_within_parent[child->name] = 0;
     sched.loop_iis[op->name] = sched.total_latency(child) + sched.offset_in_parent(child);
   } else {
     cout << "Did not implemented visitor pass for IR Node type: " << op->tp << endl;
@@ -18168,6 +18168,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
 
   if (!op->is_loop()) {
     int total_latency = op_latency(op, hwinfo);
+    hwinfo.op_offset_within_parent[op->name] = 0;
     //hwinfo.instance_latencies[op] = total_latency;
     return;
   }
@@ -18179,7 +18180,7 @@ void sequential_schedule(schedule_info& hwinfo, op* op, prog& prg) {
   int latency = 0;
   for (auto other : op->children) {
     int old_latency = latency;
-    hwinfo.op_offset_within_parent[other] = latency;
+    hwinfo.op_offset_within_parent[other->name] = latency;
     latency += hwinfo.total_latency(other);
     if (old_latency == latency) {
       latency += 1;
@@ -18216,7 +18217,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
 
   for (auto l : l2_loops) {
     sched.loop_iis[l->name] = level_iis[2];
-    sched.op_offset_within_parent[l] = 0;
+    sched.op_offset_within_parent[l->name] = 0;
   }
 
   cout << "L2 II = " << level_iis[2] << endl;
@@ -18242,7 +18243,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
     if (no_reads_from_internal_buffer) {
       edge_loops.insert(l);
       sched.loop_iis[l->name] = outer_ii;
-      sched.op_offset_within_parent[l] = 0;
+      sched.op_offset_within_parent[l->name] = 0;
     }
   }
 
@@ -18250,7 +18251,7 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
   for (auto l : l1_loops) {
     if (!elem(l, edge_loops)) {
       sched.loop_iis[l->name] = outer_ii;
-      sched.op_offset_within_parent[l] = pos*outer_ii;
+      sched.op_offset_within_parent[l->name] = pos*outer_ii;
       pos += 3;
     }
   }
@@ -18264,9 +18265,9 @@ void rate_matched_schedule(schedule_info& sched, op* root, prog& prg, const int 
 void add_delay_to_op(string op_name, prog& prg, schedule_info& sched) {
     for (auto kernel: topologically_sort_kernels(prg)) {
         auto lp = prg.find_non_op(kernel);
-        cout << "\t kernel name: " << lp<< ", delay: " << sched.op_offset_within_parent[lp]<< endl;
+        cout << "\t kernel name: " << lp<< ", delay: " << sched.op_offset_within_parent[lp->name]<< endl;
       if (!contains(kernel, "hw_input")) {
-          sched.op_offset_within_parent[lp] += 64;
+          sched.op_offset_within_parent[lp->name] += 64;
       }
     }
 }
@@ -18401,7 +18402,7 @@ void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_w
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
               cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-              sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width
+              sched.op_offset_within_parent.at(loop->name) = (loop->trip_count()) % fetch_width
                   + fetch_width * (loop->trip_count()%fetch_width== 0);
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
             }
@@ -18524,7 +18525,7 @@ void adjust_coarse_grained_loop_delays_sequentially_without_opt(schedule_info& s
       //reset the delay
       //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
       coarse_pipeline_II[name] = sched.total_latency(lp);
-      sched.op_offset_within_parent[lp] = 0;
+      sched.op_offset_within_parent[lp->name] = 0;
       if (producers.size() == 0) {
           head_op_latency[name] = coarse_pipeline_II.at(name);
       }
@@ -18544,9 +18545,9 @@ void adjust_coarse_grained_loop_delays_sequentially_without_opt(schedule_info& s
       for (string prod: producers){
           op* prod_op = prg.find_non_op(prod);
           max_delay = max(max_delay,
-                  coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op));
+                  coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op->name));
       }
-      sched.op_offset_within_parent.at(lp) = max_delay;
+      sched.op_offset_within_parent.at(lp->name) = max_delay;
       cout << tab(1) << "final delay of " << lp->name <<
           ": \t"<< max_delay << endl << endl;
     }
@@ -18584,7 +18585,7 @@ void align_glb_load_start_cycle(schedule_info& sched, prog& prg) {
     }
     for (auto name : kernels_to_be_aligned) {
       auto lp = prg.find_non_op(name);
-      sched.op_offset_within_parent.at(lp) =  - delay_map.at(name);
+      sched.op_offset_within_parent.at(lp->name) =  - delay_map.at(name);
     }
   }
 }
@@ -18615,7 +18616,7 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
       //reset the delay
       //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
       coarse_pipeline_II[name] = sched.total_latency(lp);
-      sched.op_offset_within_parent[lp] = 0;
+      sched.op_offset_within_parent[lp->name] = 0;
       if (producers.size() == 0) {
           head_op_latency[name] = coarse_pipeline_II.at(name);
       }
@@ -18635,7 +18636,7 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
       for (string prod: producers){
           op* prod_op = prg.find_non_op(prod);
           max_delay = max(max_delay,
-                  coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op));
+                  coarse_pipeline_II.at(prod) + sched.op_offset_within_parent.at(prod_op->name));
       }
       //An optimization, if this the head of the graph, push it back
       if (producers.size() == 0 ) {
@@ -18656,7 +18657,7 @@ void adjust_coarse_grained_loop_delays_sequentially(schedule_info& sched, prog& 
       //  max_delay -= 785;
       //}
 
-      sched.op_offset_within_parent.at(lp) = max_delay;
+      sched.op_offset_within_parent.at(lp->name) = max_delay;
       cout << tab(1) << "final delay of " << lp->name <<
           ": \t"<< max_delay << endl << endl;
     }
@@ -18670,10 +18671,10 @@ void dump_DNN_delays(schedule_info& sched, prog& prg, ofstream& out) {
   int start = INT_MAX, end = 0;
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
-    cout << "Kernel, " << name << ", " << sched.op_offset_within_parent.at(lp) << endl;
-    if (sched.op_offset_within_parent.at(lp) != 0){
-        start = min(sched.op_offset_within_parent.at(lp), start);
-        end = max(sched.op_offset_within_parent.at(lp), end);
+    cout << "Kernel, " << name << ", " << sched.op_offset_within_parent.at(lp->name) << endl;
+    if (sched.op_offset_within_parent.at(lp->name) != 0){
+        start = min(sched.op_offset_within_parent.at(lp->name), start);
+        end = max(sched.op_offset_within_parent.at(lp->name), end);
     }
   }
   cout << "CGRA latency: " <<  end - start << endl;
@@ -18705,7 +18706,7 @@ void adjust_outer_delays_sequentially_with_glb_guard(schedule_info& sched, prog&
     //This only works for the schedule without pipeline should change into total latency
     //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     coarse_pipeline_II[name] = sched.total_latency(lp);
-    sched.op_offset_within_parent[lp] = 0;
+    sched.op_offset_within_parent[lp->name] = 0;
   }
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
@@ -18715,14 +18716,14 @@ void adjust_outer_delays_sequentially_with_glb_guard(schedule_info& sched, prog&
     for (string prod: get_producers(name, prg)){
         op* prod_op = prg.find_loop(prod);
         max_delay = max(coarse_pipeline_II.at(prod)
-                + sched.op_offset_within_parent.at(prod_op), max_delay);
+                + sched.op_offset_within_parent.at(prod_op->name), max_delay);
     }
     //FIXME: Hack for glb latency sync nothing can start before glb transfer
     if (!contains(name, "glb")) {
       max_delay = max(glb_load_latency, max_delay);
     }
 
-    sched.op_offset_within_parent.at(lp) = max_delay;
+    sched.op_offset_within_parent.at(lp->name) = max_delay;
     cout << "final delay of " << lp->name <<
         ": \n\t"<< max_delay << endl;
   }
@@ -18771,7 +18772,7 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg, bool glb_
     //This only works for the schedule without pipeline should change into total latency
     //coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count();
     coarse_pipeline_II[name] = sched.total_latency(lp);
-    sched.op_offset_within_parent[lp] = 0;
+    sched.op_offset_within_parent[lp->name] = 0;
   }
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
@@ -18781,7 +18782,7 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg, bool glb_
     for (string prod: get_producers(name, prg)){
         op* prod_op = prg.find_loop(prod);
         max_delay = max(coarse_pipeline_II.at(prod)
-                + sched.op_offset_within_parent.at(prod_op), max_delay);
+                + sched.op_offset_within_parent.at(prod_op->name), max_delay);
     }
     //FIXME: Hack for glb latency sync nothing can start before glb transfer
     if (glb_sync) {
@@ -18790,7 +18791,7 @@ void adjust_outer_delays_sequentially(schedule_info& sched, prog& prg, bool glb_
       }
     }
 
-    sched.op_offset_within_parent.at(lp) = max_delay;
+    sched.op_offset_within_parent.at(lp->name) = max_delay;
     cout << "final delay of " << lp->name <<
         ": \n\t"<< max_delay << endl;
   }
@@ -18815,7 +18816,7 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
     for (op* coarse_pipeline_loop: cgpl_lps){
       if(elem(coarse_pipeline_loop, lower_ops)){
         for(auto child: coarse_pipeline_loop->children) {
-          int delay = map_find(child, sched.op_offset_within_parent);
+          int delay = map_find(child->name, sched.op_offset_within_parent);
           cgpl_offset = max(cgpl_offset, delay);
           cout << "Child: " << child->name << "has delay: " << delay << endl;
         }
@@ -18825,7 +18826,7 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
     //This only works for the schedule without pipeline should change into total latency
     coarse_pipeline_II[name] = sched.II(lp) * lp->trip_count() + cgpl_offset;
     cout << "coarse pipeline outer latency: " << coarse_pipeline_II.at(name) << endl;
-    sched.op_offset_within_parent[lp] = 0;
+    sched.op_offset_within_parent[lp->name] = 0;
   }
   for (auto name : topologically_sort_kernels(prg)) {
     auto lp = prg.find_loop(name);
@@ -18835,10 +18836,10 @@ void adjust_outer_delays_sequentially_cgpl(schedule_info& sched, prog& prg) {
     for (string prod: get_producers(name, prg)){
         op* prod_op = prg.find_loop(prod);
         max_delay = max(coarse_pipeline_II.at(prod)
-                + sched.op_offset_within_parent.at(prod_op), max_delay);
+                + sched.op_offset_within_parent.at(prod_op->name), max_delay);
     }
 
-    sched.op_offset_within_parent.at(lp) = max_delay;
+    sched.op_offset_within_parent.at(lp->name) = max_delay;
     cout << "final delay of " << lp->name <<
         ": \n\t"<< max_delay << endl;
   }
@@ -18938,12 +18939,12 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
     //For dsa writer kernel add the delay
     //Since topological sort may put the init kernel in beginning
     if (!dsa_writer.empty()) {
-      sched.op_offset_within_parent[prg.find_loop(dsa_writer)] += delay_max;
+      sched.op_offset_within_parent[(dsa_writer)] += delay_max;
     }
 
-    sched.op_offset_within_parent[lp] += delay_max;
+    sched.op_offset_within_parent[lp->name] += delay_max;
     cout  << "Kernel <" << name << "> has Delay slack: " << delay_max << endl;
-    cout  << "Offset with in parent: " << sched.op_offset_within_parent.at(lp) << endl;
+    cout  << "Offset with in parent: " << sched.op_offset_within_parent.at(lp->name) << endl;
   } //for each kernel in topographical order
 }
 
@@ -18998,8 +18999,8 @@ void asap_input_iis(schedule_info& sched, prog& prg) {
                 string loop_name = loop_vars.at(it);
                 cout << "loop name: " << loop_name << endl;
                 cout << "original delay within parent: " <<
-                    sched.op_offset_within_parent[prg.find_loop(loop_name)] << endl;
-                sched.op_offset_within_parent[prg.find_loop(loop_name)] = 0;
+                    sched.op_offset_within_parent[(loop_name)] << endl;
+                sched.op_offset_within_parent[(loop_name)] = 0;
                 sched.loop_iis[loop_name] = ii;
                 ii *= prg.find_loop(loop_name)->trip_count() + 1;
             }
@@ -19069,7 +19070,7 @@ void adjust_schedule_forward(schedule_info& sched, prog& prg, int offset = 1) {
   if (min <= 0) {
     for (auto k : get_kernels(prg)) {
       auto loop = prg.find_loop(k);
-      sched.op_offset_within_parent[loop] = map_find(loop, sched.op_offset_within_parent) - min;
+      sched.op_offset_within_parent[loop->name] = map_find(loop->name, sched.op_offset_within_parent) - min;
     }
   }
 
@@ -19259,21 +19260,22 @@ void update_coarse_grained_loop_iis(schedule_info& sched, op* cgpl) {
 
 
 void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl, prog& prg) {
-    int target_II = RRT.getMinimumII();
+    //int target_II = RRT.getMinimumII();
+    //Always start from 1, do not know the partition
+    int target_II = 1;
     bool finished = false;
     vector<string> sorted_kernels = topologically_sort_kernels(cgpl, prg);
     while (!finished) {
       RRT.initModuloTable(target_II);
       for (auto k: sorted_kernels) {
-          cout << "Kernel: " << k << endl;
-        auto producers = get_producers(k, cgpl, prg);
+        auto producers = get_producers_outside_SSC(k, cgpl, prg);
         int t = 0;
         for (string p : producers) {
             t = std::max(t, RRT.getTimeStamp(p)+1);
         }
         int offset = 0;
         while(offset < target_II) {
-          bool can_schedule = RRT.scheduleKernel(prg.find_non_op(k), (t + offset)  % target_II);
+          bool can_schedule = RRT.scheduleKernel(k, (t + offset)  % target_II, cgpl, prg);
           cout << "\tTarget II: " << target_II << endl;
           cout << "\tTry to schedule kernel at " << (t+offset)% target_II << endl;
           if (can_schedule) {
@@ -19301,12 +19303,15 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
     RRT.print();
 
     int cycle_accurate_II = RRT.getCycleAccurateII(sched, prg, target_II);
+
     cout << endl << "II optimization finished ..." << endl;
     cout << tab(1) << "Target II : " << target_II <<endl;
     cout << tab(1) << "Cycle Accurate II: " << cycle_accurate_II << endl;
 
     cout << tab(2) << "Current II        : " << sched.II(cgpl) << endl;
-    sched.loop_iis[cgpl->name] = cycle_accurate_II + 8;
+    //Original add 8
+    //sched.loop_iis[cgpl->name] = cycle_accurate_II + 8;
+    sched.loop_iis[cgpl->name] = cycle_accurate_II;
     cout << tab(2) << "Adjusting II to   : " << sched.II(cgpl) << endl << endl;
 }
 
@@ -19319,10 +19324,24 @@ void adjust_coarse_grained_kernel_latency(CodegenOptions& options,
             op* lp = prg.find_non_op(kernel);
             latency_at_each_timestamp = std::max(
                     sched.total_latency(lp), latency_at_each_timestamp);
-            sched.op_offset_within_parent.at(lp) = rolling_latency;
+            sched.op_offset_within_parent.at(lp->name) = rolling_latency;
         }
         rolling_latency += latency_at_each_timestamp;
     }
+}
+
+
+void coarse_grained_pipeline_optimization_subloop(CodegenOptions& options, schedule_info& sched, prog& prg) {
+
+  RTable RRT =
+      build_modulo_resource_reservation_table(options, sched, prg.root, prg);
+  update_coarse_grained_loop_iis(sched, RRT, prg.root, prg);
+
+  RRT.align_init_with_update();
+
+  //tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
+  adjust_coarse_grained_kernel_latency(options, sched, RRT, prg);
+
 }
 
 void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info& sched, prog& prg) {
@@ -19338,7 +19357,8 @@ void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info
 
 
       //update_coarse_grained_loop_iis(sched, cgpl);
-      tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
+      //FIXME: seems unnecessary to tighten ii
+      //tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
       //tighten_iis(sched, prg);
       adjust_coarse_grained_kernel_latency(options, sched, RRT, prg);
 
@@ -19436,6 +19456,137 @@ void dump_resnet_latency(CodegenOptions& options, schedule_info& sched, op* root
   return;
 }
 
+int get_fused_level(std::set<op*> & fused_kernels, prog & prg) {
+
+  auto levels = get_variable_levels(prg);
+  int max_fused_level = 0;
+  for (auto it: levels) {
+      max_fused_level = std::max(max_fused_level, it.second);
+  }
+  int fused_level = max_fused_level;
+  for (auto lp: fused_kernels) {
+    if (fused_level == max_fused_level) {
+      fused_level = map_find(lp->name, levels);
+    } else {
+      if (fused_level != map_find(lp->name, levels)) {
+        cout << "Coarse grained tag ERROR, should tag at the same level." << endl;
+        assert(false);
+      }
+    }
+    cout << "fuse kernel: " << lp->name << endl;
+    cout << "  level: " << map_find(lp->name, levels) << endl;
+  }
+  return fused_level;
+}
+
+vector<int> get_fused_level_iis(CodegenOptions& options, umap* clksched_map, uset* dom,
+        int fused_level, int fused_loop_ii) {
+
+  uset* sbounds = range(its(clksched_map, dom));
+  cout << "bounds..." << str(sbounds) << endl;
+  auto bsets = get_sets(sbounds);
+  assert(bsets.size() == 1);
+
+  auto bset = pick(bsets);
+  //assert(false);
+  vector<pair<int, int> > bounds;
+  vector<int> lengths;
+  for (int d = 0; d < num_dims(bset); d++) {
+    auto pr = project_all_but(bset, d);
+    int lmin = to_int(lexminval(pr));
+    int lmax = to_int(lexmaxval(pr));
+    bounds.push_back({lmin, lmax});
+    //This is a hack for fetch 2 memory
+    if (options.mem_hierarchy.at("mem").fetch_width == 2)
+      lengths.push_back(lmax - lmin + 1 + (lmax - lmin +1)%2);
+    else
+      lengths.push_back(lmax - lmin + 1);
+  }
+
+  // Reorder so that root is level 0
+  reverse(lengths);
+  lengths.push_back(1);
+  reverse(bounds);
+
+  cout << "lengths" << endl;
+  for (auto l : lengths) {
+    cout << l << endl;
+  }
+
+  vector<int> fused_level_iis;
+  fused_level_iis.resize(lengths.size());
+  fused_level_iis[fused_level_iis.size() - 1] = 1;
+
+
+  for (int l = fused_level; l >= 0; l--) {
+    if (l == fused_level)
+      fused_level_iis[fused_level] = fused_loop_ii;
+    else
+      fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
+  }
+
+
+  fused_level_iis.pop_back();
+  return fused_level_iis;
+}
+
+void assign_II_and_delays(vector<int> & fused_level_iis, int fused_level,
+        map<string, vector<isl_aff*> > & cs,
+        schedule_info& sched, prog & prg) {
+
+
+  cout << "Original Loop iis" << endl;
+  auto levels = get_variable_levels(prg);
+  for (auto op : prg.all_ops()) {
+    vector<string> surrounding = surrounding_vars(op, prg);
+    for (auto var : surrounding) {
+      int level = map_find(var, levels);
+      if (level > fused_level) {
+          //use coarse grained schedule, do nothing.
+      } else {
+        auto container = prg.find_loop(var);
+        int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
+        int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
+        cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
+        sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
+        sched.op_offset_within_parent[container->name] = delay*fused_level_iis.at(level);
+        //sched.instance_latencies[container] = 1;
+        cout << tab(2) << "ii = " << sched.II(container) << endl;
+      }
+    }
+  }
+}
+
+void postprocessing_for_init_ops(CodegenOptions& options, schedule_info & sched, prog & prg) {
+  vector<op*> scheduled;
+  for (auto op : inner_ops(prg)) {
+    cout << "inner ops: " << op->name << endl;
+    auto read = op->buffers_read();
+    int offset = 0;
+    std::vector<::op*> init_ops;
+    for (auto other : scheduled) {
+      if (intersection(other->buffers_written(), read).size() > 0) {
+        offset = max(offset, sched.op_offset_within_parent[other->name] + op_latency(other, sched));
+        //cout << "op latency: " << other->name << "->" << op_latency(other, sched) << endl;
+        if (contains(pick(other->buffers_written()), "clkwrk_dsa")) {
+            //This is the op which need forcing to have the same offset
+            init_ops.push_back(other);
+        }
+      }
+    }
+    sched.op_offset_within_parent[op->name] = offset;
+    for (auto init_op: init_ops) {
+      assert(sched.op_offset_within_parent[init_op->name] <= offset);
+      sched.op_offset_within_parent[init_op->name] = offset - buffer_load_latency(options) - buffer_store_latency(options);
+      cout << "force inner op: " << init_op->name << ", has same offset as update: " << offset << endl;
+    }
+    cout << "inner ops: " << op->name << ", offset: "<< offset << endl;
+    //sched.op_offset_within_parent[op] = total_latency;
+    //total_latency += op_latency(op, sched);
+    scheduled.push_back(op);
+  }
+}
+
 
 void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sched, op* root, prog& prg) {
   //get the loop alignment information
@@ -19449,7 +19600,6 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
   //} else if (is_rate_matchable(prg) || contains(prg.name, "nlmeans")) {
   } else if (is_rate_matchable_loopnest(prg, pad_indices)) {
     prg.pretty_print();
-
     loop_split(prg);
 
     //Try to align the loop and pad it
@@ -19460,10 +19610,12 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
 
     prg.pretty_print();
     cout << prg.name << " is a stencil pipeline" << endl;
-    //assert(false);
+
+    //Run Clockwork Scheduling Algorithm
     auto valid = prg.validity_deps();
     auto dom = prg.whole_iteration_domain();
-    umap* clksched_map = clockwork_schedule_umap(dom, valid, cpy(valid));
+    map<string, vector<isl_aff*> > cs = clockwork_schedule(dom, valid, cpy(valid));
+    umap* clksched_map = clockwork_schedule_umap(ctx(dom), cs);
     cout << "Clockwork schedule..." << endl;
     for (auto m : get_maps(clksched_map)) {
       cout << tab(1) << str(m) << endl;
@@ -19472,110 +19624,24 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     for (auto d : get_sets(dom)) {
       cout << tab(1) << str(d) << endl;
     }
-    uset* sbounds = range(its(clksched_map, dom));
-    cout << "bounds..." << str(sbounds) << endl;
-    auto bsets = get_sets(sbounds);
-    assert(bsets.size() == 1);
 
-    auto bset = pick(bsets);
-    //assert(false);
-    vector<pair<int, int> > bounds;
-    vector<int> lengths;
-    for (int d = 0; d < num_dims(bset); d++) {
-      auto pr = project_all_but(bset, d);
-      int lmin = to_int(lexminval(pr));
-      int lmax = to_int(lexmaxval(pr));
-      bounds.push_back({lmin, lmax});
-      //This is a hack for fetch 2 memory
-      if (options.mem_hierarchy.at("mem").fetch_width == 2)
-        lengths.push_back(lmax - lmin + 1 + (lmax - lmin +1)%2);
-      else
-        lengths.push_back(lmax - lmin + 1);
-    }
+    //Get all the kernel that need to be fused
+    std::set<op*> fused_kernels = prg.root->all_loops_to_be_fused();
+    int fused_level = get_fused_level(fused_kernels, prg);
+    cout << "fused level: " << fused_level << endl;
+    //Use coarse grain schedule to schedule the inner most loop
+    prog fused_sub_loop = extract_cgl_to_separate_prog(fused_kernels, prg);
+    fused_sub_loop.pretty_print();
+    sequential_schedule(sched, fused_sub_loop.root, fused_sub_loop);
+    coarse_grained_pipeline_optimization_subloop(options, sched, fused_sub_loop);
+    int fused_loop_ii = sched.II(fused_sub_loop.root);
+    cout << "Final cgl ii: " << fused_loop_ii << endl;
 
-    // Reorder so that root is level 0
-    reverse(lengths);
-    lengths.push_back(1);
-    reverse(bounds);
+    vector<int> fused_level_iis = get_fused_level_iis(options, clksched_map, dom, fused_level, fused_loop_ii);
 
-    vector<int> fused_level_iis;
-    fused_level_iis.resize(lengths.size());
-    fused_level_iis[fused_level_iis.size() - 1] = 1;
-    for (int l = fused_level_iis.size() - 2; l >= 0; l--) {
-      fused_level_iis[l] = fused_level_iis[l + 1] * lengths.at(l + 1);
-    }
-
-    cout << "lengths" << endl;
-    for (auto l : lengths) {
-      cout << l << endl;
-    }
-
-    fused_level_iis.pop_back();
-
-    cout << "Fused iis" << endl;
-    for (auto i : fused_level_iis) {
-      cout << tab(1) << i << endl;
-    }
-
-    auto cs = clockwork_schedule(dom, valid, cpy(valid));
-    auto levels = get_variable_levels(prg);
-    cout << "Original Loop iis" << endl;
-    for (auto op : prg.all_ops()) {
-      vector<string> surrounding = surrounding_vars(op, prg);
-      for (auto var : surrounding) {
-        int level = map_find(var, levels);
-        auto container = prg.find_loop(var);
-        int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
-        int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
-        cout << tab(1) << var << " q: " << qfactor << ", d = " << delay << endl;
-        sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
-        sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
-        //sched.instance_latencies[container] = 1;
-        cout << tab(2) << "ii = " << sched.II(container) << endl;
-      }
-    }
-    //int total_latency = 0;
-    //for (auto op : inner_ops(prg)) {
-    //    cout << "inner ops: " << op->name << ", total latency: "<< total_latency << endl;
-    //  sched.op_offset_within_parent[op] = total_latency;
-    //  //sched.instance_latencies[op] = op_latency(op, sched);
-    //  //total_latency += op_latency(op, sched) + 2;
-    //  total_latency += op_latency(op, sched);
-    //}
-
-    vector<op*> scheduled;
-    for (auto op : inner_ops(prg)) {
-      cout << "inner ops: " << op->name << endl;
-      auto read = op->buffers_read();
-      int offset = 0;
-      std::vector<::op*> init_ops;
-      for (auto other : scheduled) {
-        if (intersection(other->buffers_written(), read).size() > 0) {
-          offset = max(offset, sched.op_offset_within_parent[other] + op_latency(other, sched));
-          //cout << "op latency: " << other->name << "->" << op_latency(other, sched) << endl;
-          if (contains(pick(other->buffers_written()), "clkwrk_dsa")) {
-              //This is the op which need forcing to have the same offset
-              init_ops.push_back(other);
-          }
-        }
-      }
-      sched.op_offset_within_parent[op] = offset;
-      for (auto init_op: init_ops) {
-        assert(sched.op_offset_within_parent[init_op] <= offset);
-        sched.op_offset_within_parent[init_op] = offset - buffer_load_latency(options) - buffer_store_latency(options);
-        cout << "force inner op: " << init_op->name << ", has same offset as update: " << offset << endl;
-      }
-      cout << "inner ops: " << op->name << ", offset: "<< offset << endl;
-      //sched.op_offset_within_parent[op] = total_latency;
-      //total_latency += op_latency(op, sched);
-      scheduled.push_back(op);
-    }
-    //auto init_op_sched = op_start_times_map(sched, prg);
-    //cout << "init sched: " << str(init_op_sched)  << endl;
-    //for (auto it: sched.op_offset_within_parent) {
-    //    cout << "\t" << it.first->name << ": " << it.second << endl;
-    //}
-    //assert(false);
+    assign_II_and_delays(fused_level_iis, fused_level, cs, sched, prg);
+    //assign delay for init ops making sure all the init buffer is a wire
+    postprocessing_for_init_ops(options, sched, prg);
 
     auto op_sched = op_start_times_map(sched, prg);
     cout << "orginal schedule before relax: " << str(op_sched)  << endl;
@@ -19878,7 +19944,7 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
       int qfactor = to_int(get_coeff(map_find(op->name, cs).at(level), 0));
       int delay = to_int(int_const_coeff(map_find(op->name, cs).at(level)));
       sched.loop_iis[var] = qfactor*fused_level_iis.at(level);
-      sched.op_offset_within_parent[container] = delay*fused_level_iis.at(level);
+      sched.op_offset_within_parent[container->name] = delay*fused_level_iis.at(level);
       //sched.op_offset_within_parent[container] = (delay + 2)*fused_level_iis.at(level);
     }
   }
@@ -19891,10 +19957,10 @@ void cycle_accurate_clockwork_schedule(schedule_info& sched, op* root, prog& prg
     int offset = 0;
     for (auto other : scheduled) {
       if (intersection(other->buffers_written(), read).size() > 0) {
-        offset = max(offset, sched.op_offset_within_parent[other] + op_latency(other, sched));
+        offset = max(offset, sched.op_offset_within_parent[other->name] + op_latency(other, sched));
       }
     }
-    sched.op_offset_within_parent[op] = offset;
+    sched.op_offset_within_parent[op->name] = offset;
     //sched.op_offset_within_parent[op] = total_latency;
     //total_latency += op_latency(op, sched);
     scheduled.push_back(op);
@@ -20163,7 +20229,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
   }
 
 #ifdef COREIR
-  pipeline_compute_units(prg, sched);
+  //pipeline_compute_units(prg, sched);
 #endif
   sched.init_op_latencies(prg);
   return sched;

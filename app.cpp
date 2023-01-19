@@ -1606,6 +1606,45 @@ clockwork_schedule_umap_reversed(uset* domain,
 
   return s;
 }
+umap* clockwork_schedule_umap(isl_ctx* c,
+        map<string, vector<isl_aff*> > & sched) {
+  map<string, vector<QExpr> > scheds;
+  for (auto s : sched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  // schedule is dN, ..., d1, d0
+  for (auto& s : scheds) {
+    reverse(s.second);
+  }
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  return qschedule_to_map_final_sort(c, scheds);
+}
 
 umap*
 clockwork_schedule_umap(uset* domain,
