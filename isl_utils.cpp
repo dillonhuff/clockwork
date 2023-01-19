@@ -3876,7 +3876,7 @@ isl_set* project_all_but(isl_set* const dmap,
   auto ct = ctx(dmap);
 
   string dname = "";
-  if (isl_set_get_tuple_id(dmap) != nullptr) {
+  if (isl_set_has_tuple_id(dmap)) {
     dname = name(m);
   }
 
@@ -3890,7 +3890,7 @@ isl_set* project_all_but(isl_set* const dmap,
 
   assert(num_dims(get_space(m)) == 1);
 
-  if (isl_set_get_tuple_id(dmap) != nullptr) {
+  if (isl_set_has_tuple_id(dmap)) {
     isl_set_set_tuple_id(m, id(ct, dname));
   }
 
