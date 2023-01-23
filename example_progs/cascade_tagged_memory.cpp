@@ -5,7 +5,7 @@
 
 prog cascade_coarse() {
   prog prg;
-  prg.compute_unit_file = "cascade_compute.h";
+  prg.compute_unit_file = "cascade_coarse_compute.h";
   prg.name = "cascade_coarse";
 
 // Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
@@ -45,7 +45,6 @@ prog cascade_coarse() {
 //store is: conv1.stencil(conv1_s1_x, conv1_s1_y) = (hw_input_global_wrapper.stencil(conv1_s1_x, conv1_s1_y) + (conv1.stencil(conv1_s1_x, conv1_s1_y) + ((hw_input_global_wrapper.stencil((conv1_s1_x + 1), conv1_s1_y)*(uint16)2) + (hw_input_global_wrapper.stencil((conv1_s1_x + 2), conv1_s1_y) + ((hw_input_global_wrapper.stencil(conv1_s1_x, (conv1_s1_y + 1))*(uint16)2) + ((hw_input_global_wrapper.stencil((conv1_s1_x + 1), (conv1_s1_y + 1))*(uint16)4) + ((hw_input_global_wrapper.stencil((conv1_s1_x + 2), (conv1_s1_y + 1))*(uint16)2) + (hw_input_global_wrapper.stencil(conv1_s1_x, (conv1_s1_y + 2)) + (hw_input_global_wrapper.stencil((conv1_s1_x + 2), (conv1_s1_y + 2)) + (hw_input_global_wrapper.stencil((conv1_s1_x + 1), (conv1_s1_y + 2))*(uint16)2))))))))))
   auto hcompute_conv1_stencil_1 = conv1_s1_x->add_op("op_hcompute_conv1_stencil_1");
   hcompute_conv1_stencil_1->add_function("hcompute_conv1_stencil_1");
-  hcompute_conv1_stencil_1->add_load("conv1_stencil", "conv1_s1_y", "conv1_s1_x");
   hcompute_conv1_stencil_1->add_load("hw_input_global_wrapper_stencil", "conv1_s1_y", "conv1_s1_x");
   hcompute_conv1_stencil_1->add_load("hw_input_global_wrapper_stencil", "conv1_s1_y", "(conv1_s1_x + 1)");
   hcompute_conv1_stencil_1->add_load("hw_input_global_wrapper_stencil", "conv1_s1_y", "(conv1_s1_x + 2)");
@@ -55,6 +54,7 @@ prog cascade_coarse() {
   hcompute_conv1_stencil_1->add_load("hw_input_global_wrapper_stencil", "(conv1_s1_y + 2)", "conv1_s1_x");
   hcompute_conv1_stencil_1->add_load("hw_input_global_wrapper_stencil", "(conv1_s1_y + 2)", "(conv1_s1_x + 2)");
   hcompute_conv1_stencil_1->add_load("hw_input_global_wrapper_stencil", "(conv1_s1_y + 2)", "(conv1_s1_x + 1)");
+  hcompute_conv1_stencil_1->add_load("conv1_stencil", "conv1_s1_y", "conv1_s1_x");
   hcompute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_y", "conv1_s1_x");
 
 ////consuming conv1.stencil
