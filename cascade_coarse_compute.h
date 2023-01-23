@@ -17,7 +17,7 @@ hw_uint<16> hcompute_conv1_stencil() {
 }
 
 //store is: conv1.stencil(conv1_s1_x, conv1_s1_y) = (hw_input_global_wrapper.stencil(conv1_s1_x, conv1_s1_y) + (conv1.stencil(conv1_s1_x, conv1_s1_y) + ((hw_input_global_wrapper.stencil((conv1_s1_x + 1), conv1_s1_y)*(uint16)2) + (hw_input_global_wrapper.stencil((conv1_s1_x + 2), conv1_s1_y) + ((hw_input_global_wrapper.stencil(conv1_s1_x, (conv1_s1_y + 1))*(uint16)2) + ((hw_input_global_wrapper.stencil((conv1_s1_x + 1), (conv1_s1_y + 1))*(uint16)4) + ((hw_input_global_wrapper.stencil((conv1_s1_x + 2), (conv1_s1_y + 1))*(uint16)2) + (hw_input_global_wrapper.stencil(conv1_s1_x, (conv1_s1_y + 2)) + (hw_input_global_wrapper.stencil((conv1_s1_x + 2), (conv1_s1_y + 2)) + (hw_input_global_wrapper.stencil((conv1_s1_x + 1), (conv1_s1_y + 2))*(uint16)2))))))))))
-hw_uint<16> hcompute_conv1_stencil_1(hw_uint<16>& conv1_stencil, hw_uint<144>& hw_input_global_wrapper_stencil) {
+hw_uint<16> hcompute_conv1_stencil_1(hw_uint<144>& hw_input_global_wrapper_stencil, hw_uint<16>& conv1_stencil) {
   uint16_t _conv1_stencil_1 = (uint16_t) (conv1_stencil.extract<0, 15>());
 
   uint16_t _hw_input_global_wrapper_stencil_1 = (uint16_t) (hw_input_global_wrapper_stencil.extract<0, 15>());
