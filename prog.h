@@ -1859,6 +1859,29 @@ static
 bool operator==(const resource_instance& a, const resource_instance& b) {
   return a.type == b.type && a.number == b.number;
 }
+struct compute_resource {
+  public:
+    int num_users = 0;
+    int resource_quantity = 0;
+    bool is_created = false;
+    op* leading_op;
+    //string output_name;
+    //string sr_name;
+    //int interleave_dimension = 1; // Loop level where one iteration goes through all kernels (0 being innermost)
+    vector<string> op_names;
+
+    compute_resource(const std::string op_name) {
+        num_users ++;
+        op_names.push_back(op_name);
+    }
+
+    void add_resource(const std::string op_name) {
+        num_users ++;
+        op_names.push_back(op_name);
+    }
+
+};
+
 
 struct schedule_info {
   // Miscellaneous
@@ -1882,6 +1905,7 @@ struct schedule_info {
 
   // Resource use info
   map<op*, resource_instance> resource_assignment;
+  map<string, compute_resource> compute_resources;
 
   // Schedule offsets
   map<string, int> loop_iis;
@@ -1890,6 +1914,28 @@ struct schedule_info {
   map<string, int> target_inner_iis;
   //map<op*, int> instance_latencies;
   map<string, int> op_offset_within_parent;
+
+  bool check_if_compute_created(op* op) {
+    return compute_resources.at(op->func).is_created;
+  }
+
+  void set_compute_is_created(op* op) {
+    compute_resources.at(op->func).is_created = true;
+    compute_resources.at(op->func).leading_op = op;
+  }
+
+  bool share_compute(op* op) {
+    return compute_resources.at(op->func).num_users > 1;
+  }
+
+  vector<string> get_shared_resources() {
+    vector<string> ret;
+    for (auto it: compute_resources) {
+      if (it.second.num_users > 1)
+        ret.push_back(it.first);
+    }
+    return ret;
+  }
 
   int compute_latency(const std::string& op_name);
   int compute_latency(op* op);

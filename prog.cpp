@@ -2974,7 +2974,7 @@ std::vector<op*> get_dft_nodes(prog& prg) {
 std::vector<op*> get_dft_ops(prog& prg) {
   std::vector<op*> inner;
   dft(prg, [&inner](op* node) {
-      if (!node->is_loop()) {
+      if (!node->is_loop() && !node->is_if()) {
       inner.push_back(node);
       }
       });
