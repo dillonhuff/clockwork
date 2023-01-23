@@ -15585,7 +15585,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(stereo_unroll());
   //
   //CGRA tests
-  //test_apps.push_back(cascade_coarse());
+  test_apps.push_back(cascade_coarse());
   //test_apps.push_back(conv_3_3());
   //test_apps.push_back(cascade());
   //test_apps.push_back(conv_3_3_reorder());
@@ -20193,6 +20193,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
         sched.resource_requirements[op] = op->func;
+        if (sched.compute_resources.count(op->func)) {
+          auto& comp_unit = sched.compute_resources.at(op->func);
+          comp_unit.add_resource(op->name);
+        } else {
+          compute_resource comp_unit(op->name);
+          sched.compute_resources.insert({op->func, comp_unit});
+        }
       }
       cout << op->func << endl;
       if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
@@ -20255,7 +20262,15 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
         sched.resource_requirements[op] = op->func;
+        if (sched.compute_resources.count(op->func)) {
+          auto& comp_unit = sched.compute_resources.at(op->func);
+          comp_unit.add_resource(op->name);
+        } else {
+          compute_resource comp_unit(op->name);
+          sched.compute_resources.insert({op->func, comp_unit});
+        }
       }
+
 
       if (op->func != "") {
         sched.compute_unit_latencies[op->func] = op->latency;
