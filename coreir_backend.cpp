@@ -2971,6 +2971,161 @@ void generate_controller_for_compute_share(CodegenOptions& options, CoreIR::Modu
   }
 }
 
+//create a mux data structure
+struct MuxIR {
+    op* lead_op;
+    pair<string, string> buf2bd;
+    map<string, pair<string, string> > op2input_bd;
+
+    //Meta data for codegen, denote the output wire's bundle and buf
+    string buf_name, bundle_name;
+    int pt_width, bd_width;
+
+    MuxIR(pair<string, string> lead_inpt_bd, op* lead_op_) {
+        buf2bd = lead_inpt_bd;
+        lead_op = lead_op_;
+    }
+
+    void insertSel(string op_name, pair<string, string> input_bd) {
+        op2input_bd.insert({op_name, input_bd});
+    }
+
+    vector<string> getSelOps() {
+        vector<string> ops;
+        for (auto it: op2input_bd) {
+            ops.push_back(it.first);
+        }
+        return ops;
+    }
+
+    void initMetaData(map<string, UBuffer> & buffers) {
+
+      buf_name = buf2bd.first;
+      bundle_name = buf2bd.second;
+      auto buf = dbhc::map_find(buf_name, buffers);
+      pt_width = buf.port_widths;
+      bd_width = buf.lanes_in_bundle(bundle_name);
+    }
+
+  void wire_op_mux(CoreIR::ModuleDef* def, CoreIR::Instance* mux_ins);
+  CoreIR::Module* op_mux_def (CoreIR::Context* context);
+  CoreIR::Module* generate_op_mux(CoreIR::Context* context);
+
+};
+
+void MuxIR::wire_op_mux(CoreIR::ModuleDef* def, CoreIR::Instance* mux_ins) {
+
+  //Connect with the data path
+  for (auto it: op2input_bd) {
+    auto bundle = it.second;
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    def->connect(def->sel(buf_name + "." + bundle_name),
+            mux_ins->sel(pg(buf_name, bundle_name)));
+  }
+  def->connect(def->sel(lead_op->name+ "." + pg(buf_name, bundle_name)),
+          mux_ins->sel("out_" + pg(buf_name, bundle_name)));
+
+  //Connect with the stencil valid
+  for (auto op_name: getSelOps()) {
+    def->connect(mux_ins->sel(exe_start_name(op_name)), read_start_wire(def, op_name));
+  }
+}
+
+CoreIR::Module* MuxIR::op_mux_def (CoreIR::Context* context) {
+  //Create a mux every group of input port
+  vector<pair<string, CoreIR::Type*> > ub_field;
+  for (string op_name: getSelOps()) {
+    ub_field.push_back({exe_start_name(op_name), context->BitIn()});
+  }
+  //for (auto op_name: hwinfo.compute_resources.at(func).op_names) {
+  //  ub_field.push_back({exe_start_name(op_name), context->BitIn()});
+  //}
+
+  ub_field.push_back({"out_" + pg(buf_name, bundle_name),
+          context->Bit()->Arr(pt_width)->Arr(bd_width)});
+    //cout << "out buf: " << buf_name << ", bd: " << bundle_name << endl;
+
+
+  for (auto it: op2input_bd) {
+    //Push the bundle name inside
+    auto bundle = it.second;
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    //cout << "  buf: " << buf_name << ", bd: " << bundle_name << endl;
+    ub_field.push_back({pg(buf_name, bundle_name),
+            context->BitIn()->Arr(pt_width)->Arr(bd_width)});
+  }
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ns = context->getNamespace("global");
+  auto mux = ns->newModuleDecl("compute_share_mux_" + context->getUnique(), utp);
+  return mux;
+}
+
+CoreIR::Module* MuxIR::generate_op_mux(CoreIR::Context* context) {
+
+  CoreIR::Module* mux = op_mux_def(context);
+  auto df = mux->newModuleDef();
+
+  std::vector<pair<CoreIR::Wireable*, CoreIR::Wireable*>> sel_map;
+  for (auto it: op2input_bd) {
+    auto sel_wire = exe_start_name(it.first);
+    auto bundle = it.second;
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    auto self = df->sel("self");
+    sel_map.push_back({self->sel(pg(buf_name, bundle_name)), self->sel(sel_wire)});
+  }
+  //Create the mux
+  CoreIR::Wireable* data_out= selectList(df, sel_map, pt_width, bd_width);
+
+  //An workaround with array size of 1
+  if (bd_width > 1) {
+    df->connect(df->sel("self")->sel("out_" + pg(buf_name, bundle_name)), data_out);
+  } else {
+    df->connect(df->sel("self")->sel("out_" + pg(buf_name, bundle_name))->sel("0"), data_out);
+  }
+  //Add this coreir module
+  mux->setDef(df);
+  return mux;
+}
+
+struct BroadcastIR {
+    op* lead_op;
+    map<string, pair<string, string> > op2output_bd;
+    pair<string, string> buf2bd;
+
+
+    BroadcastIR(pair<string, string> lead_outpt_bd, op* lead_op_) {
+        buf2bd = lead_outpt_bd;
+        lead_op = lead_op_;
+    }
+
+    void insertDst(string op_name, pair<string, string> output_bd) {
+        op2output_bd.insert({op_name, output_bd});
+    }
+
+    void generate_broadcast_coreir(CoreIR::ModuleDef* def) {
+
+      auto dst_bd = buf2bd;
+
+      string buf_name = dst_bd.first;
+      string bundle_name = dst_bd.second;
+
+      for (auto it: op2output_bd) {
+        //Push the bundle name inside
+        auto bundle = it.second;
+        string bc_buf_name = bundle.first;
+        string bc_bundle_name = bundle.second;
+        def->connect(def->sel( bc_buf_name + "." + bc_bundle_name),
+                    def->sel(lead_op->name + "." + pg(buf_name, bundle_name)));
+      }
+    }
+
+};
+
+
+
 void generate_mux_for_compute_share(CoreIR::ModuleDef* def, map<string, UBuffer> & buffers, schedule_info& hwinfo, prog& prg) {
   for (string func: hwinfo.get_shared_resources()) {
 
@@ -2978,114 +3133,53 @@ void generate_mux_for_compute_share(CoreIR::ModuleDef* def, map<string, UBuffer>
     auto ns = context->getNamespace("global");
 
     cout << "Generating input mux for " << func << endl;
-    vector<pair<string, string>> lead_inpt_bd;
-    vector<map<string, pair<string, string> > > op2input_bd;
+    vector<MuxIR> compute_share_muxes;
 
     //Find the op that provide the shared compute unit
     op* lead_op = hwinfo.compute_resources.at(func).leading_op;
-    lead_inpt_bd = incoming_bundles(lead_op, buffers, prg);
+    vector<pair<string, string>> lead_inpt_bd = incoming_bundles(lead_op, buffers, prg);
     int cnt = 0;
     for (string op_name: hwinfo.compute_resources.at(func).op_names) {
       op* shared_op = prg.find_op(op_name);
       int bd_cnt = 0;
       for (auto bd: incoming_bundles(shared_op, buffers, prg)) {
-          if (cnt == 0) {
-              op2input_bd.push_back({{op_name, bd}});
-          } else {
-              op2input_bd.at(bd_cnt).insert({op_name, bd});
-          }
-          bd_cnt ++;
+        if (cnt == 0) {
+          MuxIR mux_ins(lead_inpt_bd.at(bd_cnt), lead_op);
+          mux_ins.insertSel(op_name, bd);
+          compute_share_muxes.push_back(mux_ins);
+        } else {
+          auto & mux_ins = compute_share_muxes.at(bd_cnt);
+          mux_ins.insertSel(op_name, bd);
+        }
+        bd_cnt ++;
       }
       cnt ++;
     }
 
-    int input_cnt = 0;
-    for (auto dst_bd: lead_inpt_bd) {
-      //Create a mux every group of input port
-      vector<pair<string, CoreIR::Type*> > ub_field;
-      for (auto op_name: hwinfo.compute_resources.at(func).op_names) {
-        ub_field.push_back({exe_start_name(op_name), context->BitIn()});
-      }
-
-      string buf_name = dst_bd.first;
-      string bundle_name = dst_bd.second;
-      auto buf = dbhc::map_find(buf_name, buffers);
-      int pt_width = buf.port_widths;
-      int bd_width = buf.lanes_in_bundle(bundle_name);
-      ub_field.push_back({"out_" + pg(buf_name, bundle_name),
-              context->Bit()->Arr(pt_width)->Arr(bd_width)});
-        cout << "out buf: " << buf_name << ", bd: " << bundle_name << endl;
-
-
-      int bitwidth = pt_width;
-      for (auto it: op2input_bd.at(input_cnt)) {
-        //Push the bundle name inside
-        auto bundle = it.second;
-        string buf_name = bundle.first;
-        string bundle_name = bundle.second;
-        cout << "  buf: " << buf_name << ", bd: " << bundle_name << endl;
-        auto buf = dbhc::map_find(buf_name, buffers);
-        int pt_width = buf.port_widths;
-        int bd_width = buf.lanes_in_bundle(bundle_name);
-        ub_field.push_back({pg(buf_name, bundle_name),
-                context->BitIn()->Arr(pt_width)->Arr(bd_width)});
-      }
-      CoreIR::RecordType* utp = context->Record(ub_field);
-      auto mux = ns->newModuleDecl("compute_share_mux_" + context->getUnique(), utp);
-      auto df = mux->newModuleDef();
-
-      std::vector<pair<CoreIR::Wireable*, CoreIR::Wireable*>> sel_map;
-      for (auto it: op2input_bd.at(input_cnt)) {
-        auto sel_wire = exe_start_name(it.first);
-        auto bundle = it.second;
-        string buf_name = bundle.first;
-        string bundle_name = bundle.second;
-        auto self = df->sel("self");
-        sel_map.push_back({self->sel(pg(buf_name, bundle_name)), self->sel(sel_wire)});
-      }
-      //Create the mux
-      CoreIR::Wireable* data_out= selectList(df, sel_map, bitwidth, bd_width);
-
-      //An workaround with array size of 1
-      if (bd_width > 1) {
-        df->connect(df->sel("self")->sel("out_" + pg(buf_name, bundle_name)), data_out);
-      } else {
-        df->connect(df->sel("self")->sel("out_" + pg(buf_name, bundle_name))->sel("0"), data_out);
-      }
-      //Add this coreir module
-      mux->setDef(df);
+    //Codegen the mux in place
+    for (auto & mux_ir: compute_share_muxes) {
+      mux_ir.initMetaData(buffers);
+      CoreIR::Module* mux = mux_ir.generate_op_mux(context);
       auto mux_ins= def->addInstance("compute_share_mux_" + lead_op->name + context->getUnique(), mux);
 
-      //Connect with the data path
-      for (auto it: op2input_bd.at(input_cnt)) {
-        auto bundle = it.second;
-        string buf_name = bundle.first;
-        string bundle_name = bundle.second;
-        def->connect(def->sel(buf_name + "." + bundle_name),
-                mux_ins->sel(pg(buf_name, bundle_name)));
-      }
-      def->connect(def->sel(lead_op->name+ "." + pg(buf_name, bundle_name)),
-              mux_ins->sel("out_" + pg(buf_name, bundle_name)));
-
-      //Connect with the stencil valid
-      for (auto op_name: hwinfo.compute_resources.at(func).op_names) {
-        def->connect(mux_ins->sel(exe_start_name(op_name)), read_start_wire(def, op_name));
-      }
-      input_cnt ++;
+      mux_ir.wire_op_mux(def, mux_ins);
     }
 
     //Generate the output broadcast
+    vector<BroadcastIR> bc_ir_vec;
     vector<pair<string, string> > lead_outpt_bd = outgoing_bundles(lead_op, buffers, prg);
-    vector<map<string, pair<string, string> > > op2outpt_bd;
+    //vector<map<string, pair<string, string> > > op2outpt_bd;
     cnt = 0;
     for (string op_name: hwinfo.compute_resources.at(func).op_names) {
       op* shared_op = prg.find_op(op_name);
       int bd_cnt = 0;
       for (auto bd: outgoing_bundles(shared_op, buffers, prg)) {
           if (cnt == 0) {
-              op2outpt_bd.push_back({{op_name, bd}});
+              BroadcastIR bcIR(lead_outpt_bd.at(bd_cnt), lead_op);
+              bcIR.insertDst(op_name, bd);
+              bc_ir_vec.push_back(bcIR);
           } else {
-              op2outpt_bd.at(bd_cnt).insert({op_name, bd});
+              bc_ir_vec.at(bd_cnt).insertDst(op_name, bd);
           }
           bd_cnt ++;
       }
@@ -3093,24 +3187,9 @@ void generate_mux_for_compute_share(CoreIR::ModuleDef* def, map<string, UBuffer>
     }
 
     //The output broadcast
-    int output_cnt = 0;
-    for (auto dst_bd: lead_outpt_bd) {
-      //Create a mux every group of input port
-      vector<pair<string, CoreIR::Type*> > ub_field;
-
-      string buf_name = dst_bd.first;
-      string bundle_name = dst_bd.second;
-
-      for (auto it: op2outpt_bd.at(output_cnt)) {
-        //Push the bundle name inside
-        auto bundle = it.second;
-        string bc_buf_name = bundle.first;
-        string bc_bundle_name = bundle.second;
-        //cout << "  buf: " << buf_name << ", bd: " << bundle_name << endl;
-        def->connect(def->sel( bc_buf_name + "." + bc_bundle_name),
-                    def->sel(lead_op->name + "." + pg(buf_name, bundle_name)));
-      }
-      output_cnt ++;
+    //for (auto dst_bd: lead_outpt_bd) {
+    for (auto & bc_ir: bc_ir_vec) {
+        bc_ir.generate_broadcast_coreir(def);
     }
   }
 }
