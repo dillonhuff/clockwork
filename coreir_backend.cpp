@@ -1477,15 +1477,18 @@ CoreIR::Wireable* selectList(CoreIR::ModuleDef* def, const std::vector<pair<Core
       wire = enable_map.begin()->first->sel(str(bd_i));
       for (auto it =enable_map.begin(); it < enable_map.end() - 1; it ++) {
         auto next_wire = (it + 1)->first->sel(str(bd_i));
-        auto enable_signal = it->second;
+        auto enable_signal = (it+1)->second;
         auto next_val = def->addInstance(context->getUnique() + "_mux",
                 "coreir.mux",
                 { {"width", CoreIR::Const::make(context, bitwidth)}});
         def->connect(enable_signal, next_val->sel("sel"));
-        def->connect(wire, next_val->sel("in1"));
-        def->connect(next_wire, next_val->sel("in0"));
+        def->connect(wire, next_val->sel("in0"));
+        def->connect(next_wire, next_val->sel("in1"));
         wire = next_val->sel("out");
-        def->connect(wire, pt_out->sel("in")->sel(str(bd_i)));
+
+        //if this is the final output of onehot mux
+        if (it == enable_map.end() - 2)
+          def->connect(wire, pt_out->sel("in")->sel(str(bd_i)));
       }
     }
     return pt_out->sel("out");

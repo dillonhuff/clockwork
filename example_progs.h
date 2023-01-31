@@ -24,6 +24,7 @@ prog unsharp_large();
 prog cascade(); //stencil
 prog cascade_coarse(); //stencil
 prog gaussian(); //stencil
+prog gpyr_tagged(); //pyramid
 prog harris(); //stencil
 prog harris_remove(); //manually edit
 prog pointwise(); //point
