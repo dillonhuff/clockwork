@@ -15623,6 +15623,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //this two has issue with the new loop align algorithm
   test_apps.push_back(matmul_single());
   test_apps.push_back(matmul_unroll2());
+  test_apps.push_back(gemm_reorder());
 
   //Big applications
   test_apps.push_back(mobilenet_unrolled());
