@@ -148,6 +148,8 @@ prog matmul_unroll2();
 prog matmul_single();
 prog matmul_single_m1();
 prog matmul_fpga();
+prog gemm();
+prog gemm_reorder();
 
 //resnet without input tiling
 prog resnet_output_stationary_i16();
