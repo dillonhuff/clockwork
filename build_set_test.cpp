@@ -11924,6 +11924,12 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 void playground() {
     {
+        prog app = gpyr_tagged();
+        strip_mine(4, "blur0_1_s0_y", app);
+        app.pretty_print();
+        assert(false);
+    }
+    {
         vector<int> a = {0, 1, 2, 4};
         vector<int> b = {0, 2, 1, 4};
         auto ret = pad_alignment(a, b);
@@ -15583,12 +15589,15 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
   //Not work yet
   //test_apps.push_back(stereo_unroll());
-  //
-  //CGRA tests
+
+  //Compute share apps
+  test_apps.push_back(gpyr_tagged());
   test_apps.push_back(cascade_coarse());
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(conv_3_3_reorder());
+
+  //CGRA tests
+  test_apps.push_back(conv_3_3());
+  test_apps.push_back(cascade());
+  test_apps.push_back(conv_3_3_reorder());
   test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
@@ -19592,6 +19601,49 @@ void assign_II_and_delays(vector<int> & fused_level_iis, int fused_level,
   }
 }
 
+void split_loop_according_to_rate(std::set<op*> & fused_kernels,
+        map<string, vector<isl_aff*> > & cs,
+        schedule_info& sched, prog &  prg) {
+  if (sched.share_compute()) {
+    auto levels = get_variable_levels(prg);
+    int max_rate = 1;
+    map<string, int> sm_factor_map;
+    map<string, op*> kernel2op;
+    for(op* k : fused_kernels) {
+      int level = map_find(k->name, levels);
+      auto lower_ops = k->descendant_ops();
+
+      //Only allow one op under a loop nest in stencil pipeline;
+      assert(lower_ops.size() == 1);
+
+      op* comp_op = pick(lower_ops);
+      int qfactor = to_int(get_coeff(map_find(comp_op->name, cs).at(level), 0));
+      sm_factor_map[k->name] = qfactor;
+      kernel2op[k->name] = comp_op;
+      max_rate = max(qfactor, max_rate);
+      cout << "kernel: " << k->name << endl;
+      cout << "  qfactor: " << qfactor << endl;
+    }
+
+    for (op* k : fused_kernels) {
+      op* comp_op = kernel2op.at(k->name);
+      int factor = max_rate / sm_factor_map.at(k->name);
+      strip_mine(factor, k, prg);
+
+      //Update the qfactor after stripe_mine
+      int level = map_find(k->name, levels);
+      auto sched_aff = map_find(comp_op->name, cs).at(level);
+      int delay = to_int(int_const_coeff(sched_aff));
+      int rate = to_int(int_coeff(sched_aff, 0));
+      string new_aff_str =
+          "{ [i] -> [(i + " + str(delay/rate) + ")] }";
+      cs.at(comp_op->name).at(level) = rdaff(ctx(sched_aff), new_aff_str);
+    }
+    cout << "After stripmine: " << endl;
+    prg.pretty_print();
+  }
+}
+
 void postprocessing_for_init_ops(CodegenOptions& options, schedule_info & sched, prog & prg) {
   vector<op*> scheduled;
   for (auto op : inner_ops(prg)) {
@@ -19665,6 +19717,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     int fused_level = get_fused_level(fused_kernels, prg);
     cout << "fused level: " << fused_level << endl;
     //Use coarse grain schedule to schedule the inner most loop
+    split_loop_according_to_rate(fused_kernels, cs, sched, prg);
     prog fused_sub_loop = extract_cgl_to_separate_prog(fused_kernels, prg);
     fused_sub_loop.pretty_print();
     sequential_schedule(sched, fused_sub_loop.root, fused_sub_loop);

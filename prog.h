@@ -1982,6 +1982,15 @@ struct schedule_info {
     compute_resources.at(op->func).leading_op = op;
   }
 
+  bool share_compute() {
+    for (auto it: compute_resources) {
+      if (it.second.num_users > 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool share_compute(op* op) {
     return compute_resources.at(op->func).num_users > 1;
   }
