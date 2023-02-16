@@ -117,8 +117,11 @@ struct RTableEntry {
         for (string k : modulo_table.at(coarse_t)) {
             if (k != "") {
                 ret.insert(k);
-                for (string g: partition_groups.at(k)) {
+                //This data structure is memory only, compute unit won't enter here
+                if (partition_groups.count(k)) {
+                  for (string g: partition_groups.at(k)) {
                     ret.insert(g);
+                  }
                 }
             }
         }
@@ -385,6 +388,57 @@ struct RTable {
             //cout << "\tmax II = " << max_II << endl;
             max_II += max_step_latency;
         }
+        return max_II;
+    }
+
+    int getCycleAccurateIIFineGrained(schedule_info& sched, prog& prg, int II) {
+        int max_II = 0;
+        for (auto & it : memWriteTable) {
+          int rd_max_II = 0;
+          string mem = it.first;
+          for (int coarse_t = 0; coarse_t < II; coarse_t ++) {
+            int max_step_latency = 0;
+            for(string k: memWriteTable.at(mem).getKernels(coarse_t)) {
+              op* lp = prg.find_non_op(k);
+              int latency = sched.total_latency(lp);
+              max_step_latency = std::max(latency, max_step_latency);
+            }
+            rd_max_II += max_step_latency;
+          }
+          max_II = max(rd_max_II, max_II);
+        }
+
+        for (auto & it : memReadTable) {
+          int wr_max_II = 0;
+          string mem = it.first;
+          for (int coarse_t = 0; coarse_t < II; coarse_t ++) {
+            int max_step_latency = 0;
+            for(string k: memReadTable.at(mem).getKernels(coarse_t)) {
+              op* lp = prg.find_non_op(k);
+              int latency = sched.total_latency(lp);
+              max_step_latency = std::max(latency, max_step_latency);
+            }
+            wr_max_II += max_step_latency;
+          }
+          max_II = max(wr_max_II, max_II);
+        }
+
+
+        for (auto & it : compTable) {
+          int comp_max_II = 0;
+          string comp_unit = it.first;
+          for (int coarse_t = 0; coarse_t < II; coarse_t ++) {
+            int max_step_latency = 0;
+            for(string k: compTable.at(comp_unit).getKernels(coarse_t)) {
+              op* lp = prg.find_non_op(k);
+              int latency = sched.total_latency(lp);
+              max_step_latency = std::max(latency, max_step_latency);
+            }
+            comp_max_II += max_step_latency;
+          }
+          max_II = max(comp_max_II, max_II);
+        }
+
         return max_II;
     }
 
