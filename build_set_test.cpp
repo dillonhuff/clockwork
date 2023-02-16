@@ -15563,6 +15563,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //Not work yet
   //test_apps.push_back(stereo_unroll());
 
+
+
   //Compute share apps
   test_apps.push_back(gpyr_tagged());
   test_apps.push_back(cascade_coarse());
@@ -19312,7 +19314,7 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
     }
     RRT.print();
 
-    int cycle_accurate_II = RRT.getCycleAccurateII(sched, prg, target_II);
+    int cycle_accurate_II = RRT.getCycleAccurateIIFineGrained(sched, prg, target_II);
 
     cout << endl << "II optimization finished ..." << endl;
     cout << tab(1) << "Target II : " << target_II <<endl;
