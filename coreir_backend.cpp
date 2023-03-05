@@ -1812,7 +1812,11 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       cout << "Found compute file for " << prg.name << endl;
       Instance* halide_cu = nullptr;
       if (hwinfo.use_metamapper) {
-        halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        if (options.rtl_options.use_pipelined_compute_units) {
+          halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
+        } else {
+          halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+        }
       } else {
         if (options.rtl_options.use_pipelined_compute_units) {
           halide_cu = def->addInstance("inner_compute", ns->getModule(op->func + "_pipelined"));
@@ -2662,7 +2666,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   string compute_file = "./" + prg.name + "_compute.json";
 #endif
   if (hwinfo.use_metamapper) {
-    compute_file = dse_compute_filename;
+    if (options.rtl_options.use_pipelined_compute_units) {
+      compute_file = "./coreir_compute/" + prg.name + "_compute_pipelined.json";
+    } else {
+      compute_file = dse_compute_filename;
+    }
   }
   ifstream cfile(compute_file);
   if (!cfile.good()) {
@@ -6531,6 +6539,197 @@ void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Inst
   }
   copy_def->connect(wc0, wc1);
 }
+
+void copy_and_add_latency_to_output(vector<std::set<Instance*> >& stages, 
+    map<Instance*, Instance*>& instance_map, Wireable* w0, Wireable* w1, ModuleDef* copy_def, int kernel_latency) {
+
+  cout << "w0 = " << w0->toString() << ": " << w0->getType()->toString() << endl;
+  cout << "w1 = " << w1->toString() << ": " << w1->getType()->toString() << endl;
+
+  Wireable* src = nullptr;
+  Wireable* dst = nullptr;
+  if (w0->getType()->isOutput()) {
+    //assert(w0->getType()->isInput());
+
+    src = w0;
+    dst = w1;
+  } else {
+    //assert(w0->getType()->isInput());
+
+    src = w1;
+    dst = w0;
+  }
+  assert(src != nullptr);
+  assert(dst != nullptr);
+
+  int src_stage = stage_num(stages, src);
+  int dst_stage = stage_num(stages, dst);
+
+  cout << "Src : " << src->toString() << " at " << src_stage << endl;
+  cout << "Dst stage: " << dst->toString() << " at " << dst_stage << endl;
+
+  assert(src_stage >= 0);
+  assert(dst_stage >= 0);
+  assert(dst_stage >= src_stage);
+
+  //int delay = (dst_stage == stages.size()- 1) ? kernel_latency : 0;
+
+  Wireable* wc0 = copy_wireable(instance_map, w0, copy_def);
+  Wireable* wc1 = copy_wireable(instance_map, w1, copy_def);
+
+  auto context = wc0->getContext();
+
+  if (wc0->getType()->isOutput() && isa<Interface>(base(wc0))) {
+    wc0 = delay_by(copy_def, context->getUnique(), wc0, kernel_latency);
+  }
+  if (wc1->getType()->isOutput() && isa<Interface>(base(wc1))) {
+    wc1 = delay_by(copy_def, context->getUnique(), wc1, kernel_latency);
+  }
+  copy_def->connect(wc0, wc1);
+}
+
+void add_pipeline_latency_compute_units(prog& prg, schedule_info& hwinfo) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cgralib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  add_delay_tile_generator(context);
+  add_raw_quad_port_memtile_generator(context);
+  add_tahoe_memory_generator(context);
+  auto c = context;
+
+
+  bool found_compute = true;
+  string compute_file = "./coreir_compute/" + prg.name + "_compute.json";
+  //if (hwinfo.use_metamapper) {
+  //  compute_file = hwinfo.dse_compute_filename;
+  //  cout << "Compute file dse found" << endl;
+  //}
+  ifstream cfile(compute_file);
+  if (!cfile.good()) {
+    cout << "No compute unit file: " << compute_file << endl;
+    return;
+    //assert(false);
+  }
+  if (!loadFromFile(context, compute_file)) {
+    found_compute = false;
+    cout << "Could not load compute file for: " << prg.name << ", file name = " << compute_file << endl;
+    return;
+    //assert(false);
+  }
+
+  auto ns = c->getNamespace("global");
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      string compute_name = op->func;
+      auto mod = ns->getModule(compute_name);
+      //Maybe we did not need this data structures but I still create it
+      vector<Instance*> instances;
+      map<Instance*, std::set<Instance*> > instance_connections_dst_to_src;
+      //Get all instances in module
+      for (auto inst : mod->getDef()->getInstances()) {
+        instances.push_back(inst.second);
+      }
+      cout << "# of instances: " << instances.size() << endl;
+      for (auto c : mod->getDef()->getConnections()) {
+        Wireable* base0 = base(c.first);
+        Wireable* base1 = base(c.second);
+        if (isa<Instance>(base0) && isa<Instance>(base1)) {
+          Instance* src = nullptr;
+          Instance* dst = nullptr;
+          cout << tab(1) << "Instance connection between " << base0->toString() << " and " << base1->toString() << endl;
+          cout << tab(2) << c.first->getType()->isInput() << endl;
+
+          if (c.first->getType()->isInput()) {
+            dst = static_cast<Instance*>(base0);
+            src = static_cast<Instance*>(base1);
+          } else {
+            dst = static_cast<Instance*>(base1);
+            src = static_cast<Instance*>(base0);
+          }
+
+          assert(src != nullptr);
+          assert(dst != nullptr);
+
+          instance_connections_dst_to_src[dst].insert(src);
+        }
+      }
+      cout << "Instance connections..." << endl;
+      for (auto i : instance_connections_dst_to_src) {
+        cout << tab(1) << i.first->toString() << endl;
+        for (auto c : i.second) {
+          cout << tab(2) << c->toString() << endl;
+        }
+      }
+
+      vector<std::set<Instance*> > schedule;
+      int num_scheduled = 0;
+      std::set<Instance*> unscheduled;
+      for (auto i : instances) {
+        unscheduled.insert(i);
+      }
+      while (unscheduled.size() > 0) {
+        std::set<Instance*> next_sched_lvl;
+        for (Instance* i : unscheduled) {
+          bool all_deps_scheduled = true;
+          for (auto d : instance_connections_dst_to_src[i]) {
+            if (dbhc::elem(d, unscheduled)) {
+              all_deps_scheduled = false;
+              break;
+            }
+          }
+
+          if (all_deps_scheduled) {
+            next_sched_lvl.insert(i);
+          }
+        }
+        assert(next_sched_lvl.size() > 0);
+        for (auto next_sched : next_sched_lvl) {
+          unscheduled.erase(next_sched);
+          schedule.push_back({next_sched});
+          num_scheduled++;
+        }
+
+      }
+      assert(num_scheduled == instances.size());
+
+      cout << "Final schedule size: " << schedule.size() << endl;
+      for (auto f : schedule) {
+        cout << "Level..." << endl;
+        for (auto l : f) {
+          cout << tab(1) << l->toString() << endl;
+        }
+      }
+
+      auto mod_tp = mod->getType();
+      auto copy = ns->newModuleDecl(mod->getName() + "_pipelined", mod_tp);
+      auto copy_def = copy->newModuleDef();
+      map<Instance*, Instance*> instance_map;
+      for (auto inst : instances) {
+        instance_map[inst] = copy_def->addInstance(inst, inst->getInstname());
+      }
+
+      for (auto c : mod->getDef()->getConnections()) {
+        Wireable* base0 = base(c.first);
+        Wireable* base1 = base(c.second);
+        copy_and_add_latency_to_output(schedule, instance_map, c.first, c.second, copy_def, hwinfo.compute_unit_latencies.at(op->func + "_pipelined"));
+      }
+      copy->setDef(copy_def);
+
+      //hwinfo.op_compute_unit_latencies[op->func + "_pipelined"] =
+        //std::max(0, ((int)schedule.size()) - 1);
+      //hwinfo.compute_unit_latencies[op->func + "_pipelined"] =
+      //  std::max(0, ((int)schedule.size()) - 1);
+    }
+  }
+
+  if(!saveToFile(ns, "./coreir_compute/" + prg.name + "_compute_pipelined.json")) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+  deleteContext(context);
+}
+
 
 void pipeline_compute_units(prog& prg, schedule_info& hwinfo) {
   CoreIR::Context* context = CoreIR::newContext();

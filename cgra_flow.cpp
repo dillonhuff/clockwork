@@ -45,7 +45,7 @@ vector<string> aha_flow_result(prog& prg, string dir) {
     //verilog_files.push_back("LakeWrapper.v");
     vector<string> verilog_files;
     verilog_files.push_back(name + ".v");
-    verilog_files.push_back("PE.v");
+    //verilog_files.push_back("PE.v");
     verilog_files.push_back("laketop_new.sv");
     //verilog_files.push_back("laketop.sv");
     verilog_files.push_back("LakeTop_flat.v");

@@ -15550,6 +15550,34 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   }
 }
 
+void test_pipeline_compute(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_pipeline") {
+  vector<prog> test_apps;
+  test_apps.push_back(gaussian_aha());
+
+  for ( auto prg: test_apps) {
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers_new(prg);
+    prg.pretty_print();
+#ifdef COREIR
+    //compile_for_garnet_platonic_mem(prg);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, true, "coreir_compute/" + prg.name + "_compute.json", false);
+    cout << "Output name: " << prg.name << endl;
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      vector<string> verilog_files;;
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_sp__0");
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
+    }
+#endif
+  }
+}
+
 void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_design") {
   vector<prog> test_apps;
   //TODO:has issue  with multiple input
@@ -15563,26 +15591,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(fp_arith());
   //test_apps.push_back(camera_pipeline_2x2_unroll());
 
-<<<<<<< HEAD
- //CGRA tests
-  //test_apps.push_back(nlmeans_simple_trunc());
-  //test_apps.push_back(conv_3_3());
-  //test_apps.push_back(counter());
-  //test_apps.push_back(rom());
-  //test_apps.push_back(camera_pipeline_new());
-  //test_apps.push_back(unsharp_new());
-  //test_apps.push_back(unsharp_large());
-  //test_apps.push_back(unsharp());
-  //test_apps.push_back(gaussian());
-  //test_apps.push_back(cascade());
-  //test_apps.push_back(harris());
-  //test_apps.push_back(conv_1_2());
-  //test_apps.push_back(demosaic_unrolled());
-  //test_apps.push_back(down_sample());
-  //test_apps.push_back(up_sample());
-  //test_apps.push_back(laplacian_pyramid());
-  //test_apps.push_back(laplacian_pyramid_docker());
-=======
   //Not work yet
   //test_apps.push_back(stereo_unroll());
   //
@@ -15604,7 +15612,6 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(up_sample());
   test_apps.push_back(laplacian_pyramid());
   test_apps.push_back(laplacian_pyramid_docker());
->>>>>>> all tests pass
 
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet_simple());
@@ -20068,6 +20075,8 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     json kernel_latencies;
     std::ifstream kernel_latencies_file(prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
     kernel_latencies_file >> kernel_latencies;
+    string suffix = 
+      options.rtl_options.use_pipelined_compute_units ? "_pipelined" : "" ;
 
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
@@ -20075,7 +20084,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
       }
       cout << op->func << endl;
       if (kernel_latencies[op->func] == NULL || kernel_latencies[op->func] == "null") {
-        sched.compute_unit_latencies[op->func] = 0;
+        sched.compute_unit_latencies[op->func + suffix] = 0;
       } else {
         int max_latency = 0;
         for (auto input_latencies : kernel_latencies[op->func].items()) {
@@ -20188,7 +20197,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
   }
 
 #ifdef COREIR
-  pipeline_compute_units(prg, sched);
+  if (options.rtl_options.use_pipelined_compute_units) {
+    if (use_metamapper) {
+      add_pipeline_latency_compute_units(prg, sched);
+    } else {
+      pipeline_compute_units(prg, sched);
+    }
+  }
 #endif
   sched.init_op_latencies(prg);
   return sched;
@@ -20833,6 +20848,8 @@ void compile_for_garnet_single_port_mem(prog& prg,
   options.rtl_options.double_buffer_optimization = true;
   options.emit_smt_stream = gen_smt_stream;
   options.config_gen_only = config_gen_only;
+  if (!config_gen_only && use_metamapper)
+    options.rtl_options.use_pipelined_compute_units = true;
   //if (multi_sram)
   //    options.mem_tile.multi_sram_accessor = true;
 
@@ -29464,6 +29481,13 @@ int main(int argc, char** argv) {
       bool use_multi_accessor_tile = true;
       bool gen_config_only = true;
       test_single_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
+      return 0;
+    }
+
+    if (cmd == "pipe-tests") {
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = false;
+      test_pipeline_compute(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_pipe");
       return 0;
     }
 
