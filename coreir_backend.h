@@ -250,6 +250,8 @@ void generate_platonic_ubuffer(
 
 void pipeline_compute_units(prog& prg, schedule_info& hwinfo);
 
+void add_pipeline_latency_compute_units(prog& prg, schedule_info& hwinfo); 
+
 int generate_compute_unit_regression_tb(op* op, prog& prg);
 
 CoreIR::Instance* build_counter(CoreIR::ModuleDef* def,

@@ -1,0 +1,16 @@
+{
+    "hcompute_blur_stencil": 1,
+    "hcompute_blur_stencil_1": 1,
+    "hcompute_blur_unnormalized_stencil": 0,
+    "hcompute_blur_unnormalized_stencil_1": 0,
+    "hcompute_blur_unnormalized_stencil_2": 5,
+    "hcompute_blur_unnormalized_stencil_3": 5,
+    "hcompute_hw_input_global_wrapper_glb_stencil": 0,
+    "hcompute_hw_input_global_wrapper_glb_stencil_1": 0,
+    "hcompute_hw_input_global_wrapper_global_wrapper_stencil": 3,
+    "hcompute_hw_input_global_wrapper_global_wrapper_stencil_1": 3,
+    "hcompute_hw_output_global_wrapper_glb_stencil": 0,
+    "hcompute_hw_output_global_wrapper_glb_stencil_1": 0,
+    "hcompute_hw_output_stencil": 0,
+    "hcompute_hw_output_stencil_1": 0
+}

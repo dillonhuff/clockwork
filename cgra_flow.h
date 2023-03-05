@@ -22,7 +22,7 @@ void preprocess_prog(prog& prg) {
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
+    dsa_writers_new(prg);
 }
 
 vector<string> cgra_flow_result(prog& prg, string dir, bool use_pond=false);

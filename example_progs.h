@@ -132,6 +132,7 @@ prog gaussian_isscc();
 prog gaussian_glb();
 prog gaussian_glb2();
 prog gaussian_glb8();
+prog gaussian_aha();
 prog unsharp_glb();
 prog unsharp_isscc();
 prog up_sample_glb();
