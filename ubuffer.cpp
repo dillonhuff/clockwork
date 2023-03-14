@@ -1653,8 +1653,8 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
       auto dom = ::domain(acc_map);
 
       //update op latency
-      //op_latency = info.compute_latency(::domain_name(acc_map));
-      op_latency = info.op_latencies.at(::domain_name(acc_map));
+      op_latency = info.compute_latency(::domain_name(acc_map));
+      // op_latency = info.compute_unit_latencies(::domain_name(acc_map));
 
 
       auto sched_aff = get_aff(schedule.at(inpt));
@@ -3656,7 +3656,7 @@ void UBuffer::generate_fanin_connection(CodegenOptions& options, UBufferImpl& im
       //Creating the input selection logic
       isl_aff* sched_aff = get_aff(to_map(schedule.at(src.first)));
       cout << "pt schedule: " << str(sched_aff) << endl;
-      int op_latency = info.op_latencies.at(::domain_name(to_map(schedule.at(src.first))));
+      int op_latency = info.compute_latency(::domain_name(to_map(schedule.at(src.first))));
       sched_aff = add(sched_aff, op_latency - buffer_store_latency(options) + output_delay.at(src.first));
       auto mux_ctrl = affine_controller_use_lake_tile(
               options, def, context, domain.at(src.first),

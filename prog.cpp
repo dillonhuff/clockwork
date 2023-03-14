@@ -5260,9 +5260,9 @@ int op_latency(op* op, schedule_info& hwinfo) {
 }
 
 void schedule_info::init_op_latencies(prog& prg) {
-    for (auto stmt : prg.all_ops()) {
-        op_latencies[stmt->name] = op_latency(stmt, *this);
-    }
+    // for (auto stmt : prg.all_ops()) {
+    //     op_latencies[stmt->name] = op_latency(stmt, *this);
+    // }
 }
 
 

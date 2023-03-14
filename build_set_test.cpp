@@ -20101,8 +20101,8 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
             port_slacks[(string)input_latencies.key() + "_" + port_latency.key()] = max_latency - (int)(port_latency.value()["latency"]); 
           }
         }
-        sched.compute_unit_latencies[op->func] = max_latency;
-        sched.port_latencies[op->func] = port_slacks;
+        sched.compute_unit_latencies[op->func + suffix] = max_latency;
+        sched.port_latencies[op->func + suffix] = port_slacks;
       }
 
 
@@ -20157,30 +20157,30 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         sched.assign_memory_write_resource(options, op, b);
       }
 
-    for (auto b : op->buffers_referenced()) {
-      //TODO: put this into lakecollateral
-      if (!prg.is_boundary(b)) {
-        sched.buffer_load_latencies[b] = buffer_load_latency(options, b);
-        sched.buffer_store_latencies[b] = buffer_store_latency(options, b);
-      } else {
-        sched.buffer_load_latencies[b] = 0;
-        sched.buffer_store_latencies[b] = 0;
-      }
+      for (auto b : op->buffers_referenced()) {
+        //TODO: put this into lakecollateral
+        if (!prg.is_boundary(b)) {
+          sched.buffer_load_latencies[b] = buffer_load_latency(options, b);
+          sched.buffer_store_latencies[b] = buffer_store_latency(options, b);
+        } else {
+          sched.buffer_load_latencies[b] = 0;
+          sched.buffer_store_latencies[b] = 0;
+        }
 
-      if (options.rtl_options.use_prebuilt_memory) {
-        auto pmap = prg.producer_map(b);
-        //cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
-        //    << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
-        //    "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
-        sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
-          //This is a hacky rewrite
-          if (!contains(b, "glb")) {
-            if (sched.buf2level[b] == "glb") {
-               sched.buf2level[b] = "mem";
+        if (options.rtl_options.use_prebuilt_memory) {
+          auto pmap = prg.producer_map(b);
+          //cout << "\tBuffer <" << b << "> \n\tproducer map: "<< str(pmap)
+          //    << "\n\tcapacity: " << logical_capacity(b, prg) << endl <<
+          //    "\thierarchy level: " << options.get_hierarchy_level(logical_capacity(b, prg)) << endl;
+          sched.buf2level[b] = options.get_hierarchy_level(logical_capacity(b, prg));
+            //This is a hacky rewrite
+            if (!contains(b, "glb")) {
+              if (sched.buf2level[b] == "glb") {
+                sched.buf2level[b] = "mem";
+              }
             }
-          }
-          //cout << "buf2level: " << sched.buf2level[b] << endl;
-
+            //cout << "buf2level: " << sched.buf2level[b] << endl;
+        }
       }
     }
   }
