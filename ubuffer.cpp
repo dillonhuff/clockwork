@@ -2545,6 +2545,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    if (num_in_dims(sched) > mem.get_ctrl_iter_level(ctrl_cfg_name) + 1) {
      auto pad_pair = pad_domain(sched, (linear_acc_map));
      m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   } else {
+     m_pair = merge_dom_dim(sched, linear_acc_map);
    }
    auto new_sched = m_pair.first;
    cout << tab(1) << "After Merge: " << endl;
@@ -2589,6 +2591,8 @@ Json UBuffer::generate_ubuf_args(CodegenOptions& options,
    if (num_in_dims(sched) > mem.get_ctrl_iter_level(ctrl_cfg_name) + 1) {
      auto pad_pair = pad_domain(sched, (linear_acc_map));
      m_pair = merge_dom_dim(pad_pair.first, pad_pair.second);
+   } else {
+     m_pair = merge_dom_dim(sched, linear_acc_map);
    }
    auto new_sched = m_pair.first;
    cout << tab(1) << "After Merge: " << endl;
