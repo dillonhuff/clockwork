@@ -19598,7 +19598,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     cout << "After codegen: \n" <<codegen_c(global_schedule);
     sanity_check_hw_schedule(sched, prg);
     return;
-  } else if (contains(prg.name, "split")) {
+  } else if (contains(prg.name, "split") ) {
     sequential_schedule(sched, root, prg);
     auto op_sched = op_start_times_map(sched, prg);
     cout << "\tFinal schedule : " << str(op_sched)  << endl;
@@ -19614,6 +19614,8 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     //cout << tab(2) << rv << endl;
   //}
   //assert(false);
+  if (prg.name == "three_level_pond")
+    options.fallback_schedule = SEQUENTIAL_SCHEDULE;
 
   do {
     options.rtl_options.double_buffer_optimization = options.fallback_schedule < 3;
