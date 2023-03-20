@@ -974,11 +974,11 @@ struct ir_node {
 
 };
 
-struct cmp_op {
-  bool operator() (op* l, op* r) const {
-    return l->name < r->name;
-  }
-};
+// struct cmp_op {
+//   bool operator() (op* l, op* r) const {
+//     return l->name < r->name;
+//   }
+// };
 
 
 struct cmp_op { 
