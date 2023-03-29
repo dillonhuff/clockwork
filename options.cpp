@@ -1,4 +1,5 @@
 #include "options.h"
+#include "isl_utils.h"
 #include "algorithm.h"
 
 using namespace dbhc;
@@ -23,6 +24,29 @@ string CodegenOptions::get_hierarchy_level(int capacity) {
     }
     return capacity2level.lower_bound(capacity)->second;
 
+}
+
+
+bool ConstantOffset::is_satisfied(isl_map* m, isl_map* s) {
+    auto range2range = dot(inv(m), s);
+    auto diff = isl_map_deltas(range2range);
+    isl_val* max_val= lexmaxval(diff);
+    isl_val* min_val  = lexminval(diff);
+    int max = to_int(max_val);
+    int min = to_int(min_val);
+    if (max != min) {
+        cout << "master controller sched: " << str(m) << endl;
+        cout << "slave controller sched: " << str(s) << endl;
+        cout << "shared controller does not have constant offset" << endl;
+        return false;
+    } else if (max > ub || min < lb) {
+        cout << "master controller sched: " << str(m) << endl;
+        cout << "slave controller sched: " << str(s) << endl;
+        cout << "constant offset out of bound" << endl;
+        return false;
+    } else {
+        return true;
+    }
 }
 
 int LakeCollateral::get_ctrl_iter_level(string ctrl_name) {
