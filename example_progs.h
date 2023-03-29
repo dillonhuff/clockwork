@@ -151,6 +151,8 @@ prog matmul_fpga();
 prog gemm();
 prog gemm_reorder();
 
+prog maxpool_layer();
+
 //resnet without input tiling
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
