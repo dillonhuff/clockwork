@@ -1,5 +1,31 @@
 #include "prog.h"
 
+struct CATimeStamp{
+    int min_time, max_time;
+    int latency;
+
+    CATimeStamp(int min_time_, int max_time_, int latency_) {
+        min_time = min_time_;
+        max_time = max_time_;
+        latency = latency_;
+    }
+
+    bool hasSlack() {
+        return min_time +latency < max_time;
+    }
+
+    void removeSlack() {
+        min_time = max_time - latency;
+    }
+
+    void print() {
+        cout << tab(2) << "min time: " << min_time << endl;
+        cout << tab(2) << "max time: " << max_time << endl;
+        cout << tab(2) << "latency: " << latency << endl;
+        cout << tab(2) << "has slack = " << hasSlack() << endl;
+    }
+};
+
 //Resource reservation table
 struct RTableEntry {
 
@@ -21,6 +47,7 @@ struct RTableEntry {
         for (int i = 0; i < slots.size(); i ++) {
             if (slots.at(i) == "") {
                 slots.at(i) = k;
+                map_insert(partition_groups, k, k);
                 return true;
             }
         }
@@ -91,6 +118,7 @@ struct RTableEntry {
     }
 
     void print() {
+        cout << tab(4) << "Instance count: " << ins_num << endl;
       for (auto k: kernels) {
         cout << tab(4) << k;
         if (timestamps.count(k)) {
@@ -134,6 +162,155 @@ struct RTable {
     map<string, RTableEntry> memWriteTable;
     map<string, RTableEntry> memReadTable;
     map<string, RTableEntry> compTable;
+
+    int target_II;
+    map<string, CATimeStamp> cycle_accurate_time_map;
+    op* cgpl;
+
+    void initCycleAccurateStartTime(string & kernel, int st, int latency) {
+        CATimeStamp t_stamp(st, st + target_II - 1, latency);
+        cycle_accurate_time_map.insert({kernel, t_stamp});
+    }
+
+    int getKernelStartTime(string & kernel) {
+        if (cycle_accurate_time_map.count(kernel)) {
+            return cycle_accurate_time_map.at(kernel).min_time;
+        }
+        cout << "Kernel: " << kernel << " is not scheduled yet" << endl;
+        assert(false);
+    }
+
+    void setKernelMaxTimeStamp(string & kernel, int mt) {
+        if (cycle_accurate_time_map.count(kernel)) {
+            if (mt < cycle_accurate_time_map.at(kernel).max_time)
+                cycle_accurate_time_map.at(kernel).max_time = mt;
+            return;
+        }
+        cout << "Kernel: " << kernel << " is not scheduled yet" << endl;
+        assert(false);
+    }
+
+    void printCycleAccurateTimeStamps() {
+        for (auto & it: cycle_accurate_time_map) {
+            cout << "Kernel: " << it.first << endl;
+            it.second.print();
+        }
+    }
+
+    void addInterval(vector<pair<int, bool> > & interval_bounds, string & kernel) {
+
+        int start = cycle_accurate_time_map.at(kernel).min_time;
+
+        //This is the non-inclusive end time
+        int end = start + cycle_accurate_time_map.at(kernel).latency;
+        interval_bounds.push_back({start%target_II, true});
+        //If it wrap around, since end is non inclusive, we need some tweak
+        if (start / target_II != (end-1) / target_II) {
+            interval_bounds.push_back({target_II, false});
+            interval_bounds.push_back({0, true});
+        }
+        interval_bounds.push_back({(end-1)%target_II + 1, false});
+    }
+
+    void iterativeRemoveSlack(map<string, RTableEntry> & subTable, unordered_set<string> & k_scheduled,
+            string & buffer, string & k) {
+        if (subTable.count(buffer) == 0) return;
+        if (subTable.at(buffer).partition_groups.count(k) == 0) return;
+
+        bool resource_conflict = true;
+        cout << "Check resource conflict for : " << buffer << endl;
+        cout << "  when scheduling: " << k << endl;
+        while (resource_conflict) {
+
+            vector<pair<int, bool>> interval_bounds;
+            vector<string> adjust_candidate;
+            for (string kernel: subTable.at(buffer).kernels) {
+                if (k_scheduled.count(kernel)) {
+                    //Add the resource occupation into the vector
+                    //So that we can check if it's overlap
+                    if (subTable.at(buffer).partition_groups.count(kernel)) {
+                      addInterval(interval_bounds, kernel);
+                      cout << "\tadd kernel: " << kernel << endl;
+
+                      //If this kernel has slack, we will just remove the slack,
+                      //likely it's a kernel that ahead of the kernel that is scheduled currently
+                      if (cycle_accurate_time_map.at(kernel).hasSlack())
+                          adjust_candidate.push_back(kernel);
+                    }
+                }
+            }
+            //Add current kernel in as well
+            addInterval(interval_bounds, k);
+
+            //Sort the bound
+            //Get this method from this link:
+            //https://cs.stackexchange.com/questions/153956/best-data-structures-to-store-overlapping-intervals
+            sort(interval_bounds.begin(), interval_bounds.end(),
+                   [](const pair<int, bool> & l, const pair<int, bool> & r) {
+                       if (l.first != r.first) {
+                           return l.first < r.first;
+                       } else {
+                           return l.second < r.second;
+                       }
+                   });
+            int overlap_count = 0;
+
+            //Printout for debug
+            for (auto it: interval_bounds) {
+                cout <<tab(2)<< it.first << ", " << it.second << endl;
+            }
+            resource_conflict = false;
+
+            for (auto it: interval_bounds) {
+                if (it.second) {
+                    overlap_count ++;
+                } else {
+                    overlap_count --;
+                }
+                assert(overlap_count >= 0);
+                if (overlap_count > subTable.at(buffer).ins_num) {
+                    cout << "Resource conflict mem write port for buffer: " << buffer << endl;
+                    subTable.at(buffer).print();
+                    resource_conflict = true;
+                    break;
+                }
+            }
+            if (resource_conflict && adjust_candidate.size()) {
+                string k_cand = adjust_candidate.front();
+                cycle_accurate_time_map.at(k_cand).removeSlack();
+            } else if (resource_conflict) {
+                //adjust this kernel to a late time
+                cout << "This is the case that slack relax does not work" << endl
+                     << "We should build an iterative approach to find a later timestamp," << endl
+                     << "Not implement this" << endl;
+                assert(false);
+            }
+        }
+    }
+
+    bool checkResourceConflict(string k, unordered_set<string> & k_scheduled, prog & prg){
+
+        op* k_op = prg.find_non_op(k);
+        for (auto b : buffers_written_by_kernel(k_op)) {
+            iterativeRemoveSlack(memWriteTable, k_scheduled, b, k);
+        }
+        for (auto b : buffers_read_by_kernel(k_op)) {
+            iterativeRemoveSlack(memReadTable, k_scheduled, b, k);
+        }
+        for (auto func : kernel_func(k_op)) {
+            iterativeRemoveSlack(compTable, k_scheduled, func, k);
+        }
+        return true;
+    }
+
+    void parseKernelLatency(schedule_info & sched) {
+        for (auto it : cycle_accurate_time_map) {
+            string kernel = it.first;
+            int offset = it.second.min_time;
+            sched.op_offset_within_parent.at(kernel) = offset;
+            cout << kernel << " : " << offset << endl;
+        }
+    }
 
 
     int getTimeStamp(string& k) {
@@ -447,9 +624,10 @@ struct RTable {
  * so that we can always duplicate buffer to feed that stmt
  * */
 RTable build_modulo_resource_reservation_table(CodegenOptions& options,
-        schedule_info& sched, op* cgpl, prog & prg) {
+        schedule_info& sched, op* coarse_loop, prog & prg) {
     RTable resource_reservation_table;
-    for (auto op : cgpl->children) {
+    resource_reservation_table.cgpl = coarse_loop;
+    for (auto op : coarse_loop->children) {
       //cout << "sub kernel: " << op->name << endl;
       //cout << tab(1) << "Completion time: " << sched.total_latency(op) << endl;
       //cout << tab(1) << "Offset         : " << sched.offset_in_parent(op) << endl;
