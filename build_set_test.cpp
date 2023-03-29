@@ -15271,9 +15271,10 @@ void test_pond(string dir, bool run_verilator=true) {
 
   test_apps.push_back(nlmeans_simple_blur());
   test_apps.push_back(nlmeans_simple());
-  test_apps.push_back(three_level_pond());
+
   test_apps.push_back(three_level_pond_rolled());
   test_apps.push_back(three_level_pond_copy());
+  test_apps.push_back(three_level_pond());
   test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
   test_apps.push_back(resnet_init_unroll_tile());
@@ -15392,7 +15393,8 @@ void test_fetchwidth2_mem(bool gen_config_only, bool multi_accessor=false, strin
   test_apps.push_back(up_sample());
   test_apps.push_back(camera_pipeline_new());
 
-  ////DNN apps
+  //DNN apps
+  //TODO: currently resnettiny has bug with the
   test_apps.push_back(resnet_tiny());
   test_apps.push_back(resnet());
 
@@ -15458,6 +15460,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
   vector<prog> test_apps;
 
 
+  test_apps.push_back(maxpool_layer());
   //camera pipeline variant tests
   //test_apps.push_back(resnet3_x_glb_unroll());
   test_apps.push_back(camera_pipeline_2x2_unroll());
@@ -15525,7 +15528,7 @@ void test_glb(bool gen_config_only, bool multi_accessor=false, string dir="aha_g
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
+    dsa_writers_new(prg);
     prg.pretty_print();
 
 #ifdef COREIR
@@ -15593,13 +15596,13 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
 
   //Compute share apps
-  test_apps.push_back(gpyr_tagged());
   test_apps.push_back(cascade_coarse());
+  test_apps.push_back(gpyr_tagged());
 
   //CGRA tests
+  test_apps.push_back(conv_3_3_reorder());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(cascade());
-  test_apps.push_back(conv_3_3_reorder());
   test_apps.push_back(nlmeans_simple_trunc());
   test_apps.push_back(counter());
   test_apps.push_back(rom());
@@ -19349,7 +19352,11 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
     }
     RRT.print();
 
+
+    //This method is wrong, we need to schedule use the block modulo schedule
     int cycle_accurate_II = RRT.getCycleAccurateIIFineGrained(sched, prg, target_II);
+    RRT.target_II = cycle_accurate_II;
+    //int cycle_accurate_II = RRT.getCycleAccurateII(sched, prg, target_II);
 
     cout << endl << "II optimization finished ..." << endl;
     cout << tab(1) << "Target II : " << target_II <<endl;
@@ -19362,6 +19369,7 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
     cout << tab(2) << "Adjusting II to   : " << sched.II(cgpl) << endl << endl;
 }
 
+//This function without backtracking only works when we have latency equals to the max of each stage then added together
 void adjust_coarse_grained_kernel_latency(CodegenOptions& options,
         schedule_info& sched, RTable& RRT, prog& prg) {
     int rolling_latency = 0;
@@ -19377,6 +19385,42 @@ void adjust_coarse_grained_kernel_latency(CodegenOptions& options,
     }
 }
 
+void adjust_coarse_grained_kernel_latency_fine_grained(
+        CodegenOptions& options, schedule_info& sched, RTable& RRT, prog& prg) {
+    //int rolling_latency = 0;
+    unordered_set<string> k_scheduled;
+    for (auto kernels: RRT.getSortedKernels()) {
+        //int latency_at_each_timestamp = 0;
+        for (string kernel: kernels) {
+            cout << "kernel : " << kernel << endl;
+            op* lp = prg.find_non_op(kernel);
+            auto  producers = get_producers(lp->name, RRT.cgpl, prg);
+            int start_time = 0;
+            for (string prod: producers) {
+                //skip self loop
+                if (k_scheduled.count(prod) == 0) continue;
+                op* prod_op = prg.find_non_op(prod);
+                start_time = max(start_time,
+                        sched.total_latency(prod_op) + RRT.getKernelStartTime(prod_op->name));
+            }
+
+
+            int k_latency = sched.total_latency(lp);
+            //sched.op_offset_within_parent.at(lp->name) = rolling_latency;
+            RRT.initCycleAccurateStartTime(kernel, start_time, k_latency);
+            for (string prod: producers) {
+                if (k_scheduled.count(prod) == 0) continue;
+                RRT.setKernelMaxTimeStamp(prod, start_time);
+            }
+            //Chances are that we have overlapping resource, we need to make a micro adjustment
+            RRT.checkResourceConflict(kernel, k_scheduled, prg);
+            k_scheduled.insert(kernel);
+        }
+    }
+    RRT.printCycleAccurateTimeStamps();
+    RRT.parseKernelLatency(sched);
+}
+
 
 void coarse_grained_pipeline_optimization_subloop(CodegenOptions& options, schedule_info& sched, prog& prg) {
 
@@ -19387,7 +19431,7 @@ void coarse_grained_pipeline_optimization_subloop(CodegenOptions& options, sched
   RRT.align_init_with_update();
 
   //tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
-  adjust_coarse_grained_kernel_latency(options, sched, RRT, prg);
+  adjust_coarse_grained_kernel_latency_fine_grained(options, sched, RRT, prg);
 
 }
 
@@ -19407,7 +19451,7 @@ void coarse_grained_pipeline_optimization(CodegenOptions& options, schedule_info
       //FIXME: seems unnecessary to tighten ii
       //tighten_iis(sched, prg, options.mem_hierarchy.at("mem").fetch_width);
       //tighten_iis(sched, prg);
-      adjust_coarse_grained_kernel_latency(options, sched, RRT, prg);
+      adjust_coarse_grained_kernel_latency_fine_grained(options, sched, RRT, prg);
 
     }
   }
@@ -19797,7 +19841,7 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     } else if(options.fallback_schedule == ISCA_SCHEDULE) {
       coarse_grained_pipeline_optimization(options, sched, prg);
       //adjust_coarse_grained_loop_delays_sequentially_without_opt(sched, prg);
-      align_glb_load_start_cycle(sched, prg);
+      //align_glb_load_start_cycle(sched, prg);
       tighten_coarse_grained_iis(sched, prg);
       adjust_outer_delays_sequentially(sched, prg);
       //int glb_load_latency = find_glb_load_latency(sched, prg);
