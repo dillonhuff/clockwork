@@ -11924,15 +11924,47 @@ vector<int> get_alignment_array(vector<int>& a, vector<int>& b) {
 
 void playground() {
     {
+      isl_ctx* c = isl_ctx_alloc();
+      auto s = isl_map_read_from_str(c, "{A[x]->[17+2x]: 16<=x<=32}");
+      auto s2 = ::domain(s);
+      cout << "sched: " << str(s2) << endl;
+      auto trans = get_offset_remove_map(s2);
+      cout << "trans: " << str(trans) << endl;
+      //auto trans = isl_map_read_from_str(c, "{[x]->[x-16]}");
+      cout << str(dot_domain(s, trans)) << endl;
+      //assert(false);
+
+    }
+    {
 
       isl_ctx* ctx = isl_ctx_alloc();
-      auto m = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1,i2,i3]-> [16*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8 and 0<=i2<=1 and 0<=i3<=16}");
-      auto s = get_domain_mask(m, 2);
-      auto m_mask = dot(s, m);
-      auto sv = get_domain_mask_reverse(m, 2);
-      auto m_mask_rev = dot(sv, m);
-      cout << "mask: " << str(m_mask) << endl;
-      cout << "mask_rev: " << str(m_mask_rev) << endl;
+      auto s = isl_set_read_from_str(ctx,"{ hw_input_global_wrapper_stencil[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 31}");
+
+      // auto m = get_domain_trans(s, vector<int>({2, 1}));
+      // auto m = get_domain_split(s, 0, 2);
+
+      // auto range_pair = get_domain_range_pair(s, 0);
+      // cout << "range pair " << range_pair << endl;
+
+      // auto m = get_domain_trans(s, 0, 2);
+      // auto s2 = isl_set_apply(s, m);
+      auto s2 = get_domain_split(s, 0, 2);
+      cout << s2.size() << endl;
+
+      // cout << "s " << str(s) << endl;
+      // cout << "check 1 " << endl;
+      // cout << "m " << str(m) << endl;
+      cout << "check 2 " << endl;
+      cout << "s2 " << str(s2) << endl;
+      cout << "check 3 " << endl;
+
+      // auto m = isl_map_read_from_str(ctx,"{ wr[root=0, i0, i1,i2,i3]-> [16*i0 + 2*i1]: 0<=i0<8 and 0<=i1<8 and 0<=i2<=1 and 0<=i3<=16}");
+      // auto s = get_domain_mask(m, 2);
+      // auto m_mask = dot(s, m);
+      // auto sv = get_domain_mask_reverse(m, 2);
+      // auto m_mask_rev = dot(sv, m);
+      // cout << "mask: " << str(m_mask) << endl;
+      // cout << "mask_rev: " << str(m_mask_rev) << endl;
       assert(false);
     }
 
@@ -15624,7 +15656,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   }
 }
 
-void test_chaining(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_dp") {
+void test_chaining(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_new") {
   vector<prog> test_apps;
   test_apps.push_back(matmul_chaining());
 
@@ -15637,16 +15669,16 @@ void test_chaining(bool gen_config_only, bool multi_accessor=false, string dir="
     prg.pretty_print();
 #ifdef COREIR
     //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_dual_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
+    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
     cout << "Output name: " << prg.name << endl;
     //run verilator on all the generated verilog
     if (!gen_config_only) {
       vector<string> verilog_files;;
-      verilog_files.push_back("PondTop_flat.v");
-      verilog_files.push_back("pondtop_new.sv");
-      verilog_files.push_back("pond_module_wrappers.v");
-      add_default_initial_block("pondtop", "endmodule   // sram_dp__0");
-      verilator_regression_test(prg, verilog_files, "dual_port_buffer");
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_sp__0");
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
 #endif
   }
@@ -29406,7 +29438,7 @@ int main(int argc, char** argv) {
     if (cmd == "chaining-tests") {
       bool gen_config_only = false;
       bool use_multi_accessor_tile = true;
-      test_chaining(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
+      test_chaining(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }
 

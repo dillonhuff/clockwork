@@ -106,7 +106,7 @@ prog matmul_chaining() {
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 ////producing hw_input_global_wrapper.stencil
-  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 64);
+  auto hw_input_global_wrapper_s0_y = prg.add_loop("hw_input_global_wrapper_s0_y", 0, 63);
   auto hw_input_global_wrapper_s0_x = hw_input_global_wrapper_s0_y->add_loop("hw_input_global_wrapper_s0_x", 0, 32);
 
 //store is: hw_input_global_wrapper.stencil(0, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y) = hw_input.stencil(0, hw_input_global_wrapper_s0_x, hw_input_global_wrapper_s0_y)
@@ -118,8 +118,8 @@ prog matmul_chaining() {
 
 //consuming hw_input_global_wrapper.stencil
 ////producing hw_kernel_global_wrapper.stencil
-  auto hw_kernel_global_wrapper_s0_y = prg.add_loop("hw_kernel_global_wrapper_s0_y", 0, 64);
-  auto hw_kernel_global_wrapper_s0_x = hw_kernel_global_wrapper_s0_y->add_loop("hw_kernel_global_wrapper_s0_x", 0, 32);
+  auto hw_kernel_global_wrapper_s0_y = prg.add_loop("hw_kernel_global_wrapper_s0_y", 0, 63);
+  auto hw_kernel_global_wrapper_s0_x = hw_kernel_global_wrapper_s0_y->add_loop("hw_kernel_global_wrapper_s0_x", 0, 16);
 
 //store is: hw_kernel_global_wrapper.stencil(0, 0, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_y) = hw_kernel.stencil(0, 0, hw_kernel_global_wrapper_s0_x, hw_kernel_global_wrapper_s0_y)
   auto hcompute_hw_kernel_global_wrapper_stencil = hw_kernel_global_wrapper_s0_x->add_op("op_hcompute_hw_kernel_global_wrapper_stencil");
@@ -130,7 +130,7 @@ prog matmul_chaining() {
 
 //consuming hw_kernel_global_wrapper.stencil
 ////producing conv.stencil
-  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 32);
+  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 16);
   auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 32);
 
 //store is: conv.stencil(conv_s0_x, conv_s0_y, 0) = (int16)0
@@ -138,8 +138,8 @@ prog matmul_chaining() {
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_y", "conv_s0_x");
-  auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 64);
-  auto conv_s1_y = conv_s1_r_y->add_loop("conv_s1_y", 0, 32);
+  auto conv_s1_r_y = prg.add_loop("conv_s1_r_y", 0, 63);
+  auto conv_s1_y = conv_s1_r_y->add_loop("conv_s1_y", 0, 16);
   auto conv_s1_x = conv_s1_y->add_loop("conv_s1_x", 0, 32);
 
 //store is: conv.stencil(conv_s1_x, conv_s1_y, 0) = (conv.stencil(conv_s1_x, conv_s1_y, 0) + (hw_kernel_global_wrapper.stencil(0, 0, conv_s1_r_x, conv_s1_r_y)*hw_input_global_wrapper.stencil(0, (conv_s1_r_x + conv_s1_x), (conv_s1_r_y + conv_s1_y))))
@@ -151,7 +151,7 @@ prog matmul_chaining() {
   hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_y", "conv_s1_x");
 
 //consuming conv.stencil
-  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 32);
+  auto hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 16);
   auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 32);
 
 //store is: hw_output.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0) = conv.stencil(hw_output_s0_x_xi, hw_output_s0_y_yi, 0)

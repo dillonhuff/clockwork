@@ -382,6 +382,7 @@ isl_val* lexminval(isl_set* const m0);
 isl_val* lexmaxval(isl_set* const m0);
 
 int get_domain_range(isl_set* const dom, int dim);
+pair<int, int> get_domain_range_pair(isl_set* const dom, int dim);
 int get_domain_span_range(isl_map* const m, int dim);
 int get_domain_span_range(isl_map* const m, int dim, int out_dim);
 pair<int, int> get_domain_merge_dims(isl_map* m );
@@ -402,6 +403,7 @@ isl_map* get_domain_trans(isl_set* dom, vector<int> stride_vec);
 isl_map* get_domain_trans_with_reaccess_mask(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_set* dom, int pos, int fetch_width);
 isl_set* get_domain_trans_sched_domain(isl_map* dom, int pos, int fetch_width);
+vector<isl_set*> get_domain_split(isl_set* dom, int pos, int split_factor);
 
 
 
@@ -548,6 +550,7 @@ isl_union_map* coalesce(isl_union_map* const m0);
 isl_map* coalesce(isl_map* const m0);
 
 isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1);
+isl_map* dot_domain(isl_map* const m0, isl_map* const m1);
 
 isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1);
 
@@ -762,7 +765,7 @@ void release(isl_aff* s);
 isl_multi_aff* get_multi_aff(isl_union_map* m);
 isl_multi_aff* get_multi_aff(isl_map* m);
 
-
+isl_map* get_offset_remove_map(isl_set* s);
 isl_map* linear_address_map(isl_set* s);
 isl_map* linear_schedule(isl_map* sched, vector<int> iis, int offset, bool ignore);
 isl_map* to_map(isl_aff* s);

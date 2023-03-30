@@ -1836,6 +1836,10 @@ isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_domain(cpy(m0), cpy(m1));
 }
 
+isl_map* dot_domain(isl_map* const m0, isl_map* const m1) {
+  return isl_map_apply_domain(cpy(m0), cpy(m1));
+}
+
 isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_range(cpy(m0), cpy(m1));
 }
@@ -4378,6 +4382,15 @@ int get_domain_range(isl_set* const dom, int dim) {
   return to_int(coord(max_dom_pt, dim)) - to_int(coord(min_dom_pt, dim)) + 1;
 }
 
+pair<int, int> get_domain_range_pair(isl_set* const dom, int dim) {
+  int dims = num_dims(dom);
+  assert(dim >= 0);
+  assert(dim < dims);
+  auto min_dom_pt = lexminpt(dom);
+  auto max_dom_pt = lexmaxpt(dom);
+  return make_pair(to_int(coord(max_dom_pt, dim)), to_int(coord(min_dom_pt, dim)));
+}
+
 int get_domain_span_range(isl_map* const m, int dim) {
     //cout << "input: " << str(m) << ", m dim" << dim  << endl;
   auto mm = cpy(m);
@@ -4737,6 +4750,63 @@ isl_map* get_domain_trans(isl_set* dom, int pos, int fetch_width) {
     auto trans = isl_map_read_from_str(ctx(dom), map_str.c_str());
     cout << "Autogen trans:" << str(trans) << endl;
     return trans;
+}
+
+// split a domain dimension by split_factor evenly
+// dom: domain to be split
+// pos: dimension to be split
+// split_factor: the number of isl_set* in the output vector
+vector<isl_set*> get_domain_split(isl_set* dom, int pos, int split_factor) {
+    vector<isl_set*> v_trans;
+    string dom_name = name(dom);
+    int dim = num_dims(dom);
+
+    // ranges <max_range, min_range> of the current domain
+    vector<pair<int, int>> ranges;
+    // variables of the current domain
+    vector<string> var;
+    for (int i = 0; i < dim; i ++) {
+        ranges.push_back(get_domain_range_pair(dom, i));
+        var.push_back("i" + str(i) );
+    }
+
+    // quotient and remainder of the split
+    int range_to_split = get_domain_range(dom, pos);
+    int remainder = range_to_split % split_factor;
+    int quotient = range_to_split / split_factor;
+
+    // range_start indicates that bank 0 processes the first batch
+    int range_start = ranges[pos].second;
+    for (int i = 0; i < split_factor; i ++) {
+        // local range variable that deals with split remainder
+        // if the ranges are not divisible by the split_factor
+        // we need to add the remainder to some of the new domains
+        int new_range;
+        if (i < remainder) new_range = quotient + 1;
+        else new_range = quotient;
+
+        int range_end = range_start + new_range - 1;
+        
+        // format the ranges to convert to isl_set
+        vector<string> stmt;
+        for (int r = 0; r < ranges.size(); r++){
+            // only updates the selected dimension
+            if (r == pos)
+                stmt.push_back(str(range_start) + " <= i" + str(r) + " <= " + str(range_end));
+            else
+                stmt.push_back(str(ranges[r].second) + " <= i" + str(r) + " <= " + str(ranges[r].first));
+        }
+        
+        range_start += new_range;
+
+        // add domain name and deliminiators
+        string map_str = "{" + dom_name + bracket_list(var) + " : " + sep_list(stmt, "", "", " and ") + "}";
+        auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+
+        cout << "splitted sched domain: " << i << ": " << str(trans) << endl;
+        v_trans.push_back(trans);
+    }
+    return v_trans;
 }
 
 isl_map* get_domain_trans(isl_set* dom, vector<int> stride_vec) {
@@ -5144,6 +5214,26 @@ isl_map* linear_schedule(isl_map* in_sched, vector<int> iis, int offset, bool ig
   expr = expr + "+" + to_string(offset);
   auto in_sched_new = gen_hw_sched_from_sched_vec(ctx(in_sched), {expr}, var_list, op_name);
   return its(in_sched_new, domain(in_sched));
+}
+
+isl_map* get_offset_remove_map(isl_set* s) {
+  assert(s != nullptr);
+
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  for (int i = 0; i < dim; i++) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    auto interval = project_all_but(s, i);
+    isl_val* l_val = lexminval(interval);
+    string expr = var + "-" + str(l_val);
+    exprs.push_back(expr);
+  }  
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + 
+    domain + sep_list(exprs, "[", "]", " , ") + " }";
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
 

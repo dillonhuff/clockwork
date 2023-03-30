@@ -2210,6 +2210,7 @@ void tighten_address_space() {
 
     }
 }
+    void remove_domain_offset();
 
 
     int lanes_in_bundle(const std::string& bn) {
@@ -3580,22 +3581,37 @@ struct UBufferImpl {
   map<int, std::set<string> > bank_readers;
   map<int, std::set<string> > bank_writers;
 
+  map<string, std::set<int>> outpt_to_bank; //output chaining
+  map<string, std::set<int>> inpt_to_bank; //input broadcasting
+
+
+  //This two set of information is only useful when we merge bank, 
+  //Before bank merging, we only assume the bank is single ported IO
+  
   //output broadcasting
   map<int, vector<std::set<string>> > bank_outpt2readers;
-
   //input selection(TODO: did not support this feature)
   map<int, vector<std::set<string>> > bank_inpt2writers;
 
-  map<int, GarnetImpl> lowering_info;
-
-  map<string, std::set<int>> outpt_to_bank; //output chaining
-  map<string, std::set<int>> inpt_to_bank; //input broadcasting
 
   //Shift register data
   map<string, int> shift_depth;
   map<string,pair<string,int>> shift_registered_outputs;
   map<string,vector<pair<string,int>>> fanin_outputs;
   vector<pair<string,pair<string,int>>> shift_registered_outputs_to_outputs;
+
+  //Metadata you need for mapping down to AHA CGRA
+  map<int, GarnetImpl> lowering_info;
+
+  void override_banking_info(UBufferImpl & impl) {
+    bank_rddom = impl.bank_rddom;
+    bank_readers = impl.bank_readers;
+    bank_writers = impl.bank_writers;
+    outpt_to_bank = impl.outpt_to_bank;
+    inpt_to_bank = impl.inpt_to_bank;
+    bank_outpt2readers = impl.bank_outpt2readers;
+    bank_inpt2writers = impl.bank_inpt2writers;
+  }
 
   int get_new_bank_id() {
     //Get the max bank id, nothing inside will return 0
@@ -3727,7 +3743,7 @@ struct UBufferImpl {
   void conditional_merging(CodegenOptions & options, const vector<int> & banks_tobe_merged);
   void bank_merging(CodegenOptions & options);
   void bank_merging_and_rewrite(CodegenOptions & options);
-  void capacity_partition(CodegenOptions& options);
+  void capacity_partition(CodegenOptions& options, schedule_info & info, UBuffer & buf);
   void sort_bank_port();
   void sort_bank_port(string , UBuffer& , int);
   void sort_bank_port_for_lake(string , UBuffer& , int);
@@ -3854,6 +3870,21 @@ struct UBufferImpl {
 
 
   void print_info(std::ostream& out) const {
+    out << "Bank Read Domains: " << endl;
+    for (auto it: bank_rddom) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\trddom: " << str(it.second) << endl;
+    }
+    out << "Bank outpt2readers: " << endl;
+    for (auto it: bank_outpt2readers) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\toutpt2readers: " << it.second << endl;
+    }
+    out << "Bank inpt2writers: " << endl;
+    for (auto it: bank_inpt2writers) {
+      out << "\t bank NO." << it.first << endl;
+      out << "\t\tinpt2writers: " << it.second << endl;
+    }
     out << "Bank writers: " << endl;
     for (auto it: bank_writers) {
       out << "\t bank NO." << it.first << endl;
@@ -3874,6 +3905,9 @@ struct UBufferImpl {
     for (auto it: shift_registered_outputs_to_outputs) {
       out << "\t\t " << it.second.first << "->" << it.first << ", delay = " << it.second.second << endl;
     }
+
+    cout << "outpt_to_bank " << outpt_to_bank << endl;
+    cout << "inpt_to_bank " << inpt_to_bank << endl;
   }
 
 };

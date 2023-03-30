@@ -1426,9 +1426,37 @@ void UBufferImpl::bank_merging_and_rewrite(CodegenOptions & options) {
   }
 }
 
-void UBufferImpl::capacity_partition(CodegenOptions& options) {
+void UBuffer::remove_domain_offset(){
+    for (auto it: access_map) {
+        // use it.first to modify access_map and schedule at the same time
+        cout << "access map " << it.first << ", " << str(it.second) << endl;
+        auto trans = get_offset_remove_map(::domain(to_map(it.second)));
+        cout << "new map " << str(trans) << endl;
+        string pt = it.first;
+        access_map.at(pt) = to_umap(dot_domain(to_map(access_map.at(pt)), trans));
+        schedule.at(pt) = to_umap(dot_domain(to_map(schedule.at(pt)), trans));
+        domain.at(pt) = ::domain(to_map(access_map.at(pt)));
+
+    }
+};
+
+void UBufferImpl::capacity_partition(CodegenOptions& options, schedule_info& info, UBuffer& buf) {
+    //create a new impl
+    UBufferImpl new_impl;
+    
     for (auto it: bank_rddom) {
-        GarnetImpl cgra_impl = lowering_info.at(it.first);
+        //Go over every bank check if we need chaining
+        auto bank_id = it.first;
+        UBuffer tmp_buf = buf.generate_ubuffer(*this, info, bank_id);
+
+        //This is used for tighten the cyclic banking space
+        tmp_buf.tighten_iteration_domain();
+        tmp_buf.tighten_address_space();
+        tmp_buf.set_dim_id();
+
+        //Early Determine the config mode
+        string config_mode = buf.determine_config_mode(options, tmp_buf);
+
         //TODO: You need to first check the capacity of each bank
         //and partition those banks that execeed the memory capacity into multiple banks
         //do not forget to rewrite the bank outpt_to_bank and inpt_to_bank
@@ -1439,20 +1467,47 @@ void UBufferImpl::capacity_partition(CodegenOptions& options) {
         int N_buffer = 2;
 
         //Get the memory from options
-        cout << "mem mode: " << cgra_impl.config_mode << endl;
-        string mem_string = options.get_memory_hierarchy_from_config_mode(cgra_impl.config_mode);
-        cout << "mem hierarchy: " << mem_string << endl;
-        auto mem = options.mem_hierarchy.at(mem_string);
+        cout << "mem mode: " << config_mode << endl;
+        string smem_hier = options.get_memory_hierarchy_from_config_mode(config_mode);
+        cout << "mem hierarchy: " << smem_hier << endl;
+        auto mem = options.mem_hierarchy.at(smem_hier);
         int capacity = get_bank_capacity(it.first);
         cout << "Capacity: " << capacity << endl;
         int chaining_tile = (capacity - 1) * N_buffer / mem.get_single_tile_capacity() + 1;
+        cout << "Chaining number is " << chaining_tile << endl;
+        cout << mem.get_single_tile_capacity() << endl;
+        cout << "" << *this << endl;
+        
         if (chaining_tile > 1) {
-           cout << "Need Chaining, NOT Implemented! " << endl;
-           cout << "Max chaining: " << mem.max_chaining << endl;
-           assert(chaining_tile <= mem.max_chaining);
-           assert(false);
+            assert(chaining_tile <= mem.max_chaining);
+            //cout << "Need Chaining, NOT Implemented! " << endl;
+            //cout << "Max chaining: " << mem.max_chaining << endl;
+            
+            // assume we always split at dimension 0 for now
+            // TODO: check to split the outer most dim that does not have sliding window
+            vector<isl_set*> split_rddom = get_domain_split(it.second, 0, chaining_tile);
+            // assign id to new banks
+            // assume bank id is 0, 1, 2...
+            auto inpts = bank_writers.at(bank_id);
+            auto outpts = bank_readers.at(bank_id);
+            for (int d = 0; d < chaining_tile; d++) {
+               int new_bank_id =  new_impl.add_new_bank_between(inpts, outpts, split_rddom.at(d));
+               new_impl.bank_outpt2readers.insert({new_bank_id, bank_outpt2readers.at(bank_id)});
+               new_impl.bank_inpt2writers.insert({new_bank_id, bank_inpt2writers.at(bank_id)});
+            }
+        } else {
+            auto inpts = bank_writers.at(bank_id);
+            auto outpts = bank_readers.at(bank_id);
+            int new_bank_id =  new_impl.add_new_bank_between(inpts, outpts, bank_rddom.at(bank_id));
+            new_impl.bank_outpt2readers.insert({new_bank_id, bank_outpt2readers.at(bank_id)});
+            new_impl.bank_inpt2writers.insert({new_bank_id, bank_inpt2writers.at(bank_id)});
         }
     }
+
+    override_banking_info(new_impl);
+
+    cout << "UBufferImpl after capacity partition" << endl;
+    cout << *this << endl;
 }
 
 void UBufferImpl::bank_merging(CodegenOptions & options) {
@@ -12166,6 +12221,7 @@ void lower_to_garnet_implementation(CodegenOptions& options,
     //This is used for tighten the cyclic banking space
     target_buf.tighten_iteration_domain();
     target_buf.tighten_address_space();
+    target_buf.remove_domain_offset();
     target_buf.set_dim_id();
 
     cout << "\n\tUBuffer after address tighten" << target_buf << endl;
