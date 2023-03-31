@@ -4761,6 +4761,13 @@ vector<isl_set*> get_domain_split(isl_set* dom, int pos, int split_factor) {
     string dom_name = name(dom);
     int dim = num_dims(dom);
 
+    vector<isl_constraint*> cons = constraints(dom);
+    vector<isl_constraint*> cons_added;
+    for (auto c : cons) {
+      if (isl_constraint_is_equality(c))
+        cons_added.push_back(c);
+    }
+
     // ranges <max_range, min_range> of the current domain
     vector<pair<int, int>> ranges;
     // variables of the current domain
@@ -4802,6 +4809,9 @@ vector<isl_set*> get_domain_split(isl_set* dom, int pos, int split_factor) {
         // add domain name and deliminiators
         string map_str = "{" + dom_name + bracket_list(var) + " : " + sep_list(stmt, "", "", " and ") + "}";
         auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+        for (auto c : cons_added) {
+          trans = isl_set_add_constraint(trans, c);
+        }
 
         cout << "splitted sched domain: " << i << ": " << str(trans) << endl;
         v_trans.push_back(trans);

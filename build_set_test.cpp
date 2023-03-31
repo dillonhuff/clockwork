@@ -15658,7 +15658,8 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
 void test_chaining(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_new") {
   vector<prog> test_apps;
-  test_apps.push_back(matmul_chaining());
+  test_apps.push_back(matmul_unroll2_chaining());
+  //test_apps.push_back(matmul_chaining());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
