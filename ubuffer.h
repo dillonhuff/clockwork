@@ -2212,6 +2212,7 @@ void tighten_address_space() {
 }
     void remove_domain_offset();
 
+    int pick_chaining_parition_addr_dim();
 
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));

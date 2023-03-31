@@ -1440,9 +1440,32 @@ void UBuffer::remove_domain_offset(){
     }
 };
 
+int UBuffer::pick_chaining_parition_addr_dim(){
+  //Should return the left most dimension that related to only 1 iteration domain variable
+  for (int out_dim = 0; out_dim < num_dims(); out_dim ++ ) {
+    bool no_sliding_win = true;
+    for (auto it: access_map) {
+      isl_map* am = to_map(it.second);
+      if (in_involve_dim(am, out_dim).size() != 1) {
+        no_sliding_win = false;
+        break;
+      }
+    }
+    if (no_sliding_win) {
+      return out_dim;
+    }
+  }
+  cout << "All address dimensions have sliding window, cannot apply chaining on ubuffer: " << name << endl;
+  cout << "Please reblock the app to make this memory smaller. " << endl;
+  assert(false);
+  return 0;
+}
+
 void UBufferImpl::capacity_partition(CodegenOptions& options, schedule_info& info, UBuffer& buf) {
     //create a new impl
     UBufferImpl new_impl;
+    int partition_addr = buf.pick_chaining_parition_addr_dim();
+    //assert(partition_addr == 0);
     
     for (auto it: bank_rddom) {
         //Go over every bank check if we need chaining
@@ -1485,7 +1508,7 @@ void UBufferImpl::capacity_partition(CodegenOptions& options, schedule_info& inf
             
             // assume we always split at dimension 0 for now
             // TODO: check to split the outer most dim that does not have sliding window
-            vector<isl_set*> split_rddom = get_domain_split(it.second, 0, chaining_tile);
+            vector<isl_set*> split_rddom = get_domain_split(it.second, partition_addr, chaining_tile);
             // assign id to new banks
             // assume bank id is 0, 1, 2...
             auto inpts = bank_writers.at(bank_id);

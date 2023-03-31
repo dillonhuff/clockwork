@@ -55,6 +55,7 @@ prog conv_rolled(); //stencil
 prog unet_conv_3_3(); //reduce
 prog resnet(); //reduce
 prog resnet_simple(); //for regfile debug
+prog resnet_chaining(); //for regfile debug
 prog resnet_tiny(); //for regfile debug
 prog resnet_size_test(); //for schedule debug
 prog resnet_multi_tiny(); //for regfile debug
@@ -94,6 +95,7 @@ prog three_level_memory();
 prog three_level_pond();
 prog three_level_pond_rolled();
 prog resnet_unrolled();
+prog resnet5_x_chaining();
 prog resnet88();
 prog resnet88_chain();
 prog resnet_coarse_pipeline_loop();

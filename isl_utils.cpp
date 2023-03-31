@@ -4809,7 +4809,9 @@ vector<isl_set*> get_domain_split(isl_set* dom, int pos, int split_factor) {
         // add domain name and deliminiators
         string map_str = "{" + dom_name + bracket_list(var) + " : " + sep_list(stmt, "", "", " and ") + "}";
         auto trans = isl_set_read_from_str(ctx(dom), map_str.c_str());
+        //cout << "splited sched domain before add constraints:  " << str(trans) << endl;
         for (auto c : cons_added) {
+          //cout << "constraints: " << str(c) << endl;
           trans = isl_set_add_constraint(trans, c);
         }
 

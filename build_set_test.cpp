@@ -15658,29 +15658,37 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
 void test_chaining(bool gen_config_only, bool multi_accessor=false, string dir="aha_garnet_new") {
   vector<prog> test_apps;
+  test_apps.push_back(resnet_chaining());
   test_apps.push_back(matmul_unroll2_chaining());
-  //test_apps.push_back(matmul_chaining());
+  test_apps.push_back(matmul_chaining());
 
   for ( auto prg: test_apps) {
     prg.sanity_check();
 
     break_up_multi_channel_inputs(prg);
     break_up_multi_channel_outputs(prg);
-    dsa_writers(prg);
+    dsa_writers_new(prg);
     prg.pretty_print();
 #ifdef COREIR
-    //compile_for_garnet_platonic_mem(prg);
-    compile_for_garnet_single_port_mem(prg, dir, false, gen_config_only, false, false, "", false);
+    compile_for_garnet_single_port_mem(prg, dir,
+            false, /*generate smt stream*/
+            gen_config_only,/*gen_config_only*/
+            false, /*multi level hierarchy*/
+            false, /*for metamapper*/
+            "",
+            false);
+    //generate_regression_testbench(prg);
+
     cout << "Output name: " << prg.name << endl;
-    //run verilator on all the generated verilog
     if (!gen_config_only) {
-      vector<string> verilog_files;;
+      vector<string> verilog_files;
       verilog_files.push_back("LakeTop_flat.v");
       verilog_files.push_back("laketop_new.sv");
       verilog_files.push_back("lake_module_wrappers.v");
       add_default_initial_block("laketop", "endmodule   // sram_sp__0");
       verilator_regression_test(prg, verilog_files, "single_port_buffer");
     }
+
 #endif
   }
 }
