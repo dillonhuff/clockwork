@@ -15264,6 +15264,10 @@ void test_pond(string dir, bool run_verilator=true) {
 
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
+  //Work with tb height = 4
+  test_apps.push_back(fsrcnn_reorder());
+  //Has pixel mismatch
+  //test_apps.push_back(fsrcnn_shared());
 
   //Accumulation register
   test_apps.push_back(conv_1_3());

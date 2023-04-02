@@ -154,6 +154,9 @@ prog gemm_reorder();
 
 prog maxpool_layer();
 
+prog fsrcnn();
+prog fsrcnn_shared();
+prog fsrcnn_reorder();
 //resnet without input tiling
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();

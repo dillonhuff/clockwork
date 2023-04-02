@@ -2778,8 +2778,8 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   for (auto& buf : buffers) {
     //Help for DEBUG
-    //if (!contains(buf.first, "output_cgra")) {
-    //    continue;
+    //if (!contains(buf.first, "f1_cgra_stencil")) {
+    //  continue;
     //}
     //if (!contains(buf.first, "kernel_cgra")) {
     //    continue;
