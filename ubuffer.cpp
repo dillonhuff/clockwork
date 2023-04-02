@@ -9828,8 +9828,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         isl_set* s_rem = rem_dom_set.at(i);
         cout << "\tnew: " << str(s_new) << endl;
         cout << "\trem: " << str(s_rem) << endl;
-        int origin_max = get_dim_max(range(its(acc_vec_new, s_new)), addr_dim);
-        int trans_max = get_dim_max(range(its(acc_vec_rem, s_rem)), addr_dim);
+        auto origin_range = range(its(acc_vec_new, s_new));
+        auto new_range = range(its(acc_vec_rem, s_new));
+        cout << "origin range: " << str(origin_range) << endl;
+        cout << "new range: " << str(new_range) << endl;
+        int origin_max = get_dim_max(origin_range, addr_dim);
+        int trans_max = get_dim_max(new_range, addr_dim);
         cout << "origin max: " << str(origin_max) << endl;
         cout << "trans max: " << str(trans_max) << endl;
         ahead_step = max(ahead_step, origin_max - trans_max);
@@ -9989,6 +9993,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
     //we still get the correct data in time after remove floor div
     //FIXME: Need to rewrite this after ASPLOS
     //ahead does not mean we need to fetch more item
+    //TODO: 2023 Mar, need to write a bunch of unit test for the prefetch step and pad range
     int ahead_step = get_prefetch_step(acc_vec_new, acc_vec_rem, vectorized_dim, addr_dim);
 
     //projected out the reaccessing dimension
