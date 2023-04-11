@@ -1875,6 +1875,7 @@ struct schedule_info {
   map<string, int> buffer_load_latencies;
   map<string, int> buffer_store_latencies;
   map<string, int> compute_unit_latencies;
+  map<string, int> op_latencies;
   //This data structure save the port loading slack with respect to the largest latency
   map<string, map<string, int>> port_latencies;
   map<string, string> op_compute_unit_names;

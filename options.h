@@ -144,12 +144,13 @@ struct LakeCollateral {
         counter_ub(65535),
         interconnect_in_num(1),
         interconnect_out_num(1),
-        load_latency(0),
+        //load_latency(0),
         store_latency(0),
         multi_sram_accessor(true),
         dual_port_sram(false),
         wire_chain_en(false) {
             if (level == "mem") {
+                load_latency = 1;
                 fetch_width = 4;
                 max_chaining = 4;
                 iteration_level = 6;
@@ -164,6 +165,7 @@ struct LakeCollateral {
                 controller_name = {"agg", "sram", "tb"};
                 bank_num = {{"agg", 2}, {"sram", 1}, {"tb", 2}};
             } else if (level == "regfile") {
+            load_latency = 0;
                 fetch_width = 1;
                 max_chaining = 1;
                 word_width = {{"regfile", 1}};
@@ -175,6 +177,7 @@ struct LakeCollateral {
                 iteration_level = 4;
                 iter_level_map = {{"in2regfile_1", 2}, {"regfile2out_1", 2}};
             } else if (level == "glb") {
+            load_latency = 0;
                 fetch_width = 1;
                 max_chaining = 1;
                 word_width = {{"glb", 1}};

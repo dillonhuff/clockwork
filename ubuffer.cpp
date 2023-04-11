@@ -1653,9 +1653,12 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
       auto dom = ::domain(acc_map);
 
       //update op latency
-      op_latency = info.compute_latency(::domain_name(acc_map));
+      //op_latency = info.compute_latency(::domain_name(acc_map));
+      
       // op_latency = info.compute_unit_latencies(::domain_name(acc_map));
-
+      op_latency = info.op_latencies.at(::domain_name(acc_map));
+      std::cout << "generate_ubuffer op_latencies " << info.op_latencies.at(::domain_name(acc_map)) << " " << ::domain_name(acc_map) << std::endl;
+      std::cout << "generate_ubuffer compute_latency " << info.compute_latency(::domain_name(acc_map)) << std::endl;
 
       auto sched_aff = get_aff(schedule.at(inpt));
       //cout << "buffer name:" << name << endl;
