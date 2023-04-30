@@ -2201,11 +2201,12 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   string dp_flag_str = dp_flag ? " -dp " : "";
   int fw = mem_collateral.fetch_width;
   int capacity = mem_collateral.get_single_tile_capacity()/fw;
+  int tb_height = mem_collateral.get_capacity("tb")/fw;
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d " + str(capacity) + " -mw " + str(fw*16) + dp_flag_str);
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d " + str(capacity) +
+          " -tb " + str(tb_height) + " -mw " + str(fw*16) + dp_flag_str);
   assert(res_lake == 0);
-
 
 }
 
