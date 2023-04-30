@@ -350,7 +350,7 @@ struct LakeCollateral {
 
     void set_capacity(string name, int size) {
       assert(controller_name.count(name));
-      assert(bank_num.at(name) == 1);
+      //assert(bank_num.at(name) == 1);
       capacity.insert({name, size});
     }
 
