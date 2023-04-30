@@ -5571,12 +5571,18 @@ void perfect_loop_split(op* lp, prog& prg) {
         auto new_lp = prg.root->add_loop_before(outtest_lp,
                 outtest_lp->name + "_split_"+str(child_cnt),
                 outtest_lp->start, outtest_lp->end_exclusive);
+
+        //When copy the loop node, also copy the cgl tag
+        if (outtest_lp->cgl_tag) new_lp->cgl_tag = true;
         if (child->index_variables_needed_by_compute.size() > 0) {
           child->rename_index_var(outtest_lp->name, outtest_lp->name + "_split_"+str(child_cnt));
         }
         for (auto it = loop_nest.begin()+1; it != loop_nest.end(); it ++) {
             new_lp = new_lp->add_loop((*it)->name + "_split_" + str(child_cnt),
                     (*it)->start, (*it)->end_exclusive);
+
+            if ((*it)->cgl_tag)
+                new_lp->cgl_tag = true;
 
             if (child->index_variables_needed_by_compute.size() > 0) {
               child->rename_index_var((*it)->name, (*it)->name + "_split_"+str(child_cnt));
