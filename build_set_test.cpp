@@ -20080,6 +20080,34 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     string suffix = 
       options.rtl_options.use_pipelined_compute_units ? "_pipelined" : "" ;
 
+    //Load the broadcast memory latency
+    json ub_latencies;
+    
+    std::ifstream ub_latencies_file("ub_latency.json", std::ifstream::binary);
+
+    if (ub_latencies_file.is_open()){
+      ub_latencies_file >> ub_latencies;
+    }
+
+    for (auto buf_latency_vec: ub_latencies.items()) {
+      
+      string buf = buf_latency_vec.key();
+      cout << "buf: " << buf << endl;
+      map<int, int> lat_map;
+      for (auto it: buf_latency_vec.value()) {
+        //cout << it << endl;
+        int bank = it["bank"];
+        int latency = it["latency"];
+        lat_map[bank] = latency;
+      }
+      vector<int> lat;
+      for (auto it: lat_map) {
+        lat.push_back(it.second);
+      }
+     // cout << lat << endl;
+      sched.ub_latencies[buf] = lat;
+    }
+
     for (auto op : prg.all_ops()) {
       if (op->func != "") {
         sched.resource_requirements[op] = op->func;

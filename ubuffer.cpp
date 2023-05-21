@@ -1643,6 +1643,9 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
     int usuffix = 0;
     bool sr = false;
     int op_latency = 0;
+    //FIXME: this is a hack for broadcast latency
+    int broadcast_latency = info.get_ub_latency(name, bank);
+    
 
     for (string inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
@@ -1663,6 +1666,7 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
       //    cout << "\tbuffer: " << it.first << ", " << it.second << endl;
       //}
       sched_aff = add(sched_aff, op_latency  - info.buffer_store_latencies.at(name));
+      sched_aff = add(sched_aff, broadcast_latency);
       isl_map* sched = its(to_map(sched_aff), dom);
 
       //string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);

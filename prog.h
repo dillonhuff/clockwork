@@ -1878,6 +1878,8 @@ struct schedule_info {
   //This data structure save the port loading slack with respect to the largest latency
   map<string, map<string, int>> port_latencies;
   map<string, string> op_compute_unit_names;
+  //This data structure save the broadcast latency within the interconnect.
+  map<string, vector<int> > ub_latencies;
   //map<string, int> op_compute_unit_latencies;
 
   // Resource constraints
@@ -1910,6 +1912,23 @@ struct schedule_info {
         }
       }
       return 0;
+    } else {
+      return 0;
+    }
+  }
+
+  int get_ub_latency(string buf, int bank) {
+    if (ub_latencies.count(buf)) {
+      int min_delay = INT_MAX;
+      for (int delay: ub_latencies.at(buf)) {
+        min_delay = std::min(min_delay, delay);
+      }
+      if (ub_latencies.at(buf).size() <= bank) {
+        cout << "bank number: " << bank << endl;
+        cout << ub_latencies.at(buf) << endl;
+      }
+      assert(ub_latencies.at(buf).size() > bank);
+      return ub_latencies.at(buf).at(bank) - min_delay;
     } else {
       return 0;
     }
