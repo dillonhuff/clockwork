@@ -18104,16 +18104,19 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
               cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+              cout << tab(4) << "loop II: " << sched.II(loop) << endl;
               cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
 
               //This loop is the innermost loop that access the vectorized dimension
               if (levels.at(loop->name) == in_involve_d.back()) {
-                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0));
+                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((loop->trip_count() % fetch_width) + fetch_width * (loop->trip_count()%fetch_width== 0));
+                  sched.op_pad_step[loop] = ((loop->trip_count() % fetch_width) + fetch_width * (loop->trip_count()%fetch_width== 0));
              } else {
                   //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
                   //if (range_span % fetch_width)
                   //TODO: also check the logic here, this is conservative
                   sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((4- (loop->trip_count()) % fetch_width));
+                  sched.op_pad_step[loop] = ((4- (loop->trip_count()) % fetch_width));
               }
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
               return true;
@@ -18320,14 +18323,19 @@ void tighten_iis(schedule_info& sched, prog& prg, int fetch_width) {
       if (ii != 1) {
         int L = sched.last_update_delay(loop);
         int offset = 0;
-        if (L % fetch_width != 0) {
-          offset = fetch_width - L%fetch_width;
+        if (L % 2!= 0) {
+          offset = L%2;
           L += offset;
         }
+        //if (L % fetch_width != 0) {
+        //  offset = fetch_width - L%fetch_width;
+        //  L += offset;
+        //}
         if (ii > L) {
           cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
           sched.loop_iis[loop->name] = max(L, 1);
-          //sched.op_offset_within_parent.at(pick(loop->children)) += offset;
+          //Added for offset update to create a higher temporal occupancy
+          sched.op_offset_within_parent.at(loop) = sched.pad_step(loop) * L;
           tightened = true;
           break;
         }
@@ -18420,8 +18428,7 @@ void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_w
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
               cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-              sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width
-                  + fetch_width * (loop->trip_count()%fetch_width== 0);
+              sched.op_offset_within_parent.at(loop) = (loop->trip_count() % fetch_width) + fetch_width * ((loop->trip_count()%fetch_width) == 0);
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
             }
         }
