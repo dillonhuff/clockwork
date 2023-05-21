@@ -5357,6 +5357,8 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
 
     if (!found_smaller_ii) {
       sched.loop_iis[lp->name] = old_ii;
+    } else {
+      cout << "Found smaller II of " << lp->name << " to " << sched.loop_iis[lp->name] << endl;
     }
   }
 }

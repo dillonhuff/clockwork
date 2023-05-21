@@ -18060,16 +18060,19 @@ bool need_relax(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
               cout << tab(4) << "Relax ii latency for op: " << loop->name << endl;
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
+              cout << tab(4) << "loop II: " << sched.II(loop) << endl;
               cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
 
               //This loop is the innermost loop that access the vectorized dimension
               if (levels.at(loop->name) == in_involve_d.back()) {
-                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((loop->trip_count()) % fetch_width + fetch_width * (loop->trip_count()%fetch_width== 0));
+                  sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((loop->trip_count() % fetch_width) + fetch_width * (loop->trip_count()%fetch_width== 0));
+                  sched.op_pad_step[loop] = ((loop->trip_count() % fetch_width) + fetch_width * (loop->trip_count()%fetch_width== 0));
              } else {
                   //int range_span = get_dim_extent(range(b_map), packed_addr_dim);
                   //if (range_span % fetch_width)
                   //TODO: also check the logic here, this is conservative
                   sched.op_offset_within_parent.at(loop) = sched.II(loop) * ((4- (loop->trip_count()) % fetch_width));
+                  sched.op_pad_step[loop] = ((4- (loop->trip_count()) % fetch_width));
               }
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
               return true;
@@ -18376,8 +18379,7 @@ void relax_inner_iis(schedule_info& sched, op* loop, umap* read_map, int fetch_w
               //cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(child) << endl;
               cout << tab(4) << "Original offset within parent: " << sched.offset_in_parent(loop) << endl;
               cout << tab(4) << "loop trip count: " << loop->trip_count() << endl;
-              sched.op_offset_within_parent.at(loop) = (loop->trip_count()) % fetch_width
-                  + fetch_width * (loop->trip_count()%fetch_width== 0);
+              sched.op_offset_within_parent.at(loop) = (loop->trip_count() % fetch_width) + fetch_width * ((loop->trip_count()%fetch_width) == 0);
               cout << tab(4) << "New offset within parent: " << sched.offset_in_parent(loop) << endl;
             }
         }

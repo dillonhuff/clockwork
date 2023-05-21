@@ -1881,6 +1881,7 @@ struct schedule_info {
   map<string, int> loop_iis;
   //map<op*, int> instance_latencies;
   map<op*, int> op_offset_within_parent;
+  map<op*, int> op_pad_step;
 
   int compute_latency(const std::string& op_name);
   int compute_latency(op* op);
@@ -1919,13 +1920,21 @@ struct schedule_info {
     assert(contains_key(c, op_offset_within_parent));
     return map_find(c, op_offset_within_parent);
   }
+  int pad_step(op*c) {
+    if (contains_key(c, op_pad_step)) 
+      return map_find(c, op_pad_step);
+    else
+      return 0;
+  }
 
   int perfect_loop_update_delay(op* lp) {
     assert(lp->is_loop());
     assert(lp->children.size() == 1);
     auto c = pick(lp->children);
     if (c->is_loop()) {
-      return offset_in_parent(c) + II(c) * c->trip_count();
+      cout << "child name: " << c->name << endl;
+      cout << "offset_in_parent: " << offset_in_parent(c) << endl;
+      return II(c) * (pad_step(c) + c->trip_count());
     } else if (c->is_op()) {
       return offset_in_parent(c) + total_latency(c);
     } else {
