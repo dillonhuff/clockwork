@@ -5410,6 +5410,9 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
       sched.loop_iis[lp->name] = old_ii;
     } else {
       cout << "Found smaller II of " << lp->name << " to " << sched.loop_iis[lp->name] << endl;
+      if (sched.pad_step(lp)) {
+        sched.op_offset_within_parent.at(lp) = sched.pad_step(lp) *sched.loop_iis[lp->name];
+      }
     }
   }
 }
