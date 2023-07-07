@@ -60,6 +60,7 @@ struct ir_node {
 
   // If statement condition
   std::string condition;
+  ir_node* origin_lp;
 
   // Operations / other loops contained in this loop nest
   std::vector<op*> children;
@@ -92,6 +93,7 @@ struct ir_node {
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr),
+  origin_lp(nullptr),
   tp(IR_NODE_TYPE_OPERATION),
   unroll_factor(1) {}
 
@@ -601,11 +603,12 @@ struct ir_node {
     return lp;
   }
 
-  op* add_if(const std::string& name, const std::string& condition) {
+  op* add_if(const std::string& name, const std::string& condition, op* imperfect_lp) {
     assert(!is_op());
 
     auto lp = new op();
     lp->name = name;
+    lp->origin_lp = imperfect_lp;
     lp->condition = condition;
     lp->ctx = ctx;
     lp->parent = this;
@@ -615,11 +618,12 @@ struct ir_node {
     return lp;
   }
 
-  op* add_if_front(const std::string& name, const std::string& condition) {
+  op* add_if_front(const std::string& name, const std::string& condition, op* imperfect_lp) {
     assert(!is_op());
 
     auto lp = new op();
     lp->name = name;
+    lp->origin_lp = imperfect_lp;
     lp->condition = condition;
     lp->ctx = ctx;
     lp->parent = this;
@@ -2343,3 +2347,5 @@ std::string perfect_loop_codegen(umap* schedmap);
 umap* clockwork_schedule_prog(prog& prg);
 
 std::vector<std::string> get_kernels_in_order(prog& prg);
+
+int calculate_duty_cycle(op*);
