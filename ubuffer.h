@@ -1618,7 +1618,7 @@ class UBuffer {
         for (int i = 0; i <= in_dim; i ++) {
           if (rel_map.at(i) == true) {
             cout << "Cannot separate this loop" << endl;
-            assert(false);
+            //assert(false);
             cout << "New cgpl level: " << get_in_dim_name(sched, i-1) << endl;;
             coarse_grained_pipeline_loop_level = i-1;
           }

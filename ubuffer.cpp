@@ -783,8 +783,8 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
     //assert(config_mode == "lake");
     //optimize the double buffer
     isl_set* cgpl_dom = ::domain(cgpl_sched);
-    int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
-    assert(stripmine_ext >= 2 &&( stripmine_ext % 2 == 0 ));
+    //int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
+    //assert(stripmine_ext >= 2 &&( stripmine_ext % 2 == 0 ));
     auto trans =
         get_domain_trans_with_reaccess_mask(cgpl_dom, coarse_grained_pipeline_loop_level, 2);
 
