@@ -191,6 +191,10 @@ prog resnet5_glb_unroll();
 prog resnet5_1_unroll_cyclic();
 prog resnet5_x_new();
 prog resnet_multi_channel();
+prog resnet16x16();
+prog resnet16x16_mic();
+prog resnet16x16_mic_moc();
+prog resnet_mic_moc();
 
 //Full layer simulation
 prog resnet_output_stationary_small();
