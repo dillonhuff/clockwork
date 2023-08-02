@@ -15209,6 +15209,14 @@ void Init_PE_energy_cost(power_analysis_params& power_params)  {
 }
 
 
+void compile_for_garnet_single_port_mem_large_TB(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_level_mem,
+        bool use_metamapper,
+        string dse_compute_filename,
+        bool energy_model=false);
 void compile_for_garnet_single_port_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only,bool multi_level_mem, bool use_metamapper, string dse_compute_filename, bool energy_model = false);
 void compile_for_garnet_fetch2_mem(prog & prg, string dir, bool gen_smt_stream, bool gen_config_only, bool multi_level_mem, bool use_metampper, string dse_compute_filename, bool energy_model = false);
 void compile_for_garnet_dual_port_mem(prog& prg,
@@ -15257,6 +15265,52 @@ void verilator_regression_test(prog& prg, vector<string>& collateral_files, stri
   cpy_app_to_folder(app_type, prg.name);
 }
 
+void test_multi_layer_nn(string dir, bool run_verilator=true) {
+
+    vector<prog> test_apps;
+  //Work with tb height = 4
+  test_apps.push_back(fsrcnn_reorder());
+  test_apps.push_back(fsrcnn_shared());
+
+  for ( auto prg: test_apps) {
+    cout << "====== Running CGRA Single Port test for " << prg.name << endl;
+    prg.pretty_print();
+    prg.sanity_check();
+
+    break_up_multi_channel_inputs(prg);
+    break_up_multi_channel_outputs(prg);
+    dsa_writers_new(prg);
+    prg.pretty_print();
+    bool gen_config_only = !run_verilator;
+
+#ifdef COREIR
+    compile_for_garnet_single_port_mem_large_TB(prg, dir,
+            false, /*generate smt stream*/
+            gen_config_only,/*gen_config_only*/
+            true, /*multi level hierarchy*/
+            false, /*for metamapper*/
+            "",
+            false);
+
+    cout << "Output name: " << prg.name << endl;
+    //run verilator on all the generated verilog
+    if (!gen_config_only) {
+      vector<string> verilog_files;
+      verilog_files.push_back("LakeTop_flat.v");
+      verilog_files.push_back("laketop_new.sv");
+      verilog_files.push_back("PondTop_flat.v");
+      verilog_files.push_back("pondtop.sv");
+      verilog_files.push_back("pond_module_wrappers.v");
+      verilog_files.push_back("lake_module_wrappers.v");
+      add_default_initial_block("laketop", "endmodule   // sram_sp__0");
+      verilator_regression_test(prg, verilog_files, "single_port_buffer");
+    }
+
+#endif
+  }
+}
+
+
 void test_pond(string dir, bool run_verilator=true) {
   vector<prog> test_apps;
   //Need to change the schedule for vectorization
@@ -15264,12 +15318,9 @@ void test_pond(string dir, bool run_verilator=true) {
 
   //fp app need pond for accumulation buffer
   //test_apps.push_back(nlmeans_rolled_7x7());
-  //Work with tb height = 4
-  test_apps.push_back(fsrcnn_reorder());
-  //Has pixel mismatch
-  //test_apps.push_back(fsrcnn_shared());
 
   //Accumulation register
+  //
   test_apps.push_back(conv_1_3());
   test_apps.push_back(conv_rolled());
 
@@ -17901,6 +17952,7 @@ void lake_tests() {
   //vectorization_unit_tests();
   //vectorization_unit_tests();
   test_single_port_mem(false, true, "aha_garnet_design_new");
+  test_multi_layer_nn("aha_garnet_design_pond");
   test_pond("aha_garnet_design_pond");
   //test_single_port_mem(false, false, "aha_garnet_design");
   //assert(false);
@@ -21010,6 +21062,87 @@ void compile_for_garnet_dual_port_mem(prog& prg,
 
   schedule_info sched =
       garnet_schedule_info(options, prg, use_metamapper);
+  garnet_single_port_ram_schedule(options, sched, prg.root, prg);
+  auto sched_map = op_times_map(sched, prg);
+  auto hw_sched = its(sched_map,
+          prg.whole_iteration_domain());
+  cout << "result schedule: " << str(hw_sched) << endl;
+  auto buffers_opt = build_buffers(prg, hw_sched);
+  auto sched_max = lexmaxpt(range(hw_sched));
+  cout << "Latency of application is: " << str((sched_max)) << endl;
+
+  tag_coarse_grained_loop_to_ubuf(buffers_opt, prg);
+  //FIXME: put into separate pass for power analysis
+  if (energy_model) {
+    mem_access_cnt mem_access;
+    Mem_access_count(options, buffers_opt, mem_access, prg);
+    emit_mem_access_count_to_csv(dir + "/MemCount/" + prg.name, options, mem_access);
+
+    power_analysis_params power_params;
+    power_analysis_info power_stats;
+    Init_PE_energy_cost(power_params);
+
+#ifdef COREIR
+    PE_energy_cost_instance_model(power_params, power_stats, prg);
+    PE_energy_cost(power_params, power_stats, prg);
+#endif
+
+  }
+
+#ifdef COREIR
+  generate_garnet_coreir(buffers_opt, prg, options, sched, use_metamapper, dse_compute_filename);
+  if (!options.config_gen_only) {
+    generate_garnet_verilog_top(options, prg.name);
+    generate_garnet_verilator_tb(options, prg, hw_sched, buffers_opt);
+  }
+#endif
+}
+
+void compile_for_garnet_single_port_mem_large_TB(prog& prg,
+        string dir,
+        bool gen_smt_stream,
+        bool config_gen_only,
+        bool multi_level_mem,
+        bool use_metamapper,
+        string dse_compute_filename,
+        bool energy_model) {
+
+  //make sure the loop bound and address is positive
+  normalize_bounds(prg);
+  normalize_address_offsets(prg);
+  //remove_div(prg);
+  prg.sanity_check();
+  prg.pretty_print();
+
+
+  //optimized schedule
+  cmd("mkdir -p " + dir + "/" + prg.name);
+
+  //auto iis = garnet_fuse_ii_level(prg);
+  //auto buffers_opt = build_buffers(prg, clockwork_schedule(prg));
+  CodegenOptions options = garnet_codegen_single_port_with_addrgen_options(prg, dir);
+  options.debug_options.traceWave = true;
+  options.add_memory_hierarchy("mem");
+  options.mem_hierarchy.at("mem").capacity.at("tb") = 16;
+  options.add_memory_hierarchy("glb");
+  if (multi_level_mem) {
+    options.add_memory_hierarchy("regfile");
+    //options.rtl_options.double_buffer_optimization = false;
+    //options.fallback_schedule = SEQUENTIAL_SCHEDULE;
+  }
+  options.rtl_options.double_buffer_optimization = true;
+  options.emit_smt_stream = gen_smt_stream;
+  options.config_gen_only = config_gen_only;
+  //if (multi_sram)
+  //    options.mem_tile.multi_sram_accessor = true;
+
+  if(options.fallback_schedule == ISCA_SCHEDULE) {
+    loop_perfection(prg);
+    cout << "After Loop Perfection" << endl;
+    prg.pretty_print();
+  }
+
+  schedule_info sched = garnet_schedule_info(options, prg, use_metamapper);
   garnet_single_port_ram_schedule(options, sched, prg.root, prg);
   auto sched_map = op_times_map(sched, prg);
   auto hw_sched = its(sched_map,
@@ -29669,6 +29802,7 @@ int main(int argc, char** argv) {
     if (cmd == "pond-tests") {
       bool run_verilator = true;
       test_pond("aha_garnet_design_pond", run_verilator);
+      test_multi_layer_nn("aha_garnet_design_pond", run_verilator);
       return 0;
     }
 
