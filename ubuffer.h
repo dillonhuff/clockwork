@@ -1615,12 +1615,16 @@ class UBuffer {
         //  TODO: this should be derived from loop level not distribute into ubuf
         //if we found this is not the cgpl, due to reduction of DNN loop
         //we take the inner most non-related loop as new cgpl loop
+        //
+        //UPDATE on 6.27.2023
+        //For multiple level coarse grained loop level (uneven mapping)
+        //we update the coarse grained pipeline loop level
         for (int i = 0; i <= in_dim; i ++) {
-          if (rel_map.at(i) == true) {
-            cout << "Cannot separate this loop" << endl;
-            //assert(false);
+          if(rel_map.at(i)) {
+            //cout << "Cannot separate this loop" << endl;
             cout << "New cgpl level: " << get_in_dim_name(sched, i-1) << endl;;
             coarse_grained_pipeline_loop_level = i-1;
+            break;
           }
         }
       }
