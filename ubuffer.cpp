@@ -783,8 +783,9 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
     //assert(config_mode == "lake");
     //optimize the double buffer
     isl_set* cgpl_dom = ::domain(cgpl_sched);
-    int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
-    assert(stripmine_ext >= 2 &&( stripmine_ext % 2 == 0 ));
+    //No stripmining needed
+    //int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
+    //assert(stripmine_ext >= 2 &&( stripmine_ext % 2 == 0 ));
     auto trans =
         get_domain_trans_with_reaccess_mask(cgpl_dom, coarse_grained_pipeline_loop_level, 2);
 
@@ -3921,6 +3922,7 @@ void cgpl_ctrl_optimization(CodegenOptions& options, UBuffer& target_buf, string
     UBuffer new_target_buf;
     //Also pass in the decouple_ctrl boolean, it's possible that we use double buffer
     //and not decouple ctrl anymore
+    //The following function just merge the coarse grained loops into one loop iterator and reduce total dimensionality
     cgpl_schedule =
         target_buf.get_coarse_grained_pipeline_schedule(options, new_target_buf, config_mode, decouple_ctrl, substract_glb_latency);
     //Just get the schedule, push back the logic generation we may need to change it due to double buffer optimization
