@@ -15624,8 +15624,12 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
 
 
   //Compute share apps
-  test_apps.push_back(cascade_coarse());
+  //test_apps.push_back(resnet_init_unroll_tile_dp());
+  //test_apps.push_back(laplacian_composite());
+  test_apps.push_back(gpyr_unroll_default());
+  test_apps.push_back(gpyr_unroll());
   test_apps.push_back(gpyr_tagged());
+  test_apps.push_back(cascade_coarse());
 
   //CGRA tests
   test_apps.push_back(conv_3_3_reorder());
