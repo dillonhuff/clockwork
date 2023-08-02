@@ -1393,6 +1393,7 @@ void ir_node::copy_fields_from(op* other){
   consume_locs_pair = other -> consume_locs_pair;
   dynamic_load_addresses = other -> dynamic_load_addresses;
   index_variables_needed_by_compute = other -> index_variables_needed_by_compute;
+  index_variables_prefetch_cycle = other -> index_variables_prefetch_cycle;
   func = other -> func;
 }
 
