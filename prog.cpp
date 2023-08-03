@@ -4945,6 +4945,18 @@ op* find_coarse_grained_pipeline_loop(op* lp, prog& prg) {
   //return nullptr;
 }
 
+//This is a method for if guard pipeline stage
+int calculate_duty_cycle(op* origin_lp) {
+    if (origin_lp == nullptr) {
+        return 1;
+    }
+    if (origin_lp->children.size() > 1) {
+        return origin_lp->trip_count();
+    }
+    op* child = pick(origin_lp->children);
+    return origin_lp->trip_count() * calculate_duty_cycle(child);
+}
+
 vector<string> get_lb_condition(op* root_op, op* inner_most_cgpl_lp) {
     if (root_op == inner_most_cgpl_lp) {
         string cond = "(" + root_op->name + "=" + str(root_op->start) + ")";
@@ -4976,8 +4988,9 @@ vector<string> get_ub_condition(op* root_op, op* inner_most_cgpl_lp) {
 void add_prelogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp) {
   //iteratively find the loops under this imperfect_child_loop
   vector<string> lb_condition_string_vec = get_lb_condition(imperfect_child_lp, inner_most_cgpl_lp);
+  //cout << "imperfect_child_lp: " << imperfect_child_lp->name << endl;
   string cond = sep_list(lb_condition_string_vec, "", "", "&&");
-  op* if_node = inner_most_cgpl_lp->add_if_front(op_tbm->name + "_if_prelogue_guard", cond);
+  op* if_node = inner_most_cgpl_lp->add_if_front(op_tbm->name + "_if_prelogue_guard", cond, imperfect_child_lp);
   //op_tbm->parent->delete_child(op_tbm);
   //if_node->children.push_back(op_tbm);
   //op_tbm->parent = if_node;
@@ -4987,8 +5000,9 @@ void add_prelogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp)
 void add_epilogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp) {
   //iteratively find the loops under this imperfect_child_loop
   vector<string> ub_condition_string_vec = get_ub_condition(imperfect_child_lp, inner_most_cgpl_lp);
+  //cout << "imperfect_child_lp: " << imperfect_child_lp->name << endl;
   string cond = sep_list(ub_condition_string_vec, "", "", "&&");
-  op* if_node = inner_most_cgpl_lp->add_if(op_tbm->name + "_if_epilogue_guard", cond);
+  op* if_node = inner_most_cgpl_lp->add_if(op_tbm->name + "_if_epilogue_guard", cond, imperfect_child_lp);
   //op_tbm->parent->delete_child(op_tbm);
   //if_node->children.push_back(op_tbm);
   //op_tbm->parent = if_node;
