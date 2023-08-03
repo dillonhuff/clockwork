@@ -15337,6 +15337,16 @@ void test_pond(string dir, bool run_verilator=true) {
 
   test_apps.push_back(complex_mem_pond_rolled());
   test_apps.push_back(complex_mem_pond());
+
+  //Unit test version with uneven mapping
+  test_apps.push_back(resnet_mic_moc());
+
+  //16x16 resnet for onyx, has moc, weight pond save 3(rx)x4(w) weight
+  test_apps.push_back(resnet16x16());
+  //16x16 resnet for onyx, has moc=8 and mic=4, pond save 8 weight
+  test_apps.push_back(resnet16x16_mic_moc());
+
+
   //TODO:Currently not work because of floating point, also need to check the cyclic banking condition
   //test_apps.push_back(fft8_unroll8_split());
 
@@ -19413,7 +19423,10 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
     RRT.print();
 
 
-    //This method is wrong, we need to schedule use the block modulo schedule
+    //Need to consider the loop perfection
+    RRT.calculateDutyCycle(prg);
+    RRT.markEpilogue(prg);
+
     int cycle_accurate_II = RRT.getCycleAccurateIIFineGrained(sched, prg, target_II);
     RRT.target_II = cycle_accurate_II;
     //int cycle_accurate_II = RRT.getCycleAccurateII(sched, prg, target_II);
@@ -19620,6 +19633,8 @@ int get_fused_level(std::set<op*> & fused_kernels, prog & prg) {
       fused_level = map_find(lp->name, levels);
     } else {
       if (fused_level != map_find(lp->name, levels)) {
+        cout << lp->name << endl;
+        cout << map_find(lp->name, levels) << endl;
         cout << "Coarse grained tag ERROR, should tag at the same level." << endl;
         assert(false);
       }
@@ -29785,6 +29800,10 @@ int main(int argc, char** argv) {
 
     if (cmd == "lake-tests") {
       lake_tests();
+      bool use_multi_accessor_tile = true;
+      bool gen_config_only = false;
+      //test_dual_port_mem(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_dp");
+      //test_glb(gen_config_only, use_multi_accessor_tile, "aha_garnet_design_new");
       return 0;
     }
 

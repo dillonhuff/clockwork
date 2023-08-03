@@ -165,7 +165,37 @@ struct RTable {
 
     int target_II;
     map<string, CATimeStamp> cycle_accurate_time_map;
+
+    map<string, int> duty_cycle_map;
+    map<string, bool> is_epilogue;
     op* cgpl;
+
+    void calculateDutyCycle(prog & prg) {
+
+        for(auto it : timestamp) {
+            string k = it.first;
+            op* lp = prg.find_non_op(k);
+            int dc = calculate_duty_cycle(lp->origin_lp);
+            //FIXME: should do a conditional loop perfection,
+            //did not count duty cycle when there is resource sharing
+            if (target_II > 1)
+                dc = 1;
+            duty_cycle_map[k] = dc;
+            //cout << "kernel : " << k << " duty cycle: " << dc << endl;
+        }
+    }
+
+    void markEpilogue(prog & prg) {
+
+        for(auto it : timestamp) {
+            string k = it.first;
+            if (contains(k, "epilogue")) {
+                is_epilogue[k] = true;
+            } else {
+                is_epilogue[k] = false;
+            }
+        }
+    }
 
     void initCycleAccurateStartTime(string & kernel, int st, int latency) {
         CATimeStamp t_stamp(st, st + target_II - 1, latency);
@@ -197,6 +227,30 @@ struct RTable {
         }
     }
 
+    void addInterval(vector<pair<int, bool> > & interval_bounds, string & kernel, int max_duty_cycle) {
+
+        int start = cycle_accurate_time_map.at(kernel).min_time;
+
+        //This is the non-inclusive end time
+        int normalized_duty_cycle = max_duty_cycle / duty_cycle_map.at(kernel);
+        int end = start + cycle_accurate_time_map.at(kernel).latency
+            + (normalized_duty_cycle - 1) * target_II;
+
+        if (is_epilogue[kernel]) {
+            start += (max_duty_cycle - 1) * target_II;
+            end += (max_duty_cycle - 1) * target_II;
+        }
+
+        int true_II = target_II * max_duty_cycle;
+        interval_bounds.push_back({start%true_II, true});
+        //If it wrap around, since end is non inclusive, we need some tweak
+        if (start / true_II != (end-1) / true_II) {
+            interval_bounds.push_back({true_II, false});
+            interval_bounds.push_back({0, true});
+        }
+        interval_bounds.push_back({(end-1)%true_II + 1, false});
+    }
+
     void addInterval(vector<pair<int, bool> > & interval_bounds, string & kernel) {
 
         int start = cycle_accurate_time_map.at(kernel).min_time;
@@ -224,13 +278,24 @@ struct RTable {
 
             vector<pair<int, bool>> interval_bounds;
             vector<string> adjust_candidate;
+
+            //First pass get the max duty cycle
+            int max_duty_cycle = duty_cycle_map[k];
+            for (string kernel: subTable.at(buffer).kernels) {
+                if (k_scheduled.count(kernel)) {
+                    max_duty_cycle = max(duty_cycle_map[kernel], max_duty_cycle);
+                }
+            }
+            cout << "max duty_cycle: " << max_duty_cycle << endl;
+
             for (string kernel: subTable.at(buffer).kernels) {
                 if (k_scheduled.count(kernel)) {
                     //Add the resource occupation into the vector
                     //So that we can check if it's overlap
                     if (subTable.at(buffer).partition_groups.count(kernel)) {
-                      addInterval(interval_bounds, kernel);
-                      cout << "\tadd kernel: " << kernel << endl;
+                      addInterval(interval_bounds, kernel, max_duty_cycle);
+                      //addInterval(interval_bounds, kernel);
+                      //cout << "\tadd kernel: " << kernel << endl;
 
                       //If this kernel has slack, we will just remove the slack,
                       //likely it's a kernel that ahead of the kernel that is scheduled currently
@@ -240,7 +305,8 @@ struct RTable {
                 }
             }
             //Add current kernel in as well
-            addInterval(interval_bounds, k);
+            addInterval(interval_bounds, k, max_duty_cycle);
+            //addInterval(interval_bounds, kernel);
 
             //Sort the bound
             //Get this method from this link:
@@ -282,7 +348,7 @@ struct RTable {
                 //adjust this kernel to a late time
                 cout << "This is the case that slack relax does not work" << endl
                      << "We should build an iterative approach to find a later timestamp," << endl
-                     << "Not implement this" << endl;
+                     << "Have not implement this yet" << endl;
                 assert(false);
             }
         }
@@ -577,8 +643,11 @@ struct RTable {
             int max_step_latency = 0;
             for(string k: memWriteTable.at(mem).getKernels(coarse_t)) {
               op* lp = prg.find_non_op(k);
+              int dc = duty_cycle_map.at(k);
               int latency = sched.total_latency(lp);
-              max_step_latency = std::max(latency, max_step_latency);
+              //cout << tab(2) << "t: " << coarse_t << ", kernel: " << lp->name << ", lat = " << latency << endl;
+              //cout << tab(4) << "duty cycle: " << dc << endl;;
+              max_step_latency = std::max(latency/dc, max_step_latency);
             }
             rd_max_II += max_step_latency;
           }
@@ -592,8 +661,11 @@ struct RTable {
             int max_step_latency = 0;
             for(string k: memReadTable.at(mem).getKernels(coarse_t)) {
               op* lp = prg.find_non_op(k);
+              int dc = duty_cycle_map.at(k);
               int latency = sched.total_latency(lp);
-              max_step_latency = std::max(latency, max_step_latency);
+              //cout << tab(2) << "t: " << coarse_t << ", kernel: " << lp->name << ", lat = " << latency << endl;
+              //cout << tab(4) << "duty cycle: " << dc << endl;;
+              max_step_latency = std::max(latency/dc, max_step_latency);
             }
             wr_max_II += max_step_latency;
           }
@@ -608,13 +680,17 @@ struct RTable {
             int max_step_latency = 0;
             for(string k: compTable.at(comp_unit).getKernels(coarse_t)) {
               op* lp = prg.find_non_op(k);
+              int dc = duty_cycle_map.at(k);
               int latency = sched.total_latency(lp);
-              max_step_latency = std::max(latency, max_step_latency);
+              //cout << tab(2) << "t: " << coarse_t << ", kernel: " << lp->name << ", lat = " << latency << endl;
+              //cout << tab(4) << "duty cycle: " << dc << endl;;
+              max_step_latency = std::max(latency / dc, max_step_latency);
             }
             comp_max_II += max_step_latency;
           }
           max_II = max(comp_max_II, max_II);
         }
+        //assert(false);
 
         return max_II;
     }

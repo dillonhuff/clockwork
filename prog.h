@@ -60,7 +60,7 @@ struct ir_node {
 
   // If statement condition
   std::string condition;
-  ir_node* origin_lp;
+  ir_node* origin_lp; //record the origin child
 
   // Operations / other loops contained in this loop nest
   std::vector<op*> children;
@@ -620,6 +620,7 @@ struct ir_node {
     assert(!is_op());
 
     auto lp = new op();
+    lp->origin_lp = imperfect_lp; //this record the loop below the lp before loop perfection
     lp->name = name;
     lp->origin_lp = imperfect_lp;
     lp->condition = condition;
@@ -638,6 +639,7 @@ struct ir_node {
     lp->name = name;
     lp->origin_lp = imperfect_lp;
     lp->condition = condition;
+    lp->origin_lp = imperfect_lp; //this record the loop below the lp before loop perfection
     lp->ctx = ctx;
     lp->parent = this;
     lp->tp = IR_NODE_TYPE_IF;
