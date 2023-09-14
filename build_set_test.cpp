@@ -18118,6 +18118,7 @@ void relax_write(schedule_info& sched, op* loop, prog& prg, int fetch_width) {
           continue;
       } else {
           sched.op_offset_within_parent[loop->name] += (fetch_width - (loop->trip_count() * sched.II(loop)) % fetch_width) % fetch_width;
+          sched.op_pad_step[loop] = (fetch_width - (-loop->trip_count() ) % fetch_width) % fetch_width;
           cout << "\t change loop : " << loop->name << "'s offset to " << sched.op_offset_within_parent.at(loop->name) << endl;
       }
     }
@@ -18428,10 +18429,12 @@ void tighten_iis(schedule_info& sched, prog& prg, int fetch_width) {
         //}
         if (ii > L) {
           cout << "Tightening ii " << loop->name << " from " << ii << " to " << L << endl;
+          cout << "Pad step :" << sched.pad_step(loop) << endl;
           sched.loop_iis[loop->name] = max(L, 1);
           //Added for offset update to create a higher temporal occupancy
-          sched.op_offset_within_parent.at(loop->name) = sched.pad_step(loop) * L;
           tightened = true;
+          if (loop->name != "root")
+            sched.op_offset_within_parent.at(loop->name) = sched.pad_step(loop) * L;
           break;
         }
       }
@@ -20334,12 +20337,12 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     json kernel_latencies;
     std::ifstream kernel_latencies_file(prg.name + "_compute_kernel_latencies.json", std::ifstream::binary);
     kernel_latencies_file >> kernel_latencies;
-    string suffix = 
+    string suffix =
       options.rtl_options.use_pipelined_compute_units ? "_pipelined" : "" ;
 
     //Load the broadcast memory latency
     json ub_latencies;
-    
+
     std::ifstream ub_latencies_file("ub_latency.json", std::ifstream::binary);
 
     if (ub_latencies_file.is_open()){
@@ -20347,7 +20350,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
     }
 
     for (auto buf_latency_vec: ub_latencies.items()) {
-      
+
       string buf = buf_latency_vec.key();
       cout << "buf: " << buf << endl;
       map<int, int> lat_map;
@@ -20392,7 +20395,7 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         for (auto input_latencies : kernel_latencies[op->func].items()) {
           for (auto port_latency : input_latencies.value().items()) {
             cout << "\tport compute Kernel latency " <<  (string)input_latencies.key() + "_" + port_latency.key() << " : " << max_latency - (int)(port_latency.value()["latency"]) << endl;
-            port_slacks[(string)input_latencies.key() + "_" + port_latency.key()] = max_latency - (int)(port_latency.value()["latency"]); 
+            port_slacks[(string)input_latencies.key() + "_" + port_latency.key()] = max_latency - (int)(port_latency.value()["latency"]);
           }
         }
         sched.compute_unit_latencies[op->func + suffix] = max_latency;
