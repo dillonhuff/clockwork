@@ -2225,7 +2225,7 @@ void run_lake_dp_verilog_codegen(CodegenOptions& options, string v_name, string 
 void run_lake_dp_verilog_codegen_new(CodegenOptions& options, string v_name, string ub_ins_name) {
     ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
     int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-                     "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v  -a -v -dp -ii 6 -oi 6 -rd 1 -d 2048 -mw 16");
+                     "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v  -a -v -dpflag -dp -ii 6 -oi 6 -rd 1 -d 2048 -mw 16");
     assert(res_lake == 0);
 }
 
@@ -6840,7 +6840,7 @@ void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Inst
   copy_def->connect(wc0, wc1);
 }
 
-void copy_and_add_latency_to_output(vector<std::set<Instance*> >& stages, 
+void copy_and_add_latency_to_output(vector<std::set<Instance*> >& stages,
     map<Instance*, Instance*>& instance_map, Wireable* w0, Wireable* w1, ModuleDef* copy_def, int kernel_latency) {
 
   cout << "w0 = " << w0->toString() << ": " << w0->getType()->toString() << endl;

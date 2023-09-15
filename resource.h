@@ -170,7 +170,7 @@ struct RTable {
     map<string, bool> is_epilogue;
     op* cgpl;
 
-    void calculateDutyCycle(prog & prg) {
+    void calculateDutyCycle(prog & prg, int CG_target_II) {
 
         for(auto it : timestamp) {
             string k = it.first;
@@ -178,7 +178,8 @@ struct RTable {
             int dc = calculate_duty_cycle(lp->origin_lp);
             //FIXME: should do a conditional loop perfection,
             //did not count duty cycle when there is resource sharing
-            if (target_II > 1)
+            //cout << "target II when set dc: " << CG_target_II << endl;
+            if (CG_target_II > 1)
                 dc = 1;
             duty_cycle_map[k] = dc;
             //cout << "kernel : " << k << " duty cycle: " << dc << endl;

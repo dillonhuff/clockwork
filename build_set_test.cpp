@@ -15320,7 +15320,7 @@ void test_pond(string dir, bool run_verilator=true) {
   //test_apps.push_back(nlmeans_rolled_7x7());
 
   //Accumulation register
-  //
+
   test_apps.push_back(conv_1_3());
   test_apps.push_back(conv_rolled());
 
@@ -19385,11 +19385,11 @@ void update_coarse_grained_loop_iis(schedule_info& sched, op* cgpl) {
 void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl, prog& prg) {
     //int target_II = RRT.getMinimumII();
     //Always start from 1, do not know the partition
-    int target_II = 1;
+    int CG_target_II = 1;
     bool finished = false;
     vector<string> sorted_kernels = topologically_sort_kernels(cgpl, prg);
     while (!finished) {
-      RRT.initModuloTable(target_II);
+      RRT.initModuloTable(CG_target_II);
       for (auto k: sorted_kernels) {
         auto producers = get_producers_outside_SSC(k, cgpl, prg);
         int t = 0;
@@ -19397,10 +19397,10 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
             t = std::max(t, RRT.getTimeStamp(p)+1);
         }
         int offset = 0;
-        while(offset < target_II) {
-          bool can_schedule = RRT.scheduleKernel(k, (t + offset)  % target_II, cgpl, prg);
-          cout << "\tTarget II: " << target_II << endl;
-          cout << "\tTry to schedule kernel at " << (t+offset)% target_II << endl;
+        while(offset < CG_target_II) {
+          bool can_schedule = RRT.scheduleKernel(k, (t + offset)  % CG_target_II, cgpl, prg);
+          cout << "\tTarget II: " << CG_target_II << endl;
+          cout << "\tTry to schedule kernel at " << (t+offset)% CG_target_II << endl;
           if (can_schedule) {
               cout << "\tSchedule K at time = " << t+offset << endl;
               RRT.setTimeStamp(k, (t + offset));
@@ -19409,10 +19409,10 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
               offset ++;
           }
         }
-        if (offset == target_II ) {
-          target_II ++;
+        if (offset == CG_target_II ) {
+          CG_target_II ++;
           RRT.clearSchedule();
-          if (target_II > sorted_kernels.size()) {
+          if (CG_target_II > sorted_kernels.size()) {
               cout << "Target II should not larger than number of kernel, at least sequential schedule should work in that case. " << endl;
             assert(false);
           }
@@ -19427,15 +19427,15 @@ void update_coarse_grained_loop_iis(schedule_info& sched, RTable& RRT, op* cgpl,
 
 
     //Need to consider the loop perfection
-    RRT.calculateDutyCycle(prg);
+    RRT.calculateDutyCycle(prg, CG_target_II);
     RRT.markEpilogue(prg);
 
-    int cycle_accurate_II = RRT.getCycleAccurateIIFineGrained(sched, prg, target_II);
+    int cycle_accurate_II = RRT.getCycleAccurateIIFineGrained(sched, prg, CG_target_II);
     RRT.target_II = cycle_accurate_II;
     //int cycle_accurate_II = RRT.getCycleAccurateII(sched, prg, target_II);
 
     cout << endl << "II optimization finished ..." << endl;
-    cout << tab(1) << "Target II : " << target_II <<endl;
+    cout << tab(1) << "Target II : " << CG_target_II <<endl;
     cout << tab(1) << "Cycle Accurate II: " << cycle_accurate_II << endl;
 
     cout << tab(2) << "Current II        : " << sched.II(cgpl) << endl;
