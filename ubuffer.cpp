@@ -1604,7 +1604,13 @@ pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, sc
 
   if (isIn.at(inpt)) {
     //update op latency, if it's input port
+    //FIXME: this seems to be added twice, all latency was handled in generate ubuffer method
+    //TODO: comment this out
     int op_latency = info.compute_latency(::domain_name(acc_map));
+    if (op_latency != 0) {
+        cout << "This could be an issue in dual port bank selection." << endl;
+        assert(false);
+    }
     sched_aff = add(sched_aff, op_latency);
   }
 
@@ -1646,7 +1652,7 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
     int op_latency = 0;
     //FIXME: this is a hack for broadcast latency
     int broadcast_latency = info.get_ub_latency(name, bank);
-    
+
 
     for (string inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
@@ -1657,7 +1663,9 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
       auto dom = ::domain(acc_map);
 
       //update op latency
-      op_latency = info.compute_latency(::domain_name(acc_map));
+      //Change to op latency, because all the schedule is the start time
+      op_latency = info.get_op_latency(::domain_name(acc_map));
+      //op_latency = info.compute_latency(::domain_name(acc_map));
       // op_latency = info.compute_unit_latencies(::domain_name(acc_map));
 
 

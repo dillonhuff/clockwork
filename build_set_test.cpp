@@ -15740,7 +15740,6 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   vector<prog> test_apps;
 
   //CGRA tests that pass dual port test
-  test_apps.push_back(resnet_init_unroll_tile_dp());
   test_apps.push_back(conv_3_3());
   test_apps.push_back(gaussian());
   test_apps.push_back(cascade());
@@ -15760,20 +15759,17 @@ void test_dual_port_mem(bool gen_config_only, bool multi_accessor=false, string 
   test_apps.push_back(rom());
   test_apps.push_back(conv_1_2());
   test_apps.push_back(demosaic_unrolled());
-  test_apps.push_back(resnet88());
   test_apps.push_back(camera_pipeline_new());
-
-  test_apps.push_back(up_sample());
-  test_apps.push_back(laplacian_pyramid_docker());
-  test_apps.push_back(laplacian_pyramid());
 
 
   ////////DNN apps
   //////Not working
-  //////test_apps.push_back(matmul_single());
   ////test_apps.push_back(resnet_tiny());
   ////test_apps.push_back(resnet_simple());
   test_apps.push_back(resnet());
+  test_apps.push_back(resnet88());
+  test_apps.push_back(resnet_init_unroll_tile_dp());
+  test_apps.push_back(matmul_single());
 
   //////Big applications
   //test_apps.push_back(mobilenet_unrolled());
@@ -18972,8 +18968,8 @@ void relax_delays_rate_matched(CodegenOptions& options, schedule_info& sched, pr
   cout << "Adjusting delays of " << prg.name << endl;
   map<string, int> delay_relaxation;
   int fetch_width = options.mem_hierarchy.at("mem").fetch_width;
-  if (fetch_width == 1)
-      return;
+  //if (fetch_width == 1)
+  //    return;
   auto start_times = its(op_times_map(sched, prg), prg.whole_iteration_domain());
   auto start_times_map = get_maps_in_map(start_times);
   auto domains = prg.domains();

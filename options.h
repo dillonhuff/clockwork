@@ -493,7 +493,7 @@ struct LakeCollateral {
       capacity = {{"mem", 2048}};
       controller_name = {"regfile"};
       load_latency = 1;
-      store_latency = 1;
+      store_latency = 0;
     }
 
     int get_max_capacity() const {

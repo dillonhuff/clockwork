@@ -1021,7 +1021,7 @@ struct ir_node {
 // };
 
 
-struct cmp_op { 
+struct cmp_op {
   std::string toUpper(std::string s) const {
     for(int i=0;i<(int)s.length();i++){s[i]=toupper(s[i]);}
     return s;
@@ -1953,6 +1953,9 @@ struct schedule_info {
   map<string, int> compute_unit_latencies;
   //This data structure save the port loading slack with respect to the largest latency
   map<string, map<string, int>> port_latencies;
+  //This data is helpful when we decide the input schedule
+  map<string, int> op_latencies;
+
   map<string, string> op_compute_unit_names;
   //This data structure save the broadcast latency within the interconnect.
   map<string, vector<int> > ub_latencies;
@@ -1974,6 +1977,13 @@ struct schedule_info {
   //map<op*, int> instance_latencies;
   map<string, int> op_offset_within_parent;
   map<op*, int> op_pad_step;
+
+  int get_op_latency(string name) {
+    if (op_latencies.count(name) == 0) {
+      cout << "Op : " << name << " was not initialized in op latency meta data." << endl;
+    }
+    return op_latencies.at(name);
+  }
 
   bool check_if_compute_created(op* op) {
     return compute_resources.at(op->func).is_created;
@@ -2061,7 +2071,7 @@ struct schedule_info {
     return map_find(c->name, op_offset_within_parent);
   }
   int pad_step(op*c) {
-    if (contains_key(c, op_pad_step)) 
+    if (contains_key(c, op_pad_step))
       return map_find(c, op_pad_step);
     else
       return 0;
