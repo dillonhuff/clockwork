@@ -15665,6 +15665,7 @@ void test_single_port_mem(bool gen_config_only, bool multi_accessor=false, strin
   //test_apps.push_back(laplacian_composite());
   test_apps.push_back(gpyr_unroll_default());
   test_apps.push_back(gpyr_unroll());
+  test_apps.push_back(conv_3_3());
   test_apps.push_back(gpyr_tagged());
   test_apps.push_back(cascade_coarse());
 
@@ -19842,8 +19843,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     prog fused_sub_loop = extract_cgl_to_separate_prog(fused_kernels, prg);
     fused_sub_loop.pretty_print();
     sequential_schedule(sched, fused_sub_loop.root, fused_sub_loop);
+
+    //By default set ii = 1
     int fused_loop_ii = 1;
-    if (sched.share_compute() || !all_perfect_loop_nests(fused_sub_loop)) {
+    //cout << fused_sub_loop.root->is_inner_loop() << endl;
+    if (sched.share_compute() || !fused_sub_loop.root->is_inner_loop()) {
       coarse_grained_pipeline_optimization_subloop(options, sched, fused_sub_loop);
       fused_loop_ii = sched.II(fused_sub_loop.root);
     }
