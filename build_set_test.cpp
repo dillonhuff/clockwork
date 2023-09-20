@@ -19843,8 +19843,11 @@ void garnet_single_port_ram_schedule(CodegenOptions& options, schedule_info& sch
     prog fused_sub_loop = extract_cgl_to_separate_prog(fused_kernels, prg);
     fused_sub_loop.pretty_print();
     sequential_schedule(sched, fused_sub_loop.root, fused_sub_loop);
-    coarse_grained_pipeline_optimization_subloop(options, sched, fused_sub_loop);
-    int fused_loop_ii = sched.II(fused_sub_loop.root);
+    int fused_loop_ii = 1;
+    if (sched.share_compute() || !all_perfect_loop_nests(fused_sub_loop)) {
+      coarse_grained_pipeline_optimization_subloop(options, sched, fused_sub_loop);
+      fused_loop_ii = sched.II(fused_sub_loop.root);
+    }
     cout << "Final cgl ii: " << fused_loop_ii << endl;
 
     vector<int> fused_level_iis = get_fused_level_iis(options, clksched_map, dom, fused_level, fused_loop_ii);

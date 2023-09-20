@@ -2408,19 +2408,36 @@ prog extract_cgl_to_separate_prog(const std::set<op*>& cg_loops, prog& original)
 	prog extracted;
 	extracted.name = "Extracted_subloop";
 	op* new_root = extracted.root;
-	for(auto cgl : cg_loops){
+  //first pass check if all cg loops are single op
+  bool all_single_op = true;
+  for (auto cgl: cg_loops) {
         cout << cgl->name << " has children = " << cgl->children.size() << endl;
         assert(cgl->children.size() == 1);
-        if (is_inner_loop(cgl)) {
-            string l_name = "loop_" + pick(cgl->children)->name;
-            op* container_loop = new_root->add_loop(l_name, 0, 1);
-		    deep_copy_child(container_loop, pick(cgl->children), original);
-        } else {
-		    deep_copy_child(new_root, pick(cgl->children), original);
+        if (!is_inner_loop(cgl)) {
+          all_single_op = false;
+          break;
         }
-	}
+  }
+
+  if (all_single_op) {
+	  for(auto cgl : cg_loops){
+		  deep_copy_child(new_root, pick(cgl->children), original);
+    }
+  } else {
+	  for(auto cgl : cg_loops){
+      cout << cgl->name << " has children = " << cgl->children.size() << endl;
+      assert(cgl->children.size() == 1);
+      if (is_inner_loop(cgl)) {
+        string l_name = "loop_" + pick(cgl->children)->name;
+        op* container_loop = new_root->add_loop(l_name, 0, 1);
+		    deep_copy_child(container_loop, pick(cgl->children), original);
+      } else {
+		    deep_copy_child(new_root, pick(cgl->children), original);
+      }
+	  }
+  }
 	cout << "Programs copied" << endl;
-    return extracted;
+  return extracted;
 }
 
 
