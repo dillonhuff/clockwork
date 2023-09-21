@@ -1,5 +1,6 @@
 #pragma once
 #include "utils.h"
+#include "isl_utils.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -108,8 +109,64 @@ struct RTLOptions {
     hls_clock_target_Hz(250000000) {}
 };
 
+struct AffCtrl {
+    string name;
+    int dimensionality;
+    int range_bw, stride_bw, offset_bw;
+
+    AffCtrl(string n, int dim, int r_bw, int s_bw, int o_bw):
+        name(n),
+        dimensionality(dim),
+        range_bw(r_bw),
+        stride_bw(s_bw),
+        offset_bw(o_bw) {}
+};
+
+class CtrlConstraints {
+    public:
+        virtual bool is_satisfied(isl_map* l, isl_map* r) {return true;}
+};
+
+class ConstantOffset: public CtrlConstraints {
+    private:
+        int ub, lb;
+    public:
+        ConstantOffset(int ub_, int lb_) {
+            ub = ub_;
+            lb = lb_;
+        }
+
+        bool is_satisfied(isl_map* m, isl_map* s);
+};
+
 
 struct LakeCollateral {
+
+    //New lake collateral
+    /*
+    //set of logical ports
+    std::unordered_map<string, int> pt_width;
+    std::unordered_map<string, bool> isIn;
+
+    //Set of physical memory node
+    std::unordered_map<string, int> macro2bw;
+
+    //Map from port to physical memory(node)
+    std::unordered_map<string, string> pt2macro;
+
+    //map from port to controllers
+    std::unordered_map<string, vector<AffCtrl> > pt2ctrl;
+
+    //Capacity of all storage component, only macro is defined, and the other is inferred
+    std::unordered_map<string, int> capacity;
+
+    std::unordered_map<pair<string, string>, CtrlConstraints > constraints;
+
+    int roundtrip_latency;
+    */
+
+
+
     std::unordered_map<string, int> word_width;
     std::unordered_map<string, int> bank_num;
     std::unordered_map<string, int> capacity;
@@ -188,6 +245,82 @@ struct LakeCollateral {
                 assert(false);
             }
     }
+    /*
+    string add_wr_port(int port_width) {
+        int pt_cnt = pt_width.size();
+        string pt_name = "pt" + str(pt_cnt);
+        pt_width[pt_name] = port_width;
+        isIn[pt_name] = true;
+        return pt_name;
+    }
+
+    string add_rd_port(int port_width) {
+        int pt_cnt = pt_width.size();
+        string pt_name = "pt" + str(pt_cnt);
+        pt_width[pt_name] = port_width;
+        isIn[pt_name] = false;
+        return pt_name;
+    }
+
+    string add_macro(string name, int bitwidth, int capacity_macro, bool is_dual_port) {
+        capacity[name] = capacity_macro;
+        macro2bw[name] = bitwidth;
+        dual_port_sram = is_dual_port;
+        return name;
+    }
+
+    void connect(string macro_name, string pt_name) {
+        pt2macro[pt_name] = macro_name;
+    }
+
+    void assign_ctrl(string pt, AffCtrl& ctrl) {
+        map_insert(pt2ctrl, pt, ctrl);
+    }
+
+    void assign_ctrl(string pt, AffCtrl& ctrl, int offset_ub, int offset_lb) {
+        map_insert(pt2ctrl, pt, ctrl);
+        string pt_master;
+        if (ctrl2pt.count(ctrl.name)) {
+            pt_master = pick(ctrl2pt.at(ctrl.name));
+        } else {
+            cout << "Did not find master port for controller " << ctrl.name << endl;
+            assert(false);
+        }
+        constraints[{pt_master, pt}] = ConstantOffset(offset_ub, offset_lb);
+    }
+
+    void infer_default_buf(string pt) {
+        //TODO: this function will infer agg and tb depends on the read/write
+        //
+        //Add buffer
+        //
+        //set capacity
+        //
+        //set constraints
+    }
+
+    void add_macro_ctrl(string pt, AffCtrl& m_ctrl) {
+        //TODO: add this ctrl into a specific map
+
+    }
+
+    void add_macro_ctrl(string pt, AffCtrl& m_ctrl, int offset_ub, int offset_lb) {
+        //TODO: add this ctrl into a specific map
+
+    }
+
+    void override_capacity(string pt, int size) {
+        //TODO: change the capacity map
+    }
+
+    //FIXME:This two seems a little arbitrary
+    void set_rt_latency(int latency){
+        roundtrip_latency= latency;
+    }
+    */
+    void set_max_chaining(int mc){
+        max_chaining= mc;
+    }
 
     int get_ctrl_iter_level(string ctrl_name);
 
@@ -217,7 +350,7 @@ struct LakeCollateral {
 
     void set_capacity(string name, int size) {
       assert(controller_name.count(name));
-      assert(bank_num.at(name) == 1);
+      //assert(bank_num.at(name) == 1);
       capacity.insert({name, size});
     }
 
@@ -241,10 +374,7 @@ struct LakeCollateral {
 
 
     void set_fetch_width(int a){
-	fetch_width = a;
-    }
-    void set_max_chaining(int a){
-	max_chaining= a;
+	  fetch_width = a;
     }
     void set_iteration_level(int a){
 	iteration_level = a;
@@ -363,7 +493,7 @@ struct LakeCollateral {
       capacity = {{"mem", 2048}};
       controller_name = {"regfile"};
       load_latency = 1;
-      store_latency = 1;
+      store_latency = 0;
     }
 
     int get_max_capacity() const {

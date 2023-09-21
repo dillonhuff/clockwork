@@ -11,6 +11,7 @@ prog fft8_unroll8();
 prog fft8_unroll8_ratematch();
 prog fft8_unroll8_pease();
 prog fft8_unroll8_split();
+prog laplacian_composite();
 prog laplacian_pyramid();
 prog laplacian_pyramid_docker();
 prog counter();
@@ -22,7 +23,18 @@ prog unsharp();
 prog unsharp_new();
 prog unsharp_large();
 prog cascade(); //stencil
+prog cascade_coarse(); //stencil
 prog gaussian(); //stencil
+
+
+//Gaussian pyramid without sharing
+prog gpyr_default(); //pyramid
+//Gaussian pyramid with compute sharing
+prog gpyr_tagged(); //pyramid
+//Gaussian pyramid with unroll glb transfer
+prog gpyr_unroll(); //pyramid
+prog gpyr_unroll_default(); //pyramid
+
 prog harris(); //stencil
 prog harris_remove(); //manually edit
 prog pointwise(); //point
@@ -147,7 +159,14 @@ prog matmul_unroll2();
 prog matmul_single();
 prog matmul_single_m1();
 prog matmul_fpga();
+prog gemm();
+prog gemm_reorder();
 
+prog maxpool_layer();
+
+prog fsrcnn();
+prog fsrcnn_shared();
+prog fsrcnn_reorder();
 //resnet without input tiling
 prog resnet_output_stationary_i16();
 prog resnet_output_stationary_i8();
@@ -172,6 +191,10 @@ prog resnet5_glb_unroll();
 prog resnet5_1_unroll_cyclic();
 prog resnet5_x_new();
 prog resnet_multi_channel();
+prog resnet16x16();
+prog resnet16x16_mic();
+prog resnet16x16_mic_moc();
+prog resnet_mic_moc();
 
 //Full layer simulation
 prog resnet_output_stationary_small();

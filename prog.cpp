@@ -679,10 +679,10 @@ void align_loop_var_with_pad(prog& prg) {
 
 
 //Transform align dimension into pad dimension
-//{0, 1,2,5} {0,2,3,5}
+//{0, 1,2,4} {0,2,3,4}
 //->
-//{0, -1. 1, 2, 3, 4}
-//{0,  1,  2, 3, 4, -1 }
+//{0, -1. 1, 2, 3}
+//{0,  1, 2, 3, -1 }
 pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
         vector<int> & p_align_dim,
         vector<int> & c_align_dim) {
@@ -715,6 +715,8 @@ pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
     pad_dim_p.pop_back();
     return make_pair(pad_dim_p, pad_dim_c);
 }
+
+
 
 /*
  * this function will return the index of matrix of aligning dimension
@@ -847,6 +849,7 @@ pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r) {
     }
     return make_pair(l_pad, r_pad);
 }
+
 
 //Pad both the origin map and float map
 //node exist in both map
@@ -1319,15 +1322,39 @@ std::set<string> get_producers(string next_kernel, op* root, prog& prg) {
   return producers;
 }
 
+std::set<string> get_producers_outside_SSC(string next_kernel, op* root, prog& prg) {
+    std::set<string> ret;
+    auto prods = get_producers(next_kernel, root, prg);
+    for (auto prod : prods) {
+        auto prods_of_prod = get_producers(prod, root, prg);
+        if (prods_of_prod.count(next_kernel) == 0) {
+            ret.insert(prod);
+        }
+    }
+    return ret;
+}
+
+//Helper function that checks if k_l is producer or consumer of k_r
+bool is_prod_or_cons(string k_l, string k_r, op* root, prog& prg) {
+
+    auto k_l_prod =  get_producers(k_l, root, prg);
+    auto k_r_prod =  get_producers(k_r, root, prg);
+    //cout << k_l << " prod: " << k_l_prod << endl;
+    //cout << k_r << "r_prod: " << k_r_prod << endl;
+
+    return k_r_prod.count(prg.find_non_op(k_l)->name)
+        ^ k_l_prod.count(prg.find_non_op(k_r)->name);
+
+}
+
 
 std::set<string> get_producers(string next_kernel, prog& prg) {
 
-  //   cout << "next kernel: " << next_kernel<< endl;
   std::set<string> producers;
-  op* loop = prg.find_loop(next_kernel);
+  op* loop = prg.find_non_op(next_kernel);
 
   std::set<string> buffers_read;
-  for (auto op : prg.find_loop(next_kernel)->descendant_ops()) {
+  for (auto op : prg.find_non_op(next_kernel)->descendant_ops()) {
     for (auto buff : op->buffers_read()){
       buffers_read.insert(buff);
       //             cout << tab(1) << buff << endl;
@@ -1338,7 +1365,7 @@ std::set<string> get_producers(string next_kernel, prog& prg) {
   for (auto other_kernel : get_kernels(prg)) {
     if (other_kernel != next_kernel) {
       std::set<string> buffers_written;
-      for (auto op : prg.find_loop(other_kernel)->descendant_ops()) {
+      for (auto op : prg.find_non_op(other_kernel)->descendant_ops()) {
         for (auto buff : op -> buffers_written()) {
           buffers_written.insert(buff);
         }
@@ -1366,6 +1393,7 @@ void ir_node::copy_fields_from(op* other){
   consume_locs_pair = other -> consume_locs_pair;
   dynamic_load_addresses = other -> dynamic_load_addresses;
   index_variables_needed_by_compute = other -> index_variables_needed_by_compute;
+  index_variables_prefetch_cycle = other -> index_variables_prefetch_cycle;
   func = other -> func;
 }
 
@@ -2375,6 +2403,42 @@ std::set<op*, cmp_op> find_readers(const string& buff, prog& prg){
 
 // 	return groups;
 // }
+//
+prog extract_cgl_to_separate_prog(const std::set<op*>& cg_loops, prog& original) {
+	prog extracted;
+	extracted.name = "Extracted_subloop";
+	op* new_root = extracted.root;
+  //first pass check if all cg loops are single op
+  bool all_single_op = true;
+  for (auto cgl: cg_loops) {
+        cout << cgl->name << " has children = " << cgl->children.size() << endl;
+        assert(cgl->children.size() == 1);
+        if (!is_inner_loop(cgl)) {
+          all_single_op = false;
+          break;
+        }
+  }
+
+  if (all_single_op) {
+	  for(auto cgl : cg_loops){
+		  deep_copy_child(new_root, pick(cgl->children), original);
+    }
+  } else {
+	  for(auto cgl : cg_loops){
+      cout << cgl->name << " has children = " << cgl->children.size() << endl;
+      assert(cgl->children.size() == 1);
+      if (is_inner_loop(cgl)) {
+        string l_name = "loop_" + pick(cgl->children)->name;
+        op* container_loop = new_root->add_loop(l_name, 0, 1);
+		    deep_copy_child(container_loop, pick(cgl->children), original);
+      } else {
+		    deep_copy_child(new_root, pick(cgl->children), original);
+      }
+	  }
+  }
+	cout << "Programs copied" << endl;
+  return extracted;
+}
 
 
 prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original) {
@@ -2928,7 +2992,7 @@ std::vector<op*> get_dft_nodes(prog& prg) {
 std::vector<op*> get_dft_ops(prog& prg) {
   std::vector<op*> inner;
   dft(prg, [&inner](op* node) {
-      if (!node->is_loop()) {
+      if (!node->is_loop() && !node->is_if()) {
       inner.push_back(node);
       }
       });
@@ -3428,7 +3492,7 @@ bool can_achieve_full_rate(prog& prg, map<string, vector<int> > & pad_indices, i
 
 bool is_rate_matchable_loopnest(prog& prg, map<string, vector<int> >& pad_indices) {
 
-    if (all_perfect_loop_nests(prg)) {
+    if (all_perfect_loop_nests(prg) && (pad_indices.size() > 0)) {
         int max_depth = max_loop_depth(prg);
         int align_loop_depth = pick(pad_indices).second.size();
         if (align_loop_depth == max_depth) {
@@ -3519,14 +3583,14 @@ void build_schedule_exprs(op* parent, map<op*, QExpr>& schedule_exprs, schedule_
       QTerm root_sched_t{{qconst(map_find(c->name, sched.loop_iis)), qvar(c->name)}};
       QExpr root_sched{{root_sched_t}};
 
-      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QAV delayv = qconst(map_find(c->name, sched.op_offset_within_parent));
       QTerm delayt{{delayv}};
       QExpr delay{{delayt}};
 
       root_sched = parent_sched + root_sched + delay;
       schedule_exprs[c] = root_sched;
     } else {
-      QAV delayv = qconst(map_find(c, sched.op_offset_within_parent));
+      QAV delayv = qconst(map_find(c->name, sched.op_offset_within_parent));
       QTerm delayt{{delayv}};
       QExpr delay{{delayt}};
 
@@ -3891,7 +3955,7 @@ int schedule_info::instance_latency(op* op) {
   if (op->is_loop()) {
     int maxoffset = 1;
     for (auto c : op->children) {
-      int delay = map_find(c, op_offset_within_parent);
+      int delay = map_find(c->name, op_offset_within_parent);
       int latency = total_latency(c);
       int inner_delay = delay + latency;
       maxoffset = max(maxoffset, inner_delay);
@@ -3914,7 +3978,7 @@ int schedule_info::instance_latency(op* op) {
 
 bool is_op_scheduled(op* op, schedule_info& sched, prog& prg) {
   //bool has_latency = contains_key(op, sched.instance_latencies);
-  bool has_offset = contains_key(op, sched.op_offset_within_parent);
+  bool has_offset = contains_key(op->name, sched.op_offset_within_parent);
   bool has_ii = contains_key(op->name, sched.loop_iis);
 
   if (op == prg.root) {
@@ -4898,15 +4962,16 @@ op* find_coarse_grained_pipeline_loop(op* lp, prog& prg) {
   //return nullptr;
 }
 
-int calculate_duty_cycle(op* lp) {
-  if (lp == nullptr) {
-    return 1;
-  }
-  if (lp->children.size() > 1) {
-    return lp->trip_count();
-  }
-  op* child = pick(lp->children);
-  return lp->trip_count() * calculate_duty_cycle(child);
+//This is a method for if guard pipeline stage
+int calculate_duty_cycle(op* origin_lp) {
+    if (origin_lp == nullptr) {
+        return 1;
+    }
+    if (origin_lp->children.size() > 1) {
+        return origin_lp->trip_count();
+    }
+    op* child = pick(origin_lp->children);
+    return origin_lp->trip_count() * calculate_duty_cycle(child);
 }
 
 vector<string> get_lb_condition(op* root_op, op* inner_most_cgpl_lp) {
@@ -4940,6 +5005,7 @@ vector<string> get_ub_condition(op* root_op, op* inner_most_cgpl_lp) {
 void add_prelogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp) {
   //iteratively find the loops under this imperfect_child_loop
   vector<string> lb_condition_string_vec = get_lb_condition(imperfect_child_lp, inner_most_cgpl_lp);
+  //cout << "imperfect_child_lp: " << imperfect_child_lp->name << endl;
   string cond = sep_list(lb_condition_string_vec, "", "", "&&");
   op* if_node = inner_most_cgpl_lp->add_if_front(op_tbm->name + "_if_prelogue_guard", cond, imperfect_child_lp);
   //op_tbm->parent->delete_child(op_tbm);
@@ -4951,6 +5017,7 @@ void add_prelogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp)
 void add_epilogue_op(op* op_tbm, op* imperfect_child_lp, op* inner_most_cgpl_lp) {
   //iteratively find the loops under this imperfect_child_loop
   vector<string> ub_condition_string_vec = get_ub_condition(imperfect_child_lp, inner_most_cgpl_lp);
+  //cout << "imperfect_child_lp: " << imperfect_child_lp->name << endl;
   string cond = sep_list(ub_condition_string_vec, "", "", "&&");
   op* if_node = inner_most_cgpl_lp->add_if(op_tbm->name + "_if_epilogue_guard", cond, imperfect_child_lp);
   //op_tbm->parent->delete_child(op_tbm);
@@ -5144,7 +5211,7 @@ void print_partial_schedule(schedule_info& sched, prog& prg) {
   cout << endl;
   cout << "Offsets in parent" << endl;
   for (auto e : sched.op_offset_within_parent) {
-    cout << tab(1) << e.first->name << ": " << e.second << endl;
+    cout << tab(1) << e.first << ": " << e.second << endl;
   }
   cout << endl;
   //cout << "Instance latencies" << endl;
@@ -5157,10 +5224,10 @@ void fuse_sequentially(const vector<op*>& outer, schedule_info& sched, prog& prg
   int delay = 0;
   for (auto outer_loop : outer) {
     for (auto c : outer_loop->children) {
-      sched.op_offset_within_parent[c] = delay;
+      sched.op_offset_within_parent[c->name] = delay;
       delay += sched.total_latency(c);
     }
-    sched.op_offset_within_parent[outer_loop] = 0;
+    sched.op_offset_within_parent[outer_loop->name] = 0;
   }
 
   for (auto outer_loop : outer) {
@@ -5271,9 +5338,11 @@ int op_latency(op* op, schedule_info& hwinfo) {
 }
 
 void schedule_info::init_op_latencies(prog& prg) {
-    // for (auto stmt : prg.all_ops()) {
-    //     op_latencies[stmt->name] = op_latency(stmt, *this);
-    // }
+    //FIXME: this was comment out in aha flow may result problem in dp test
+    //Put it back since we need this meta data in schedule
+    for (auto stmt : prg.all_ops()) {
+        op_latencies[stmt->name] = op_latency(stmt, *this);
+    }
 }
 
 
@@ -5289,7 +5358,7 @@ void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_l
 
     int earliest_possible_delay = 0;
     int latest_legal_delay =
-      map_find(lp, sched.op_offset_within_parent);
+      map_find(lp->name, sched.op_offset_within_parent);
 
     int current_delay = latest_legal_delay;
 
@@ -5297,7 +5366,7 @@ void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_l
     while (latest_legal_delay - earliest_possible_delay > 0) {
       assert(latest_legal_delay >= earliest_possible_delay);
       int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
-      sched.op_offset_within_parent[lp] = try_delay;
+      sched.op_offset_within_parent[lp->name] = try_delay;
       if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         latest_legal_delay = try_delay;
       } else {
@@ -5315,10 +5384,10 @@ void adjust_outer_delays_exhaustively(schedule_info& sched, prog& prg, int glb_l
         for (string prod: get_producers(name, prg)) {
             op* prod_op = prg.find_loop(prod);
             latest_legal_delay = std::max(latest_legal_delay,
-                    sched.total_latency(prod_op) + sched.op_offset_within_parent.at(prod_op));
+                    sched.total_latency(prod_op) + sched.op_offset_within_parent.at(prod_op->name));
         }
     }
-    sched.op_offset_within_parent[lp] = latest_legal_delay;
+    sched.op_offset_within_parent[lp->name] = latest_legal_delay;
   }
 }
 
@@ -5333,7 +5402,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
 
     int earliest_possible_delay = 0;
     int latest_legal_delay =
-      map_find(lp, sched.op_offset_within_parent);
+      map_find(lp->name, sched.op_offset_within_parent);
 
     int current_delay = latest_legal_delay;
 
@@ -5341,7 +5410,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
     while (latest_legal_delay - earliest_possible_delay > 100) {
       assert(latest_legal_delay >= earliest_possible_delay);
       int try_delay = (latest_legal_delay + earliest_possible_delay) / 2;
-      sched.op_offset_within_parent[lp] = try_delay;
+      sched.op_offset_within_parent[lp->name] = try_delay;
       if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         latest_legal_delay = try_delay;
       } else {
@@ -5351,7 +5420,7 @@ void adjust_outer_delays(schedule_info& sched, prog& prg) {
       cout << "Latest legal  : " << latest_legal_delay << endl;
     }
 
-    sched.op_offset_within_parent[lp] = latest_legal_delay;
+    sched.op_offset_within_parent[lp->name] = latest_legal_delay;
 
     //int old_delay = map_find(lp, sched.op_offset_within_parent);
 
@@ -5380,11 +5449,11 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
   cout << "Adjusting delays of " << prg.name << endl;
   for (auto lp : find_coarse_grained_pipeline_loop(prg.root)->children) {
 
-    int old_delay = map_find(lp, sched.op_offset_within_parent);
+    int old_delay = map_find(lp->name, sched.op_offset_within_parent);
     int try_delay = 1;
     bool found_smaller_delay = false;
     while (try_delay < old_delay) {
-      sched.op_offset_within_parent[lp] = try_delay;
+      sched.op_offset_within_parent[lp->name] = try_delay;
       if (no_violated_cycle_accurate_dependencies(deps, sched, prg)) {
         found_smaller_delay = true;
         break;
@@ -5395,10 +5464,43 @@ void adjust_outer_pipeline_delays(schedule_info& sched, prog& prg) {
     }
 
     if (!found_smaller_delay) {
-      sched.op_offset_within_parent[lp] = old_delay;
+      sched.op_offset_within_parent[lp->name] = old_delay;
     }
   }
 }
+
+bool check_if_relax_inner_iis(op* lp, prog& prg) {
+
+    //Add a method to check the stride
+    for (string b: buffers_read(lp)) {
+        //Skip all the input buffers(read only)
+        if (prg.ins.count(b) || contains(b, "glb") || contains(b, "pond")) {
+          continue;
+        }
+        //cout << " buffer consumed: " << b << endl;
+        isl_map* reads = consumer_map(lp, b, prg);
+        auto single_maps = to_map(pick(get_basic_maps(reads)));
+        cout << "access map: " << str(reads) << endl;
+        cout << "access map single: " << str(single_maps) << endl;
+        auto reduce_map = linear_address_map_lake(range(reads));
+        reduce_map = set_domain_name(reduce_map, b);
+        reduce_map = set_range_name(reduce_map, b);
+        auto linear_reads = dot(single_maps, reduce_map);
+        int cms = common_max_stride(linear_reads, 0);
+        cout << "cms: " << cms << endl;
+        auto stride = stride_in_dim(linear_reads, num_in_dims(linear_reads) - 1);
+        //Chances are that this buffer only access to single pixel
+        if (cms == 0)
+            continue;
+        cout << " inner most read stride: " << stride/cms << endl;
+        cout << "  linear reads: " << str(linear_reads) << endl;
+        if (stride/cms > 2) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void adjust_inner_iis(schedule_info& sched, prog& prg) {
   auto deps = cycle_accurate_deps(prg);
@@ -5406,7 +5508,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
   for (auto lp : get_inner_loops(prg)) {
     cout << "Adjusting ii of " << lp->name << endl;
     int old_ii = map_find(lp->name, sched.loop_iis);
-    int try_ii = 1;
+    int try_ii = sched.target_inner_iis.at(lp->name);
     bool found_smaller_ii = false;
     while (try_ii < old_ii) {
       sched.loop_iis[lp->name] = try_ii;
@@ -5422,7 +5524,7 @@ void adjust_inner_iis(schedule_info& sched, prog& prg) {
     } else {
       cout << "Found smaller II of " << lp->name << " to " << sched.loop_iis[lp->name] << endl;
       if (sched.pad_step(lp)) {
-        sched.op_offset_within_parent.at(lp) = sched.pad_step(lp) *sched.loop_iis[lp->name];
+        sched.op_offset_within_parent.at(lp->name) = sched.pad_step(lp) *sched.loop_iis[lp->name];
       }
     }
   }
@@ -5460,7 +5562,7 @@ void loop_split(prog& prg) {
   vector<op*> cgpl_lp;
   find_split_inner_perfect_loop(prg.root, cgpl_lp, prg);
   for (auto lp: cgpl_lp) {
-      cout << tab(4) << lp->name << endl;
+    //cout << tab(4) << lp->name << endl;
     perfect_loop_split(lp, prg);
   }
 }
@@ -5498,9 +5600,6 @@ void perfect_loop_split(op* lp, prog& prg) {
     op* outtest_lp = prg.root->container_child(lp);
     auto child_list = lp->children;
 
-    //Cannot split loop if they share index variable
-    if (share_index_var(child_list))
-        return;
     for (op* child: child_list) {
         //Get surrounding loops from root to leave
         cout << "\tVisiting child: " << child->name << endl;
@@ -5511,9 +5610,22 @@ void perfect_loop_split(op* lp, prog& prg) {
         auto new_lp = prg.root->add_loop_before(outtest_lp,
                 outtest_lp->name + "_split_"+str(child_cnt),
                 outtest_lp->start, outtest_lp->end_exclusive);
+
+        //When copy the loop node, also copy the cgl tag
+        if (outtest_lp->cgl_tag) new_lp->cgl_tag = true;
+        if (child->index_variables_needed_by_compute.size() > 0) {
+          child->rename_index_var(outtest_lp->name, outtest_lp->name + "_split_"+str(child_cnt));
+        }
         for (auto it = loop_nest.begin()+1; it != loop_nest.end(); it ++) {
             new_lp = new_lp->add_loop((*it)->name + "_split_" + str(child_cnt),
                     (*it)->start, (*it)->end_exclusive);
+
+            if ((*it)->cgl_tag)
+                new_lp->cgl_tag = true;
+
+            if (child->index_variables_needed_by_compute.size() > 0) {
+              child->rename_index_var((*it)->name, (*it)->name + "_split_"+str(child_cnt));
+            }
         }
         move_node(child, new_lp, prg);
         child->add_var_suffix_to_writes("_split_" + str(child_cnt), surrounding_loops);

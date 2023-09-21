@@ -133,6 +133,9 @@ CoreIR::Instance* affine_controller(CoreIR::ModuleDef* def, isl_set* dom, isl_af
 
 affine_controller_ctrl pack_controller(affine_controller_ctrl& unpacked);
 
+void generate_controller_for_compute_share(CodegenOptions& options, CoreIR::ModuleDef* def, vector<isl_map*> & sched_map, schedule_info& hwinfo, prog& prg);
+void generate_mux_for_compute_share(CoreIR::ModuleDef* def, map<string, UBuffer> & buffers, schedule_info& hwinfo, prog& prg);
+
 void generate_banks_garnet(CodegenOptions& options, prog& prg, UBuffer& buf, UBufferImpl& impl, schedule_info& hw_info);
 
 void generate_coreir_addrgen_in_tile(CodegenOptions& options,

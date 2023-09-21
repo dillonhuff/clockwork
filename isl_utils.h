@@ -559,6 +559,8 @@ isl_pw_qpolynomial* card(isl_map* const m);
 
 isl_pw_qpolynomial* card(isl_set* const m);
 
+int card_in_dim(isl_map* m, int in_dim);
+
 isl_union_set* range(isl_union_map* const m);
 isl_union_set* domain(isl_union_map* const m);
 

@@ -3876,7 +3876,7 @@ isl_set* project_all_but(isl_set* const dmap,
   auto ct = ctx(dmap);
 
   string dname = "";
-  if (isl_set_get_tuple_id(dmap) != nullptr) {
+  if (isl_set_has_tuple_id(dmap)) {
     dname = name(m);
   }
 
@@ -3890,7 +3890,7 @@ isl_set* project_all_but(isl_set* const dmap,
 
   assert(num_dims(get_space(m)) == 1);
 
-  if (isl_set_get_tuple_id(dmap) != nullptr) {
+  if (isl_set_has_tuple_id(dmap)) {
     isl_set_set_tuple_id(m, id(ct, dname));
   }
 
@@ -5505,6 +5505,20 @@ vector<int> extents(isl_set* s) {
     exts.push_back(to_int(lexmaxval(pr)) - to_int(lexminval(pr)) + 1);
   }
   return exts;
+}
+
+int card_in_dim(isl_map* m, int in_dim) {
+    assert(in_dim < num_in_dims(m));
+    auto tmp = cpy(m);
+    if (in_dim != 0) {
+      for (int i = num_in_dims(tmp); i > in_dim + 1; i --) {
+        tmp = project_out_domain(tmp, i-1);
+      }
+    }
+    //cout << "tmp map: " << str(tmp) << endl;
+    int data_btw_fetch = int_upper_bound(card(tmp));
+    cout << "data fetch between: " << data_btw_fetch << endl;
+    return data_btw_fetch;
 }
 
 isl_set* project_out_zero_dim(isl_set* s) {

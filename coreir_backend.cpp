@@ -1459,6 +1459,58 @@ CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
   return val;
 }
 
+CoreIR::Wireable* selectList(CoreIR::ModuleDef* def, const std::vector<pair<CoreIR::Wireable*, CoreIR::Wireable*>>& enable_map, int bitwidth, int bundle_width) {
+  CoreIR::Wireable* wire = nullptr;
+  if (enable_map.size() == 1) {
+    return pick(enable_map).first;
+  }
+
+  auto context = def->getContext();
+
+  //An hack for coreIR, mentle wire did not work well with arr size of 1
+  if (bundle_width > 1) {
+    CoreIR::Type* type = context->Bit()->Arr(bitwidth)->Arr(bundle_width);
+    CoreIR::Wireable* pt_out = def->addInstance("pt_out_"+context->getUnique(),
+            "mantle.wire", {{"type", Const::make(context, type)}});
+
+    for (int bd_i = 0; bd_i < bundle_width; bd_i ++) {
+      wire = enable_map.begin()->first->sel(str(bd_i));
+      for (auto it =enable_map.begin(); it < enable_map.end() - 1; it ++) {
+        auto next_wire = (it + 1)->first->sel(str(bd_i));
+        auto enable_signal = (it+1)->second;
+        auto next_val = def->addInstance(context->getUnique() + "_mux",
+                "coreir.mux",
+                { {"width", CoreIR::Const::make(context, bitwidth)}});
+        def->connect(enable_signal, next_val->sel("sel"));
+        def->connect(wire, next_val->sel("in0"));
+        def->connect(next_wire, next_val->sel("in1"));
+        wire = next_val->sel("out");
+
+        //if this is the final output of onehot mux
+        if (it == enable_map.end() - 2)
+          def->connect(wire, pt_out->sel("in")->sel(str(bd_i)));
+      }
+    }
+    return pt_out->sel("out");
+  } else {
+
+    wire = enable_map.begin()->first->sel("0");
+    for (auto it =enable_map.begin(); it < enable_map.end() - 1; it ++) {
+      auto next_wire = (it + 1)->first->sel("0");
+      auto enable_signal = (it + 1)->second;
+      auto next_val = def->addInstance(context->getUnique() + "_mux",
+              "coreir.mux",
+              { {"width", CoreIR::Const::make(context, bitwidth)}});
+      def->connect(enable_signal, next_val->sel("sel"));
+      def->connect(wire, next_val->sel("in0"));
+      def->connect(next_wire, next_val->sel("in1"));
+      wire = next_val->sel("out");
+    }
+    return wire;
+  }
+}
+
+
 CoreIR::Wireable* selectList(CoreIR::ModuleDef* def, const std::vector<pair<CoreIR::Wireable*, CoreIR::Wireable*>>& enable_map, int bitwidth) {
   CoreIR::Wireable* wire = nullptr;
   if (enable_map.size() == 1) {
@@ -1730,7 +1782,8 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       ub_field.push_back({"valid_pass_out", context->Bit()});
   }
   for (auto var : op->index_variables_needed_by_compute) {
-    ub_field.push_back({var, context->BitIn()->Arr(16)});
+    string real_var = take_until_str(var, "_split_");
+    ub_field.push_back({real_var, context->BitIn()->Arr(16)});
   }
   for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
     string buf_name = bundle.first;
@@ -1827,7 +1880,9 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
       assert(halide_cu != nullptr);
 
       for (auto var : op->index_variables_needed_by_compute) {
-        def->connect(halide_cu->sel(var), def->sel("self")->sel(var));
+
+        string real_var = take_until_str(var, "_split_");
+        def->connect(halide_cu->sel(real_var), def->sel("self")->sel(real_var));
       }
 
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
@@ -1858,7 +1913,7 @@ void generate_coreir_compute_unit(CodegenOptions& options, bool found_compute,
         assert(found);
       }
 
-      cout << "More than oune outgoing bundle" << endl;
+      cout << "More than one outgoing bundle" << endl;
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
         auto buf = dbhc::map_find(bundle.first, buffers);
         bool found = false;
@@ -2146,11 +2201,12 @@ void run_lake_verilog_codegen(CodegenOptions& options, string v_name, string ub_
   string dp_flag_str = dp_flag ? " -dp " : "";
   int fw = mem_collateral.fetch_width;
   int capacity = mem_collateral.get_single_tile_capacity()/fw;
+  int tb_height = mem_collateral.get_capacity("tb")/fw;
 
   int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d " + str(capacity) + " -mw " + str(fw*16) + dp_flag_str);
+          "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v -a -v -d " + str(capacity) +
+          " -tb " + str(tb_height) + " -mw " + str(fw*16) + dp_flag_str);
   assert(res_lake == 0);
-
 
 }
 
@@ -2169,7 +2225,7 @@ void run_lake_dp_verilog_codegen(CodegenOptions& options, string v_name, string 
 void run_lake_dp_verilog_codegen_new(CodegenOptions& options, string v_name, string ub_ins_name) {
     ASSERT(getenv("LAKE_PATH"), "Define env var $LAKE_PATH which is the /PathTo/lake");
     int res_lake = cmd("python $LAKE_PATH/lake/utils/wrapper.py -c " + options.dir + "lake_collateral/" + ub_ins_name +
-                     "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v  -a -v -dp -ii 6 -oi 6 -rd 1 -d 2048 -mw 16");
+                     "/config.json -s -wmn "+ v_name + " -wfn lake_module_wrappers.v  -a -v -dpflag -dp -ii 6 -oi 6 -rd 1 -d 2048 -mw 16");
     assert(res_lake == 0);
 }
 
@@ -2689,7 +2745,10 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
+    if(!hwinfo.check_if_compute_created(op)) {
+      generate_coreir_compute_unit(options, found_compute, def, op, prg, buffers, hwinfo);
+      hwinfo.set_compute_is_created(op);
+    }
   }
 
   //Add a pass to see if there is a glb
@@ -2717,10 +2776,11 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
     }
   }
 
+
   for (auto& buf : buffers) {
     //Help for DEBUG
-    //if (!contains(buf.first, "output_cgra")) {
-    //    continue;
+    //if (!contains(buf.first, "f1_cgra_stencil")) {
+    //  continue;
     //}
     //if (!contains(buf.first, "kernel_cgra")) {
     //    continue;
@@ -2777,114 +2837,122 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
       generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
     }
     for (auto var : op->index_variables_needed_by_compute) {
+
+      string real_var = take_until_str(var, "_split_");
       int level = dbhc::map_find(var, levels);
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
-      def->connect(def->sel(op->name)->sel(var), var_wire);
+      def->connect(def->sel(op->name)->sel(real_var), var_wire);
     }
 
 
-    for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-      string buf_name = bundle.first;
-      string bundle_name = bundle.second;
-      auto buf = dbhc::map_find(buf_name, buffers);
-      int pixel_width = buf.port_widths;
+    if (hwinfo.share_compute(op)) {
 
-      assert(buf.is_input_bundle(bundle.second));
+    } else {
 
-      if (prg.is_output(buf_name)) {
-        def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        if (options.pass_through_valid) {
-            //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
-            //need_pass_valid = true;
-          //} else {
-            //cout << "This app does not have memory tile!" << endl;
-            //This is the situation does not have memory tile, we need to use affine generator
+      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        string buf_name = bundle.first;
+        string bundle_name = bundle.second;
+        auto buf = dbhc::map_find(buf_name, buffers);
+        int pixel_width = buf.port_widths;
 
-            //Always use the output controller, without index involve
-            if (op->index_variables_needed_by_compute.size() == 0)
-              generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
-            auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
-            def->connect(def->sel(output_en),
-                write_start_wire(def, op->name));
-        }
-      } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        /*def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
-            write_start_wire(def, op->name));
-        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-            write_start_control_vars(def, op->name));*/
-        if (options.pass_through_valid) {
-          if (need_pass_valid) {
-            def->connect(buf_name + "." + bundle_name + "_extra_ctrl", op->name + ".valid_pass_out");
+
+        assert(buf.is_input_bundle(bundle.second));
+
+        if (prg.is_output(buf_name)) {
+          def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+          if (options.pass_through_valid) {
+              //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + ".valid_pass_out");
+              //need_pass_valid = true;
+            //} else {
+              //cout << "This app does not have memory tile!" << endl;
+              //This is the situation does not have memory tile, we need to use affine generator
+
+              //Always use the output controller, without index involve
+              if (op->index_variables_needed_by_compute.size() == 0)
+                generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+              auto output_en = "self." + pg(buf_name, bundle_name) + "_valid";
+              def->connect(def->sel(output_en),
+                  write_start_wire(def, op->name));
           }
-        }
-      }
-    }
-
-    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      string buf_name = bundle.first;
-      string bundle_name = bundle.second;
-      auto buf = dbhc::map_find(buf_name, buffers);
-
-      assert(buf.is_output_bundle(bundle.second));
-
-      if (last_producer_buf_with_tile.has_value()) {
-        if (buf_name != last_producer_buf_with_tile.get_value()) {
-          need_pass_valid = false;
-        }
-      }
-
-      if (prg.is_input(buf_name)) {
-
-        //create the op controller for input will remove for garnet test
-        generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
-
-        auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
-        auto input_bus = "self." + pg(buf_name, bundle_name);
-
-
-        def->connect(def->sel(input_bus),
-            def->sel(op->name + "." + pg(buf_name, bundle_name)));
-
-        def->connect(def->sel(output_valid),
-            read_start_wire(def, op->name));
-        //auto const_1 = def->addInstance("true",
-        //    "corebit.const",
-        //    {{"value", CoreIR::Const::make(context, true)}});
-        //def->connect(def->sel(output_valid), const_1->sel("out"));
-
-        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), DATAPATH_WIDTH);
-        // TODO: This delayed input is a hack that I insert to
-        // ensure that I can assume all buffer reads take 1 cycle
-        //def->connect(def->sel(input_bus)->sel(0),
-        //    def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
-      } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-
-        //wire the stencil valid from last buffer to the next one
-        if (options.pass_through_valid) {
-          //we disable wiring if we found first memory tile
-          if (need_pass_valid) {
-            //skip the self loop I/O, or the node with init
-            //FIXME this may not work with multiple input
-            if ( (!dbhc::elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
-                    (!contains(buf_name, "clkwrk_dsa"))){
-               def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
-            }
-            //Stop at the ubuffer with memory tile inside
-            if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
-              cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
-              last_producer_buf_with_tile = buf_name;
+        } else {
+          def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+          /*def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
+              write_start_wire(def, op->name));
+          def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+              write_start_control_vars(def, op->name));*/
+          if (options.pass_through_valid) {
+            if (need_pass_valid) {
+              def->connect(buf_name + "." + bundle_name + "_extra_ctrl", op->name + ".valid_pass_out");
             }
           }
         }
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
-        //    read_start_wire(def, op->name));
-        //def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
-        //    read_start_control_vars(def, op->name));
       }
+
+      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        string buf_name = bundle.first;
+        string bundle_name = bundle.second;
+        auto buf = dbhc::map_find(buf_name, buffers);
+
+        assert(buf.is_output_bundle(bundle.second));
+
+        if (last_producer_buf_with_tile.has_value()) {
+          if (buf_name != last_producer_buf_with_tile.get_value()) {
+            need_pass_valid = false;
+          }
+        }
+
+        if (prg.is_input(buf_name)) {
+
+          //create the op controller for input will remove for garnet test
+          generate_coreir_op_controller(options, def, op, sched_maps, hwinfo);
+
+          auto output_valid = "self." + pg(buf_name, bundle_name) + "_en";
+          auto input_bus = "self." + pg(buf_name, bundle_name);
+
+
+          def->connect(def->sel(input_bus),
+              def->sel(op->name + "." + pg(buf_name, bundle_name)));
+
+          def->connect(def->sel(output_valid),
+              read_start_wire(def, op->name));
+          //auto const_1 = def->addInstance("true",
+          //    "corebit.const",
+          //    {{"value", CoreIR::Const::make(context, true)}});
+          //def->connect(def->sel(output_valid), const_1->sel("out"));
+
+          auto delayed_input = delay(def, def->sel(input_bus)->sel(0), DATAPATH_WIDTH);
+          // TODO: This delayed input is a hack that I insert to
+          // ensure that I can assume all buffer reads take 1 cycle
+          //def->connect(def->sel(input_bus)->sel(0),
+          //    def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
+        } else {
+          def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+
+          //wire the stencil valid from last buffer to the next one
+          if (options.pass_through_valid) {
+            //we disable wiring if we found first memory tile
+            if (need_pass_valid) {
+              //skip the self loop I/O, or the node with init
+              //FIXME this may not work with multiple input
+              if ( (!dbhc::elem(buf_name, outgoing_buffers(buffers, op, prg))) &&
+                      (!contains(buf_name, "clkwrk_dsa"))){
+                 def->connect(buf_name + "." + bundle_name +"_extra_ctrl", op->name + ".valid_pass_in" );
+              }
+              //Stop at the ubuffer with memory tile inside
+              if (buffers.at(buf_name).contain_memory_tile && !last_producer_buf_with_tile.has_value()) {
+                cout << "Stop wiring stencil valid up from buf: " << buf_name << endl;
+                last_producer_buf_with_tile = buf_name;
+              }
+            }
+          }
+        }
+      }
+
     }
   }
+
+  generate_controller_for_compute_share(options, def, sched_maps, hwinfo, prg);
+  generate_mux_for_compute_share(def, buffers, hwinfo, prg);
 
   ub->setDef(def);
 
@@ -2898,6 +2966,236 @@ CoreIR::Module*  generate_coreir_without_ctrl(CodegenOptions& options,
   return ub;
   //assert(false);
 
+}
+
+void generate_controller_for_compute_share(CodegenOptions& options, CoreIR::ModuleDef* def, vector<isl_map*> & sched_maps, schedule_info& hwinfo, prog& prg) {
+  for (string func: hwinfo.get_shared_resources()) {
+    for (string op_name: hwinfo.compute_resources.at(func).op_names)
+      generate_coreir_op_controller(options, def, prg.find_op(op_name), sched_maps, hwinfo);
+  }
+}
+
+//create a mux data structure
+struct MuxIR {
+    op* lead_op;
+    pair<string, string> buf2bd;
+    map<string, pair<string, string> > op2input_bd;
+
+    //Meta data for codegen, denote the output wire's bundle and buf
+    string buf_name, bundle_name;
+    int pt_width, bd_width;
+
+    MuxIR(pair<string, string> lead_inpt_bd, op* lead_op_) {
+        buf2bd = lead_inpt_bd;
+        lead_op = lead_op_;
+    }
+
+    void insertSel(string op_name, pair<string, string> input_bd) {
+        op2input_bd.insert({op_name, input_bd});
+    }
+
+    vector<string> getSelOps() {
+        vector<string> ops;
+        for (auto it: op2input_bd) {
+            ops.push_back(it.first);
+        }
+        return ops;
+    }
+
+    void initMetaData(map<string, UBuffer> & buffers) {
+
+      buf_name = buf2bd.first;
+      bundle_name = buf2bd.second;
+      auto buf = dbhc::map_find(buf_name, buffers);
+      pt_width = buf.port_widths;
+      bd_width = buf.lanes_in_bundle(bundle_name);
+    }
+
+  void wire_op_mux(CoreIR::ModuleDef* def, CoreIR::Instance* mux_ins);
+  CoreIR::Module* op_mux_def (CoreIR::Context* context);
+  CoreIR::Module* generate_op_mux(CoreIR::Context* context);
+
+};
+
+void MuxIR::wire_op_mux(CoreIR::ModuleDef* def, CoreIR::Instance* mux_ins) {
+
+  //Connect with the data path
+  for (auto it: op2input_bd) {
+    auto bundle = it.second;
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    def->connect(def->sel(buf_name + "." + bundle_name),
+            mux_ins->sel(pg(buf_name, bundle_name)));
+  }
+  def->connect(def->sel(lead_op->name+ "." + pg(buf_name, bundle_name)),
+          mux_ins->sel("out_" + pg(buf_name, bundle_name)));
+
+  //Connect with the stencil valid
+  for (auto op_name: getSelOps()) {
+    def->connect(mux_ins->sel(exe_start_name(op_name)), read_start_wire(def, op_name));
+  }
+}
+
+CoreIR::Module* MuxIR::op_mux_def (CoreIR::Context* context) {
+  //Create a mux every group of input port
+  vector<pair<string, CoreIR::Type*> > ub_field;
+  for (string op_name: getSelOps()) {
+    ub_field.push_back({exe_start_name(op_name), context->BitIn()});
+  }
+  //for (auto op_name: hwinfo.compute_resources.at(func).op_names) {
+  //  ub_field.push_back({exe_start_name(op_name), context->BitIn()});
+  //}
+
+  ub_field.push_back({"out_" + pg(buf_name, bundle_name),
+          context->Bit()->Arr(pt_width)->Arr(bd_width)});
+    //cout << "out buf: " << buf_name << ", bd: " << bundle_name << endl;
+
+
+  for (auto it: op2input_bd) {
+    //Push the bundle name inside
+    auto bundle = it.second;
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    //cout << "  buf: " << buf_name << ", bd: " << bundle_name << endl;
+    ub_field.push_back({pg(buf_name, bundle_name),
+            context->BitIn()->Arr(pt_width)->Arr(bd_width)});
+  }
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto ns = context->getNamespace("global");
+  auto mux = ns->newModuleDecl("compute_share_mux_" + context->getUnique(), utp);
+  return mux;
+}
+
+CoreIR::Module* MuxIR::generate_op_mux(CoreIR::Context* context) {
+
+  CoreIR::Module* mux = op_mux_def(context);
+  auto df = mux->newModuleDef();
+
+  std::vector<pair<CoreIR::Wireable*, CoreIR::Wireable*>> sel_map;
+  for (auto it: op2input_bd) {
+    auto sel_wire = exe_start_name(it.first);
+    auto bundle = it.second;
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    auto self = df->sel("self");
+    sel_map.push_back({self->sel(pg(buf_name, bundle_name)), self->sel(sel_wire)});
+  }
+  //Create the mux
+  CoreIR::Wireable* data_out= selectList(df, sel_map, pt_width, bd_width);
+
+  //An workaround with array size of 1
+  if (bd_width > 1) {
+    df->connect(df->sel("self")->sel("out_" + pg(buf_name, bundle_name)), data_out);
+  } else {
+    df->connect(df->sel("self")->sel("out_" + pg(buf_name, bundle_name))->sel("0"), data_out);
+  }
+  //Add this coreir module
+  mux->setDef(df);
+  return mux;
+}
+
+struct BroadcastIR {
+    op* lead_op;
+    map<string, pair<string, string> > op2output_bd;
+    pair<string, string> buf2bd;
+
+
+    BroadcastIR(pair<string, string> lead_outpt_bd, op* lead_op_) {
+        buf2bd = lead_outpt_bd;
+        lead_op = lead_op_;
+    }
+
+    void insertDst(string op_name, pair<string, string> output_bd) {
+        op2output_bd.insert({op_name, output_bd});
+    }
+
+    void generate_broadcast_coreir(CoreIR::ModuleDef* def) {
+
+      auto dst_bd = buf2bd;
+
+      string buf_name = dst_bd.first;
+      string bundle_name = dst_bd.second;
+
+      for (auto it: op2output_bd) {
+        //Push the bundle name inside
+        auto bundle = it.second;
+        string bc_buf_name = bundle.first;
+        string bc_bundle_name = bundle.second;
+        def->connect(def->sel( bc_buf_name + "." + bc_bundle_name),
+                    def->sel(lead_op->name + "." + pg(buf_name, bundle_name)));
+      }
+    }
+
+};
+
+
+
+void generate_mux_for_compute_share(CoreIR::ModuleDef* def, map<string, UBuffer> & buffers, schedule_info& hwinfo, prog& prg) {
+  for (string func: hwinfo.get_shared_resources()) {
+
+    auto context = def->getContext();
+    auto ns = context->getNamespace("global");
+
+    cout << "Generating input mux for " << func << endl;
+    vector<MuxIR> compute_share_muxes;
+
+    //Find the op that provide the shared compute unit
+    op* lead_op = hwinfo.compute_resources.at(func).leading_op;
+    vector<pair<string, string>> lead_inpt_bd = incoming_bundles(lead_op, buffers, prg);
+    int cnt = 0;
+    for (string op_name: hwinfo.compute_resources.at(func).op_names) {
+      op* shared_op = prg.find_op(op_name);
+      int bd_cnt = 0;
+      for (auto bd: incoming_bundles(shared_op, buffers, prg)) {
+        if (cnt == 0) {
+          MuxIR mux_ins(lead_inpt_bd.at(bd_cnt), lead_op);
+          mux_ins.insertSel(op_name, bd);
+          compute_share_muxes.push_back(mux_ins);
+        } else {
+          auto & mux_ins = compute_share_muxes.at(bd_cnt);
+          mux_ins.insertSel(op_name, bd);
+        }
+        bd_cnt ++;
+      }
+      cnt ++;
+    }
+
+    //Codegen the mux in place
+    for (auto & mux_ir: compute_share_muxes) {
+      mux_ir.initMetaData(buffers);
+      CoreIR::Module* mux = mux_ir.generate_op_mux(context);
+      auto mux_ins= def->addInstance("compute_share_mux_" + lead_op->name + context->getUnique(), mux);
+
+      mux_ir.wire_op_mux(def, mux_ins);
+    }
+
+    //Generate the output broadcast
+    vector<BroadcastIR> bc_ir_vec;
+    vector<pair<string, string> > lead_outpt_bd = outgoing_bundles(lead_op, buffers, prg);
+    //vector<map<string, pair<string, string> > > op2outpt_bd;
+    cnt = 0;
+    for (string op_name: hwinfo.compute_resources.at(func).op_names) {
+      op* shared_op = prg.find_op(op_name);
+      int bd_cnt = 0;
+      for (auto bd: outgoing_bundles(shared_op, buffers, prg)) {
+          if (cnt == 0) {
+              BroadcastIR bcIR(lead_outpt_bd.at(bd_cnt), lead_op);
+              bcIR.insertDst(op_name, bd);
+              bc_ir_vec.push_back(bcIR);
+          } else {
+              bc_ir_vec.at(bd_cnt).insertDst(op_name, bd);
+          }
+          bd_cnt ++;
+      }
+      cnt ++;
+    }
+
+    //The output broadcast
+    //for (auto dst_bd: lead_outpt_bd) {
+    for (auto & bc_ir: bc_ir_vec) {
+        bc_ir.generate_broadcast_coreir(def);
+    }
+  }
 }
 
 void instantiate_controllers(CodegenOptions& options,
@@ -2996,8 +3294,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     for (auto var : op->index_variables_needed_by_compute) {
       assert(options.rtl_options.use_external_controllers);
       int level = dbhc::map_find(var, levels);
+      //FIXME: it's a hack index var may be splited and we need to remove the suffix
+      string real_var = take_until_str(var, "_split_");
       auto var_wire = exe_start_control_vars(def, op->name)->sel(level);
-      def->connect(def->sel(op->name)->sel(var), var_wire);
+      def->connect(def->sel(op->name)->sel(real_var), var_wire);
     }
   }
 
@@ -6540,7 +6840,7 @@ void copy_and_pipeline_connection(vector<std::set<Instance*> >& stages, map<Inst
   copy_def->connect(wc0, wc1);
 }
 
-void copy_and_add_latency_to_output(vector<std::set<Instance*> >& stages, 
+void copy_and_add_latency_to_output(vector<std::set<Instance*> >& stages,
     map<Instance*, Instance*>& instance_map, Wireable* w0, Wireable* w1, ModuleDef* copy_def, int kernel_latency) {
 
   cout << "w0 = " << w0->toString() << ": " << w0->getType()->toString() << endl;

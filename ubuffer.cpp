@@ -783,6 +783,7 @@ isl_map* UBuffer::get_coarse_grained_pipeline_schedule(CodegenOptions& options, 
     //assert(config_mode == "lake");
     //optimize the double buffer
     isl_set* cgpl_dom = ::domain(cgpl_sched);
+    //No stripmining needed
     //int stripmine_ext = get_dim_extent(cgpl_dom, coarse_grained_pipeline_loop_level);
     //assert(stripmine_ext >= 2 &&( stripmine_ext % 2 == 0 ));
     auto trans =
@@ -1603,7 +1604,13 @@ pair<isl_map*, isl_map*> UBuffer::get_bank_pt_IR(string inpt, isl_set* rddom, sc
 
   if (isIn.at(inpt)) {
     //update op latency, if it's input port
+    //FIXME: this seems to be added twice, all latency was handled in generate ubuffer method
+    //TODO: comment this out
     int op_latency = info.compute_latency(::domain_name(acc_map));
+    if (op_latency != 0) {
+        cout << "This could be an issue in dual port bank selection." << endl;
+        assert(false);
+    }
     sched_aff = add(sched_aff, op_latency);
   }
 
@@ -1645,7 +1652,7 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
     int op_latency = 0;
     //FIXME: this is a hack for broadcast latency
     int broadcast_latency = info.get_ub_latency(name, bank);
-    
+
 
     for (string inpt: inpts) {
       auto acc_map = to_map(access_map.at(inpt));
@@ -1656,7 +1663,9 @@ UBuffer UBuffer::generate_ubuffer(CodegenOptions& options, UBufferImpl& impl, sc
       auto dom = ::domain(acc_map);
 
       //update op latency
-      op_latency = info.compute_latency(::domain_name(acc_map));
+      //Change to op latency, because all the schedule is the start time
+      op_latency = info.get_op_latency(::domain_name(acc_map));
+      //op_latency = info.compute_latency(::domain_name(acc_map));
       // op_latency = info.compute_unit_latencies(::domain_name(acc_map));
 
 
@@ -3929,6 +3938,7 @@ void cgpl_ctrl_optimization(CodegenOptions& options, UBuffer& target_buf, string
     UBuffer new_target_buf;
     //Also pass in the decouple_ctrl boolean, it's possible that we use double buffer
     //and not decouple ctrl anymore
+    //The following function just merge the coarse grained loops into one loop iterator and reduce total dimensionality
     cgpl_schedule =
         target_buf.get_coarse_grained_pipeline_schedule(options, new_target_buf, config_mode, decouple_ctrl, substract_glb_latency);
     //Just get the schedule, push back the logic generation we may need to change it due to double buffer optimization
@@ -9836,8 +9846,12 @@ void UBuffer::generate_banks(CodegenOptions& options) {
         isl_set* s_rem = rem_dom_set.at(i);
         cout << "\tnew: " << str(s_new) << endl;
         cout << "\trem: " << str(s_rem) << endl;
-        int origin_max = get_dim_max(range(its(acc_vec_new, s_new)), addr_dim);
-        int trans_max = get_dim_max(range(its(acc_vec_rem, s_rem)), addr_dim);
+        auto origin_range = range(its(acc_vec_new, s_new));
+        auto new_range = range(its(acc_vec_rem, s_new));
+        cout << "origin range: " << str(origin_range) << endl;
+        cout << "new range: " << str(new_range) << endl;
+        int origin_max = get_dim_max(origin_range, addr_dim);
+        int trans_max = get_dim_max(new_range, addr_dim);
         cout << "origin max: " << str(origin_max) << endl;
         cout << "trans max: " << str(trans_max) << endl;
         ahead_step = max(ahead_step, origin_max - trans_max);
@@ -9921,7 +9935,8 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
     return pad_zero_iteration;
 }
 
-  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map, int fetch_width, int addr_dim, int& vectorized_dim, bool is_dual_port) {
+  pair<isl_map*, isl_map*> get_vectorized_read_simplified(isl_map* acc_0, isl_map* sched, map<string, isl_map*> sched_record_map,
+          int fetch_width, int tb_capacity, int addr_dim, int& vectorized_dim, bool is_dual_port) {
 
     isl_ctx* ctx = ::ctx(acc_0);
 
@@ -9933,6 +9948,15 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
 
     //From the range transform get the domain transform
     auto dim2denom = get_dim2denom(acc_slice);
+
+    //Get the innermost dimension for stripmining
+    int innermost_stripmining_dim = 0;
+    for (auto it: dim2denom) {
+        if (it.first > innermost_stripmining_dim) {
+            innermost_stripmining_dim = it.first;
+        }
+    }
+
     auto div_trans = get_div_trans(acc_slice, dim2denom);
     cout << str(div_trans) << endl;
     auto acc_vec_new = simplify_expr(dot(inv(div_trans), acc_slice));
@@ -9957,6 +9981,12 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
     //Get the vectorized dimension
     vectorized_dim =
         get_inner_most_related_dom_dim_debug(acc_vec_rem, addr_dim, fetch_width);
+    //Force it to be the inner most dimension
+
+    int data_btw_fetch = card_in_dim(cpy(acc_0), innermost_stripmining_dim);
+    if (data_btw_fetch > tb_capacity) {
+      vectorized_dim = num_in_dims(acc_vec_rem) - 1;
+    }
     cout << "Vectorization dimension: " << vectorized_dim << endl;
     //cout << "Relation map: " << relation_map(acc_vec_rem) << endl;
 
@@ -9981,6 +10011,7 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
     //we still get the correct data in time after remove floor div
     //FIXME: Need to rewrite this after ASPLOS
     //ahead does not mean we need to fetch more item
+    //TODO: 2023 Mar, need to write a bunch of unit test for the prefetch step and pad range
     int ahead_step = get_prefetch_step(acc_vec_new, acc_vec_rem, vectorized_dim, addr_dim);
 
     //projected out the reaccessing dimension
@@ -10391,13 +10422,13 @@ bool pad_range_one_vec_dim(map<int, int> & dim2denom,
               auto am = to_map(access_map.at(out_pt_name));
               auto sched = to_map(schedule.at(out_pt_name));
 
-
+              int tb_capacity = options.mem_hierarchy.at("mem").get_capacity("tb");
               //New method for sram read schedule
               int vectorized_dim = 0;
               auto sram_ir = get_vectorized_read_simplified(
                       to_map(access_map.at(out_pt_name)),
                       to_map(schedule.at(out_pt_name)),
-                      sched_record_map, fetch_width, dim_id, vectorized_dim, is_dual_port);
+                      sched_record_map, fetch_width, tb_capacity, dim_id, vectorized_dim, is_dual_port);
 
               isl_map* vectorized_access = add_domain_suffix(sram_ir.first, "_sram2tb_" + str(tb_cnt));
               isl_set* dom = ::domain(vectorized_access);

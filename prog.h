@@ -60,7 +60,7 @@ struct ir_node {
 
   // If statement condition
   std::string condition;
-  ir_node* origin_lp;
+  ir_node* origin_lp; //record the origin child
 
   // Operations / other loops contained in this loop nest
   std::vector<op*> children;
@@ -87,15 +87,20 @@ struct ir_node {
   // latency which further extract by schedule into
   int latency = 0;
 
-  // Annotation used for debug printouts
+  // Annotation used for debug printouts, if all set to false,
+  // fuse all loop by inner most dim
   int unroll_factor;
+
+  // Tag for loop fusion
+  bool cgl_tag;
 
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr),
   origin_lp(nullptr),
   tp(IR_NODE_TYPE_OPERATION),
-  unroll_factor(1) {}
+  unroll_factor(1),
+  cgl_tag(false){}
 
   ~ir_node();
 
@@ -110,7 +115,7 @@ struct ir_node {
   void shift_address(const std::string& var, const std::vector<int>& min_locs);
 
   bool is_inner_loop() const {
-    if (this->is_loop()) {
+    if (!this->is_loop()) {
       return false;
     }
     for (auto c : children) {
@@ -373,6 +378,14 @@ struct ir_node {
     index_variables_needed_by_compute.push_back(v);
   }
 
+  void rename_index_var(const std::string org, const std::string new_) {
+      for (string& var: index_variables_needed_by_compute) {
+          if (var == org) {
+              var = new_;
+          }
+      }
+  }
+
   void index_variable_prefetch_cycle(const int v) {
     index_variables_prefetch_cycle = v;
   }
@@ -607,6 +620,7 @@ struct ir_node {
     assert(!is_op());
 
     auto lp = new op();
+    lp->origin_lp = imperfect_lp; //this record the loop below the lp before loop perfection
     lp->name = name;
     lp->origin_lp = imperfect_lp;
     lp->condition = condition;
@@ -625,6 +639,7 @@ struct ir_node {
     lp->name = name;
     lp->origin_lp = imperfect_lp;
     lp->condition = condition;
+    lp->origin_lp = imperfect_lp; //this record the loop below the lp before loop perfection
     lp->ctx = ctx;
     lp->parent = this;
     lp->tp = IR_NODE_TYPE_IF;
@@ -650,6 +665,10 @@ struct ir_node {
     children.push_back(lp);
 
     return lp;
+  }
+
+  void coarse_grain_loop_tag() {
+    cgl_tag = true;
   }
 
   op* store(const pair<string, string>& dst, const pair<string, string>& src) {
@@ -921,6 +940,23 @@ struct ir_node {
     return loops;
   }
 
+  std::set<op*> all_loops_to_be_fused() {
+    std::set<op*> loops;
+    if (cgl_tag) {
+      loops.insert(this);
+    } else if (is_inner_loop()) {
+      //By default fuse at inner most level
+      loops.insert(this);
+    } else {
+      for (auto c: children) {
+        for (auto loop: c->all_loops_to_be_fused()) {
+          loops.insert(loop);
+        }
+      }
+    }
+    return loops;
+  }
+
   std::set<std::string> all_existing_loop_names() {
     std::set<string> names;
     for (auto op : all_root_ops()) {
@@ -985,7 +1021,7 @@ struct ir_node {
 // };
 
 
-struct cmp_op { 
+struct cmp_op {
   std::string toUpper(std::string s) const {
     for(int i=0;i<(int)s.length();i++){s[i]=toupper(s[i]);}
     return s;
@@ -1078,6 +1114,11 @@ struct prog {
 
   op* add_loop(const int l, const int u) {
     return add_loop(unique_name("l"), l, u);
+  }
+
+  //Fuse at root level
+  void coarse_grain_loop_tag() {
+    root->coarse_grain_loop_tag();
   }
 
   isl_set* domain(op* op);
@@ -1653,6 +1694,9 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 
 pair<vector<int>, vector<int>> pad_alignment(vector<int>& l, vector<int>& r);
 map<string, vector<int>> align_loop_var_with_pad(op* root, prog& prg);
+pair<vector<int>, vector<int> > aligned_dim_to_pad_dim(
+        vector<int> & p_align_dim,
+        vector<int> & c_align_dim);
 void align_loop_var_with_pad(prog& prg);
 std::vector<string> topologically_sort_kernels(prog& prg);
 std::vector<string> topologically_sort_kernels(op* root, prog& prg);
@@ -1671,7 +1715,10 @@ bool writes(const std::string& target_buf, op* p);
 
 op* find_writer(const std::string& target_buf, prog& prg);
 
+
+bool is_prod_or_cons(string k_l, string k_r, op* root, prog& prg);
 std::set<string> get_producers(string next_kernel, prog& prg);
+std::set<string> get_producers_outside_SSC(string next_kernel, op* root, prog& prg);
 //in sub ast under root
 std::set<string> get_producers(string next_kernel, op* root, prog& prg);
 
@@ -1700,6 +1747,8 @@ bool compile_regression_tb(prog& prg);
 vector<string> surrounding_vars(op* loop, prog& prg);
 vector<string> surrounding_vars(const std::string& op, prog& prg);
 vector<op*> surrounding_vars_ops(op* loop, prog& prg);
+
+prog extract_cgl_to_separate_prog(const std::set<op*>& cg_loops, prog& original);
 prog extract_group_to_separate_prog(const std::set<std::string>& group, prog& original);
 
 
@@ -1867,6 +1916,29 @@ static
 bool operator==(const resource_instance& a, const resource_instance& b) {
   return a.type == b.type && a.number == b.number;
 }
+struct compute_resource {
+  public:
+    int num_users = 0;
+    int resource_quantity = 0;
+    bool is_created = false;
+    op* leading_op;
+    //string output_name;
+    //string sr_name;
+    //int interleave_dimension = 1; // Loop level where one iteration goes through all kernels (0 being innermost)
+    vector<string> op_names;
+
+    compute_resource(const std::string op_name) {
+        num_users ++;
+        op_names.push_back(op_name);
+    }
+
+    void add_resource(const std::string op_name) {
+        num_users ++;
+        op_names.push_back(op_name);
+    }
+
+};
+
 
 struct schedule_info {
   // Miscellaneous
@@ -1881,6 +1953,9 @@ struct schedule_info {
   map<string, int> compute_unit_latencies;
   //This data structure save the port loading slack with respect to the largest latency
   map<string, map<string, int>> port_latencies;
+  //This data is helpful when we decide the input schedule
+  map<string, int> op_latencies;
+
   map<string, string> op_compute_unit_names;
   //This data structure save the broadcast latency within the interconnect.
   map<string, vector<int> > ub_latencies;
@@ -1892,12 +1967,54 @@ struct schedule_info {
 
   // Resource use info
   map<op*, resource_instance> resource_assignment;
+  map<string, compute_resource> compute_resources;
 
   // Schedule offsets
   map<string, int> loop_iis;
+  //This is the target ii for each inner loop
+  //We need to save it for ii tighten, since some loop cannot support ii=1 due to the fetch width
+  map<string, int> target_inner_iis;
   //map<op*, int> instance_latencies;
-  map<op*, int> op_offset_within_parent;
+  map<string, int> op_offset_within_parent;
   map<op*, int> op_pad_step;
+
+  int get_op_latency(string name) {
+    if (op_latencies.count(name) == 0) {
+      cout << "Op : " << name << " was not initialized in op latency meta data." << endl;
+    }
+    return op_latencies.at(name);
+  }
+
+  bool check_if_compute_created(op* op) {
+    return compute_resources.at(op->func).is_created;
+  }
+
+  void set_compute_is_created(op* op) {
+    compute_resources.at(op->func).is_created = true;
+    compute_resources.at(op->func).leading_op = op;
+  }
+
+  bool share_compute() {
+    for (auto it: compute_resources) {
+      if (it.second.num_users > 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool share_compute(op* op) {
+    return compute_resources.at(op->func).num_users > 1;
+  }
+
+  vector<string> get_shared_resources() {
+    vector<string> ret;
+    for (auto it: compute_resources) {
+      if (it.second.num_users > 1)
+        ret.push_back(it.first);
+    }
+    return ret;
+  }
 
   int compute_latency(const std::string& op_name);
   int compute_latency(op* op);
@@ -1950,11 +2067,11 @@ struct schedule_info {
   }
 
   int offset_in_parent(op* c) {
-    assert(contains_key(c, op_offset_within_parent));
-    return map_find(c, op_offset_within_parent);
+    assert(contains_key(c->name, op_offset_within_parent));
+    return map_find(c->name, op_offset_within_parent);
   }
   int pad_step(op*c) {
-    if (contains_key(c, op_pad_step)) 
+    if (contains_key(c, op_pad_step))
       return map_find(c, op_pad_step);
     else
       return 0;
@@ -2166,6 +2283,7 @@ bool no_violated_buf_write_port_assignments(CodegenOptions& options, schedule_in
 bool schedule_bounds_fit_controller_bitwidth(const int bitwidth, schedule_info& sched, prog& prg);
 
 void adjust_inner_iis(schedule_info& sched, prog& prg);
+bool check_if_relax_inner_iis(op* lp, prog& prg);
 
 void loop_split(prog& prg);
 void perfect_loop_split(op*, prog& );
