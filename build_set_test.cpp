@@ -20389,17 +20389,13 @@ schedule_info garnet_schedule_info(CodegenOptions& options, prog& prg, bool use_
         int max_latency = 0;
         for (auto input_latencies : kernel_latencies[op->func].items()) {
           cout << "Compute Kernel latency " <<  input_latencies.key() << " : " << input_latencies.value() << endl;
-          for (auto port_latency : input_latencies.value().items()) {
-            max_latency = std::max(max_latency, (int)port_latency.value()["latency"]);
-          }
+          max_latency = std::max(max_latency, (int)input_latencies.value()["latency"]);
         }
-        cout << "\tmax compute Kernel latency " << max_latency << endl;
+        cout << "\tmax compute kernel latency " << max_latency << endl;
         map<string, int> port_slacks;
         for (auto input_latencies : kernel_latencies[op->func].items()) {
-          for (auto port_latency : input_latencies.value().items()) {
-            cout << "\tport compute Kernel latency " <<  (string)input_latencies.key() + "_" + port_latency.key() << " : " << max_latency - (int)(port_latency.value()["latency"]) << endl;
-            port_slacks[(string)input_latencies.key() + "_" + port_latency.key()] = max_latency - (int)(port_latency.value()["latency"]);
-          }
+          cout << "\tport compute Kernel latency " <<  (string)input_latencies.key() << " : " << max_latency - (int)(input_latencies.value()["latency"]) << endl;
+          port_slacks[(string)input_latencies.key()] = max_latency - (int)(input_latencies.value()["latency"]);
         }
         sched.compute_unit_latencies[op->func + suffix] = max_latency;
         sched.port_latencies[op->func + suffix] = port_slacks;
